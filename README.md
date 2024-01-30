@@ -25,12 +25,12 @@ Steady...
 
 The way out, is through.
 
-## Table of Contents
+## :closed_book: Table of Contents
 
 * [Feature Highlights](#sparkles-feature-highlights)
 * [Roadmap of TODOs](docs/TODO.md)
 * [Requirements](#pill-requirements)
-* [Structure](#skeleton-structure)
+* [Structure](#nut_and_bolt-structure)
 * [Adding a New Host](docs/Addnewhost.md)
 * [Secrets Management](docs/secretsmgmt.md)
 * [Initial Install Notes](docs/installnotes.md)
@@ -57,7 +57,7 @@ The roadmap of features is laid across funtionally thematic stages that can be v
 * Persistance
 * More disk space
 
-## :skeleton: Structure Quick Reference
+## :nut_and_bolt: Structure Quick Reference
 
 For details about design concepts, constraints, and how structural elements interact, see [Anatomy](docs/anatomy.md).
 
