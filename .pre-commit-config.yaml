@@ -1,0 +1,39 @@
+minimum_pre_commit_version: "2.9.0"
+ci:
+  autoupdate_schedule: monthly
+repos:
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.1
+    hooks:
+      - id: forbid-crlf
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: forbid-submodules
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+  - repo: https://github.com/yuvipanda/pre-commit-hook-ensure-sops
+    rev: v1.0
+    hooks:
+      - id: sops-encryption
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+  - repo: https://github.com/nix-community/nixpkgs-fmt
+    rev: f3fac47d6509e6b23c6103bb833353db348c634f
+    hooks:
+      - id: nixpkgs-fmt
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.7.0-1
+    hooks:
+      - id: shfmt
