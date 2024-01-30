@@ -19,7 +19,7 @@ The secrets stored in `secrets.yaml` include private ssh keys, user passwords, m
 ## Table of Contents
 
   * [Requirements](#requirements)
-  * [Using nix-secrets with nix-config](#using-this-repo-with-nix-config)
+  * [Using nix-secrets with nix-config](#using-nix-secrets-with-nix-config)
   * [Initializing Secrets and Keys](#initializing-secrets-and-keys)
   * [Managing Keys](#managing-keys)
   * [Managing Secrets](#managing-secrets)
