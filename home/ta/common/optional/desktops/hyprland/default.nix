@@ -1,24 +1,47 @@
-{pkgs, ...} : {
+{pkgs, lib, ...} : {
   imports = [
+    # custom key binds
     ./binds.nix
 
-    #./waybar.nix #infobar
-    #./rofi-wayland.nix #app launcher
-    #./dunst.nix #notification daemon
-    #./swww.nix #wallpaper daemon
   ];
 
+  #Note: xdg portal package is currently set in /hosts/common/optional/hyprland.nix
+  
   wayland.windowManager.hyprland = {
     enable = true;
-    plugins = [];
+    systemd = {
+      enable = true;
+      # TODO experiment with whether this is required.
+      # Same as default, but stop the graphical session too
+      extraCommands = lib.mkBefore [
+        "systemctl --user stop graphical-session.target"
+        "systemctl --user start hyprland-session.target"
+      ];
+    };
+
+    plugins = [
+
+    ];
 
     settings = {
+      env = [
+        "NIXOS_OZONE_WL, 1" # for ozone-based and electron apps to run on wayland
+        "MOZ_ENABLE_WAYlAND, 1" # for firefox to run on wayland
+        "MOZ_WEBRENDER, 1" # for firefox to run on wayland
+
+  # FIXME pass these as vars from /home/ta/grief.nix
+  # VirtualBox settings for Hyprland to display correctly
+        "WLR_NO_HARDWARE_CURSORS, 1"
+        "WLR_RENDERER_ALLOW_SOFTWARE, 1"
+      ];
+
       general = {
         gaps_in = 8;
         gaps_out = 5;
         border_size = 3;
         cursor_inactive_timeout = 4;
       };
+
       input = {
         kb_layout = "us";
         #mouse = {
@@ -26,6 +49,7 @@
           #naturalScroll = true;
         #};
       };
+      
       decoration = {
         active_opacity = 0.94;
         inactive_opacity = 0.75;
@@ -44,6 +68,9 @@
         "col.shadow" = "0x44000000";
         "col.shadow_inactive" = "0x66000000";
       };
+
+#      exec-once = ''${startupScript}/path'';
+
     };
     # load at the end of the hyperland set
     extraConfig = ''
@@ -54,10 +81,7 @@
 #TODO move below into individual .nix files with their own configs
   home.packages = builtins.attrValues {
     inherit (pkgs)
-    # Notifcation daemon
-    libnotify # required by dunst
-    dunst
-    #mako
+    #nm-applet --indicator &  # notification manager applet.
 
     # bar
     waybar  # closest thing to polybar available

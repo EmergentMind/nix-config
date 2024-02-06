@@ -9,6 +9,6 @@
     common/optional/helper-scripts
 
 #FIXME change to just common/optional/desktops after hyprland is working
-    common/optional/desktops/hyprland/binds.nix
+    common/optional/desktops
   ];
 }

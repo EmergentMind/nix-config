@@ -30,7 +30,19 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-    
+
+    # Windows management
+    # for now trying to avoid this one because I want stability for my wm
+    # this is the hyprland development flake package / unstable
+    #hyprland = {
+      #url = "github:hyprwm/hyprland";
+      #inputs.nixpkgs.follows = "nixpkgs";
+    #};
+    #hyprland-plugins = {
+      #url = "github:hyprwm/hyprland-plugins";
+      #inputs.hyprland.follows = "hyprland";
+    #};
+
     #################### Personal Repositories ####################
 
     # Private secrets repo.  See ./docs/secretsmgmt.md

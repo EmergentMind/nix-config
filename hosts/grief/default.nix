@@ -61,8 +61,8 @@
   };
   
   # VirtualBox settings for Hyprland to display correctly
-  environment.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
-  environment.sessionVariables.WLR_RENDERER_ALLOW_SOFTWARE = "1";
+  #environment.sessionVariables.WLR_NO_HARDWARE_CURSORS = "1";
+  #environment.sessionVariables.WLR_RENDERER_ALLOW_SOFTWARE = "1";
 
   # Fix to enable VSCode to successfully remote SSH on a client to a NixOS host
   # https://nixos.wiki/wiki/Visual_Studio_Code#Remote_SSH
