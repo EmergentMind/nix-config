@@ -8,11 +8,9 @@
 { inputs, ... }: {
   imports = [
     #################### Hardware Modules #################### 
-    # inputs.hardware.nixosModules.common-cpu-amd
-    inputs.hardware.nixosModules.common-cpu-intel
-    # inputs.hardware.nixosModules.common-gpu-nvidia
-    inputs.hardware.nixosModules.common-gpu-intel
-    # inputs.hardware.nixosModules.common-pc-ssd
+    inputs.hardware.nixosModules.common-cpu-amd
+    inputs.hardware.nixosModules.common-gpu-amd
+    inputs.hardware.nixosModules.common-pc-ssd
 
     #################### Required Configs #################### 
     ../common/core 
@@ -26,8 +24,9 @@
     ../common/optional/services/openssh.nix
 
     # Desktop
-    ../common/optional/services/greetd.nix # display manager
-    ../common/optional/hyprland.nix # window manager
+#    ../common/optional/services/greetd.nix # display manager
+#    ../common/optional/hyprland.nix # window manager
+    ../common/optional/xfce.nix
     ../common/optional/pipewire.nix # audio
 
     #################### Users to Create #################### 
@@ -36,11 +35,10 @@
     ../common/users/media
 
   ];
-
   # set custom autologin options. see greetd.nix for details
   # TODO is there a better spot for this?
-  autoLogin.enable = true;
-  autoLogin.username = "ta";
+#  autoLogin.enable = true;
+#  autoLogin.username = "ta";
 
   services.gnome.gnome-keyring.enable = true;
   #TODO enable and move to greetd area? may need authentication dir or something? 

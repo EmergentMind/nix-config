@@ -5,6 +5,8 @@ in
 {
   imports = [
     # Packages with custom configs go here
+    ./chromium.nix
+    ./gtk.nix
 
   ] ++ (builtins.attrValues outputs.homeManagerModules);
 
@@ -39,7 +41,7 @@ in
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {
-      experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      experimental-features = [ "nix-command" "flakes" ];
       warn-dirty = false;
     };
   };
