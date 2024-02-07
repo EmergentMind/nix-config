@@ -24,21 +24,17 @@
     ../common/optional/services/openssh.nix
 
     # Desktop
-#    ../common/optional/services/greetd.nix # display manager
-#    ../common/optional/hyprland.nix # window manager
-    ../common/optional/xfce.nix
-    ../common/optional/pipewire.nix # audio
+    ../common/optional/services/greetd.nix # display manager
+    ../common/optional/hyprland.nix # window manager
 
     #################### Users to Create #################### 
     ../common/users/ta
-    # FIXME remove media user after machine swap
-    ../common/users/media
 
   ];
   # set custom autologin options. see greetd.nix for details
   # TODO is there a better spot for this?
-#  autoLogin.enable = true;
-#  autoLogin.username = "ta";
+  autoLogin.enable = true;
+  autoLogin.username = "ta";
 
   services.gnome.gnome-keyring.enable = true;
   #TODO enable and move to greetd area? may need authentication dir or something? 

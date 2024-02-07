@@ -4,13 +4,14 @@
 
 ## Short Term
 
-* finish display /login manager set up
-* hyprland binds
-* hyprland essentials
+* xfce stop gap set up to speed up theater deploy
 * Pipewire sound testing
 * vlc and chromium configs
 * deploy to gusto
   * document steps... see TODO stage 2 in nix-config and nix-secrets
+
+* hyprland binds
+* hyprland essentials
 
 * sort out justfile sops-check failure on just rebuild
 * migrate bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA    consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"

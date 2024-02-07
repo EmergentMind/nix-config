@@ -118,9 +118,8 @@
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
       };
-      #FIXME change to gusto when stable
-      "media@grief" = lib.homeManagerConfiguration {
-        modules = [ ./home/media/grief.nix ];
+      "media@gusto" = lib.homeManagerConfiguration {
+        modules = [ ./home/media/gusto.nix ];
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
       };

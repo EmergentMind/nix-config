@@ -6,6 +6,9 @@
 
     #################### Host-specific Optional Configs #################### 
     common/optional/sops.nix
-    common/optional/desktops
+    common/optional/helper-scripts
+
+    common/optional/desktops/gtk.nix 
+    common/browsers/chromium.nix # using chromium on guso for testing against 'media' user
   ];
 }

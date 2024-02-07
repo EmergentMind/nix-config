@@ -8,7 +8,8 @@
     common/optional/sops.nix
     common/optional/helper-scripts
 
-#FIXME change to just common/optional/desktops after hyprland is working
     common/optional/desktops
+
+    common/optional/browsers/chromium.nix
   ];
 }
