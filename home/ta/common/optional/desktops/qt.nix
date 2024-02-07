@@ -2,7 +2,7 @@
 {
   qt = {
     enable = true;
-    platformTheme = "gtk";
+    platformTheme = "gtk2";
     style = {
       name = "gtk2";
           # autodetected themes:
