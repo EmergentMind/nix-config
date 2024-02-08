@@ -4,14 +4,13 @@
 
 ## Short Term
 
-* xfce stop gap set up to speed up theater deploy
 * Pipewire sound testing
-* vlc and chromium configs
+* vlc
+* smb mount
 * deploy to gusto
   * document steps... see TODO stage 2 in nix-config and nix-secrets
 
-* hyprland binds
-* hyprland essentials
+* autoupgrade
 
 * sort out justfile sops-check failure on just rebuild
 * migrate bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA    consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
@@ -20,6 +19,8 @@ ongoing until moved to stable or I decide to use unstable
 
 * check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
 * check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+
+* delete gustold aliases, dns entries, and forwarding
 
 ## Long Term
 
@@ -105,6 +106,8 @@ Primer:
 Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
 Also start adding more to the GUI experience for machines that are meant for more than browser streaming.
 
+* hyprland binds
+* hyprland essentials
 * laptop utils
 * more desktop utils and customization
   * set up copyq clipboard mgr

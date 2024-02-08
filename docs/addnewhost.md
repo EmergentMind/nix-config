@@ -54,12 +54,12 @@ Also need to include updating secrets
 
 ### On the new host
 
-These instructions currently assume:
-
-* You haven't stepped through loading custom config from the live environment
-* Your repo is still private
-
 0. Boot the new machine into a NixOS live environment and wait for the installer to automatically open.
+1. Exit out fo the installer.
+2. Open a terminal
+3. 
+
+
 1. Follow the installer steps, select no gui for windows manager, wait for it to install and reboot.
 2. Once you've booted to the terminal.
 3. Set the required features: `export NIX_CONFIG="experimental-features = nix-command flakes"`
