@@ -78,7 +78,7 @@ Order is important here, get the partitions working the way you want, with imper
 If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
 
 * refactor to use specialArgs and extraSpecial Args for common user and host settings
-* declarative partitionion
+* declarative partitionion via disko
 * custom iso generation and installer
 * automated machine setup
 * impermanence
