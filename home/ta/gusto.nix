@@ -9,6 +9,6 @@
     common/optional/helper-scripts
 
     common/optional/desktops/gtk.nix 
-    common/optional/browsers/chromium.nix # using chromium on guso for testing against 'media' user
+    common/optional/browsers/chromium.nix # using chromium on gusto for testing against 'media' user
   ];
 }
