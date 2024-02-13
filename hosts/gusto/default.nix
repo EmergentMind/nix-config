@@ -16,8 +16,6 @@
     ./hardware-configuration.nix
 
     #################### Host-specific Optional Configs #################### 
-    ../common/optional/services/clamav.nix # depends on optional/msmtp.nix
-    ../common/optional/msmtp.nix # required for emailing clamav alerts
     ../common/optional/services/openssh.nix # allow remote SSH access
 
     ../common/optional/xfce.nix # window manager
@@ -28,6 +26,16 @@
     ../common/users/media
   ];
 
+  # Enable some basic X server options
+  services.xserver.enable = true;
+  services.xserver.displayManager = {
+    lightdm.enable = true;
+    autoLogin.enable = true;
+    autoLogin.user = "media";
+  };
+  # TODO this might be redudnant
+  services.xserver.xkb.layout = "us";
+  
   networking = {
     hostName = "gusto";
     enableIPv6 = false;

@@ -10,6 +10,5 @@
 
     common/optional/desktops
 
-    common/optional/browsers/chromium.nix
   ];
 }
