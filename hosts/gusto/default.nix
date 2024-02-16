@@ -7,21 +7,22 @@
 
 { inputs, ... }: {
   imports = [
-    #################### Hardware Modules #################### 
+    #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-intel
     inputs.hardware.nixosModules.common-gpu-intel
 
-    #################### Required Configs #################### 
-    ../common/core 
+    #################### Required Configs ####################
+    ../common/core
     ./hardware-configuration.nix
 
-    #################### Host-specific Optional Configs #################### 
+    #################### Host-specific Optional Configs ####################
     ../common/optional/services/openssh.nix # allow remote SSH access
 
     ../common/optional/xfce.nix # window manager
     ../common/optional/pipewire.nix # audio
+    ../common/optional/smbclient.nix # mount the ghost mediashare
 
-    #################### Users to Create #################### 
+    #################### Users to Create ####################
     ../common/users/ta
     ../common/users/media
   ];
@@ -35,7 +36,7 @@
   };
   # TODO this might be redudnant
   services.xserver.xkb.layout = "us";
-  
+
   networking = {
     hostName = "gusto";
     enableIPv6 = false;

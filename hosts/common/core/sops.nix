@@ -30,6 +30,7 @@ in
     # because they will be output to /run/secrets-for-users and only when the user is assigned to a host.
     secrets = {
       msmtp-password = {};
+      # smb-secrets are extracted in hosts/common/optional/smbclient.nix
 
       # extract to default pam-u2f authfile location for passwordless sudo. see ../optional/yubikey
       "yubico/u2f_keys" = {

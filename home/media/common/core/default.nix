@@ -5,7 +5,7 @@ in
 {
   imports = [
     # Packages with custom configs go here
-    ./chromium.nix
+    ./brave.nix
     ./gtk.nix
 
   ] ++ (builtins.attrValues outputs.homeManagerModules);
