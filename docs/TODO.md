@@ -4,23 +4,8 @@
 
 ## Short Term
 
-* Pipewire sound testing
-* vlc
-* smb mount
-* deploy to gusto
-  * document steps... see TODO stage 2 in nix-config and nix-secrets
-
-* autoupgrade
-
-* sort out justfile sops-check failure on just rebuild
-* migrate bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA    consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
-
-ongoing until moved to stable or I decide to use unstable
-
-* check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
-* check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
-
-* delete gustold aliases, dns entries, and forwarding
+* Create main branch for Stage 2 stable
+* Stage 3 planning and refinement
 
 ## Long Term
 
@@ -50,24 +35,20 @@ nix-config automation, and core tty that will be common on all machines.
 
 This stage will add a second host machine, gusto (theatre). To effectively used gusto, we'll need to introduce gui elements such as a desktop, basic QoL tools for using the desktop, and some basic gui applications to play media, including the requisite audio/visual packages to make it all work.
 
-* Add a media user specifically for gusto (autolog that one)
-* Document and tweak steps to deploy to new host
-* Simple desktop - add visual desktop and a/v elements as common options
-* Stable windows manager environment
-* Stable audio
-* Stable video
-* Auto-upgrade
+* ~~Add a media user specifically for gusto (autolog that one)~~
+* ~~Document and tweak steps to deploy to new host~~
+* ~~Simple desktop - add visual desktop and a/v elements as common options~~
+* ~~Stable windows manager environment~~
+* ~~Stable audio~~
+* ~~Stable video~~
+* ~~Auto-upgrade~~
 * ~~Better secrets management~~
   * ~~private repo for secrets~~
   * ~~personal documentation for secrets management, i.e. README for nix-secrets private repo~~
   * ~~public documentation for secrets management, i.e. how to use this repo with the private repo~~
-* Potentially yubiauth and u2f for passwordless sudo
-* Review and complete TODO sops, TODO yubi, and TODO stage 2
-* Deploy gusto
-
-##### Stage 2 References
-
-* [nix-colors](https://github.com/Misterio77/nix-colors) - consider using this for easy color scheming across hosts
+* DEFERRED - Potentially yubiauth and u2f for passwordless sudo
+* ~~Review and complete applicable TODO sops, TODO yubi, and TODO stage 2~~
+* ~~Deploy gusto~~
 
 #### 3. Squeaky Clean
 
@@ -77,15 +58,28 @@ Order is important here, get the partitions working the way you want, with imper
 !! Some of this needs heavy assessment and consideration given the assumed reliance on theoretical tooling like flake-parts, which is a tangential extension of flakes (which is in fact *still* experimental)
 If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
 
+* enable git signing in home/ta/common/core/git.nix using nix-secrets
+* solve outstanding yubikey FIXMEs
+* separate, specialpurpose bootstrap flake for basic, pre-secrets install from liveISO
+* confirm clamav scan notification
+    * check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
+    * check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+* custom iso generation and installer
 * refactor to use specialArgs and extraSpecial Args for common user and host settings
 * declarative partitionion via disko
-* custom iso generation and installer
 * automated machine setup
+* per host branch scheme
 * impermanence
     need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
+* migrate bash scripts
+* overhaul just file
+* Potentially yubiauth and u2f for passwordless sudo
 * Potentially re-enable CI pipelines. These were disabled during stage 2 because I moved to inputing the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
 
 ##### Stage 3 References
+
+* Migrating bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA
+  Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
 
 These two are the references to follow and integrate. The Primer list below is good review before diving into this:
 
@@ -115,7 +109,12 @@ Also start adding more to the GUI experience for machines that are meant for mor
   * better linting and fixing in vscode and vim
   * look at https://github.com/dandavison/delta
 * gui dev
+  * host specific colours via nix-colors
 * dualboot?
+
+##### Stage 4 References
+
+* [nix-colors](https://github.com/Misterio77/nix-colors) - consider using this for easy color scheming across hosts
 
 #### 5. Ghost
 
