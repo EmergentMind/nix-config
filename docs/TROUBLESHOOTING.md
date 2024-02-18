@@ -16,6 +16,8 @@
 This issue was encountered during a  home-manager switch without any substantial changes to the config.
 Including --refresh seemed to solve the problem: `home-manager switch --refresh --flake .#ta@grief`
 
+If adding `--refresh` does not solve the issue, you can run `systemctl --user reset-failed` prior to runninng `home-manager switch --flake .#ta@grief`
+
 Failure output below:
 
 ```bash
