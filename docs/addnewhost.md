@@ -2,8 +2,11 @@
 
 [README](../README.md) > Adding A New Host
 
-TODO Stage 2:  This section is outdated. Update during deployment to gusto and consider moving this section back to the README.
-Also need to include updating secrets
+FIXME These steps can and should be streamlined significantly during each roadmap stage. In particular, install from the liveISO rather than installing and then loading the config. I opted to forgo the latter until the config is more mature and I better understand the required process.
+
+### Requirements
+
+Because this repo relies on a private `nix-secrets` repository input as a flake uri, you must use a NixOS ISO versioned 23.11 or higher so that building the flake prompts for a passphrase.
 
 ### In this repo
 
@@ -54,19 +57,17 @@ Also need to include updating secrets
 
 ### On the new host
  
-FIXME These steps can be streamlined significantly at later roadmap stages to install based on the config, rather than installing and then loading the config. I opted to forgo the latter until the config is more mature and I better understand the required process.
-
 These steps assume:
 * installation on an UEFI system
 
-0. Boot the new machine into a NixOS live environment and wait for the installer to automatically open.
+0. Boot the new machine into a NixOS live environment and wait for a shell, or for the graphical installer to automatically open if you used a graphical ISO.
 
-1. Exit the graphical installer and open a terminal.
+1. If in the graphical installer, and open a terminal.
   Confirm the boot process brought up networking successfully and a ip was acquired. Check `ip a`. If no ip was assigned, refer to <https://nixos.org/manual/nixos/stable/#sec-installation-manual-networking>
 
-2. Most of the following steps require root 
+2. To gain remote access right away, set a temporary password for the root user using `passwd root` and following the prompts. Then from a remote machine, `ssh root@0.0.0.0` using the ip printed in step 1.
 
-    `sudo su`
+3.  Most of the following steps require root. If you are remoted in from step 2 you should have a root shell. Otherwise, `sudo su`
 
    > IMPORTANT: the code samples below assume installation on the `sda` device. Modify if necessary.
    These are instructions come directly from <https://nixos.org/manual/nixos/stable/#sec-installation-manual-partitioning> with little to no modification.
@@ -111,7 +112,7 @@ These steps assume:
 11. Mount the boot file system on /mnt/boot, e.g.
     ```bash
     # mkdir -p /mnt/boot
-    # mount /dev/disk/by-label/boot /mnt/boot
+    # mount /dev/disk/by-label/BOOT /mnt/boot
     ```
 
 12. If you are using swap, activate swap devices now (swapon device). The installer (or rather, the build actions that it may spawn) may need quite a bit of RAM, depending on your configuration.
@@ -128,8 +129,6 @@ These steps assume:
     # vim /mnt/etc/nixos/configuration.nix
     ```
 
-    or use nano if you're in a great mood and don't care.
-
 15. Edit or add the following as needed.
 
     1. Verify:
@@ -142,49 +141,38 @@ These steps assume:
     2. Uncomment this line and replace `nixos` with your desired host name:
 
         ```nix
-        networking.hostname = "nixos";
+        # networking.hostname = "nixos";
         ```
+      This step isn't technically required but will make connected to the machine faster if you have aliases already setup.
 
-    3. Delete the following lines:
+    3. Delete or comment out the following lines if the are present.
 
         ```nix
-        services.xserver.enable = true;
+        # services.xserver.enable = true;
 
-        services.xserver.displayManager.gdm.enable = true;
+        # services.xserver.displayManager.gdm.enable = true;
       
-        services.xserver.desktopManager.gnome.enable = true;
+        # services.xserver.desktopManager.gnome.enable = true;
         ```
     
     4. Uncomment the `users.users.alice` section and create a basic use. For example:
 
         ```nix
-        users.users.ta = {
-          isNormalUser = true;
-          extraGroups = [ "wheel" ];
-          initialPassword = "temp";
-          mutableUsers = true;
-        };
+        #users.users.ta := {
+          #isNormalUser = true;
+          #extraGroups = [ "wheel" ];
+          #initialPassword = "temp";
+        #};
+        #users.mutableUsers = true;
         ```
     
-    5. Uncommment the `environment.systemPackages` list and add a few key packages. The section should look like:
+    5. Uncomment `services.openssh.enable = true`
 
-        ```nix
-        environment.systemPackages = with pkgs; [
-          neovim
-          git
-          sops
-          age
-          ssh-to-age
-        ];
-        ```
-
-      6. Uncomment `services.openssh.enable = true`
-
-    7. At the end of the file, but prior to the final `}`, add the following line:
+    6. At the end of the file, but prior to the final `}`, add the following line:
 
        `nix.settings.experimental-features = [ "nix-command" "flakes" ];`
        
-    8. Save and exit the file
+    7. Save and exit the file
 
 16. Do the installation.
 
@@ -198,21 +186,27 @@ These steps assume:
 19. In case something goes wrong in the next steps, set the password for the user defined in 15.4. For example: `passwd ta`
 20. Create as source directory in the users home and clone the nix-config repo.
 
-    ```nix
+    ```bash
     $ mkdir -p ~/src
     $ cd ~/src
-    $ git clone https://github.com/EmergentMind/nix-config.git
+    $ nix-shell -p git --run 'git clone https://github.com/EmergentMind/nix-config.git'
+    ```
+
+21. Change to the repo directory and run nix-develop to access the dev shell defined in flake.nix.
+
+    ```bash
+    $ cd nix-config
+    $ nix develop
     ```
 
 21. Generate an age key on the new host, based on it's ssh host key.
 
-    ```nix
-    nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
-    this path will be fetched (0.01 MiB download, 0.05 MiB unpacked):
-      /nix/store/gv2cl6qvvslz5h15vqd89f1rpvrdg5yc-stdenv-linux
-    copying path '/nix/store/gv2cl6qvvslz5h15vqd89f1rpvrdg5yc-stdenv-linux' from 'https://cache.nixos.org'...
+    ```bash
+    $ cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age
     age00000000000000000000000000000000000000000000000000
     ```
+
+### On a system with access to nix-secrets
 
 22. On a system with access to the nix-secrets repo, add the generated age key as a host key entry to the `nix-secrets/.sops.yaml` file.
 
@@ -239,7 +233,7 @@ These steps assume:
 23. Update the keys of the related sops file
 
     ```bash
-    sops --config ../nix-secrets/.sops.yaml updatekeys ../nix-secrets/secrets.yaml
+    $ sops --config ../nix-secrets/.sops.yaml updatekeys ../nix-secrets/secrets.yaml
     2024/02/09 12:11:05 Syncing keys for file /home/ta/src/nix-secrets/secrets.yaml
     The following changes will be made to the file's groups:
     Group 1
@@ -250,64 +244,71 @@ These steps assume:
     2024/02/09 12:16:54 File /home/ta/src/nix-secrets/secrets.yaml synced with new keys
     ```
 
-24. 
+24. Commit and push the changes to `nix-secrets` so they will be retrieved when the flake is built on the new host.
 
-
-
-9. ssh to the vm from ghost `ssh ta@0.0.0.0`
-10. Now we'll add some authorized_keys so that we can ssh without a password
+25. Before we build the flake and home-manager confgs on the new host, we need to ensure that it can access the private `nix-secrets` repo. From a system with the required priv/pub key set, cp the keys to the newhost:
 
     ```bash
-    $ nix-shell -p neovim
-    $ mkdir .ssh
-    $ nvim .ssh/authorized_keys
-    
-    .ssh/authorized_keys
-    ---------
-    <public key data>
-    <public key 2 data>
-    
+    $ scp ~/.ssh/key_name* user@0.0.0.0:.ssh/
+    ```
+### Back on the new host
+
+26. Back on the new hosts, create a `~/.ssh/config` so the correct keys are used.
+
+    ```ssh
+    ~/.ssh/config
+    ------------------------------
+    Host gitlab.com github.com
+      IdentitiesOnly yes
+      IdentityFile ~/.ssh/id_manu
+
+    Host *
+      ForwardAgent no
+      Compression no
+      ServerAliveInterval 0
+      ServerAliveCountMax 3
+      HashKnownHosts no
+      UserKnownHostsFile ~/.ssh/known_hosts
+      ControlMaster no
+      ControlPath ~/.ssh/master-%r@%n:%p
+      ControlPersist no
     ```
 
-11. Save and exit the file and then open a new terminal on ghost. Connect to grief over ssh again and confirm that it asks for authorization against one of the authorized keys we just added.
-If not, diagnose the issue.
+27. Since we've updated nix-secrets, we'll have to update the flake lock file to ensure that the latest revision is retrieved.
 
+    ```bash
+    $ nix flake lock --update-input mysecrets
+    warning: Git tree '/home/ta/src/nix-config' is dirty
+    Enter passphrase for key '/home/ta/.ssh/id_manu': 
+    warning: updating lock file '/home/ta/src/nix-config/flake.lock':
+    • Updated input 'mysecrets':
+     'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=aa0165aff5f74d367b523cc27dbd028b0251c30d&shallow=1' (2024-02-09)
+    → 'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=2ef287a53f19be75a4ff1f5ba28595686d4b5cbb&shallow=1' (2024-02-13)
+    warning: Git tree '/home/ta/src/nix-config' is dirty
+    ```
 
+    Enter the passphrase when prompted.
 
+28. Copy the generated hardware config from its default location to the nix-config location:
 
+    `$ cp /etc/nixos/hardware-configuration.nix ~/src/nix-config/hosts/NEWHOSTNAME/hardware-configuration.nix`
 
+29. Build and switch to the flake:
+    
+    ```bash
+    $ sudo nixos-rebuild switch --flake .#newhostname`
+    ```
 
-1. Exit out fo the installer.
-2. Open a terminal
-3. Partition and format drives as desired using the cli. <https://nixos.org/manual/nixos/stable/#sec-installation-manual-partitioning>
-4. Clone the public config repo:
-    TODO: update url to appropraite Release branch when that stage comes
-    `git clone https://github.com/EmergentMind/nix-config.gitit@github.com:EmergentMind/nix-config.git`
-. 
+30. Once the build is finished build home-manager configs for each user on the system:
 
-1. Follow the installer steps, select no gui for windows manager, wait for it to install and reboot.
-2. Once you've booted to the terminal.
-3. Set the required features: `export NIX_CONFIG="experimental-features = nix-command flakes"`
-4. `mkdir -p src/`
-5. `nix-shell -p git`
-6. `git init src/nix-config`
-7. `ls /dev` to display the current devices. Note the devices called `sda`, `sdb`, `sdb1`, etc.
-8. Plug in the USB still with the copy of nix-config repo
-9. `ls /dev` again, and note the new device. e.g. `sdc`
-10. `mkdir -p /mnt/usbstick` to create a mountpoint
-11. run `sudo mount /dev/<device> /mnt/usbstick` but replace `<device>` with the device you identified in step 8.
-12. `ls /mnt/usbstick` to confirm the contents of the mounted device are in fact the nix-config repo
-13. `cp -r /mnt/usbstick/* src/nix-config` to copy the contents of the repo to its location on the new host.
-. Generate a `hardware-configuration.nix` file for this machine: `sudo nixos-generate-config`
-    You should see output saying that `hardware-configuration.nix` is writting and a warning that `configuration.nix` is not being overwritten.
-14. run `cp /etc/nixos/hardware-configuration.nix src/nix-config/hosts/<hostname>/` but replace `<hostname>` with the actual hostname.
-15. `cd src/nix-config`
-16. Stage all of the files so nix flakes knows they exists `git add .`
-17. Apply your system configuration using `sudo nixos-install --flake .#<hostname>`, wait for the installation to complete, and reboot.
-      NOTE: If you are not in a live environment. run `sudo nixos-rebuild switch --flake .#hostname` and don't reboot.
-18. If you didn't fuck up, you can install home-manager to the nix shell so we can apply the home configuration. `nix-shell -p home-manager`
-19. `home-manager switch --flake .#<user>@<hostname>`
-20. You should be able to remote in over ssh
+    ```bash 
+    $ home-manager build --flake .#user@newhostname
+
+    ...
+    
+    $ home-manager build --flake .#user@newhostname
+    ```
+30. Commit and push the new hardware-configuration that was copied in step 2
 
 ---
 [Return to top](#adding-a-new-host)
