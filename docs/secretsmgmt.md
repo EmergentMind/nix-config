@@ -96,7 +96,7 @@ in
 
 ### Initial and subsequent flake rebuilds
 When rebuilding the flake or updating the inputs using a private repo you will be asked to authenticate using the associated ssh passphrase or depending on the host, by touching a yubikey. The first time this happens you will often see errors about some of the keys it's looking for, this is normal, wait until it asks for a manual passphrase or actually asks for touch presence. Some times, in particular with input updating, you will be asked for credentials twice.
-See [no such identity](#no-such-identity), below for an exmaple of output with errors that will eventually resolve.
+See [no such identity](#no-such-identity), below for an example of output with errors that will eventually resolve.
 See [Editing  `secrets.yaml`](#editing-secretsyaml), above for an example of input updating. 
 
 
@@ -176,7 +176,59 @@ This is a log of the steps taken to create the repo contents on grief (lab):
 ## Managing keys
 
 ### Adding additional keys
-TODO stage 2
+
+1. Generate a new age key. The example below demonstrates add an age key on a new host, based on it's ssh host key. This would occur on the new host itself.
+
+    ```nix
+    nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
+    this path will be fetched (0.01 MiB download, 0.05 MiB unpacked):
+      /nix/store/gv2cl6qvvslz5h15vqd89f1rpvrdg5yc-stdenv-linux
+    copying path '/nix/store/gv2cl6qvvslz5h15vqd89f1rpvrdg5yc-stdenv-linux' from 'https://cache.nixos.org'...
+    age00000000000000000000000000000000000000000000000000
+    ```
+
+2. On a system with access to the nix-secrets repo, add the generated age key as a key entry to the `nix-secrets/.sops.yaml` file. This example follows the new host example from step 1.
+
+    ```yaml
+    nix-secrets/.sops.yaml
+
+    ------------------------------
+
+    # pub keys
+    keys:
+      # ...
+      - &hosts:
+        - &yournewhostname age00000000000000000000000000000000000000000000000000
+
+    creation_rules:
+      - path_regex: secrets.yaml$
+        key_groups:
+        - age:
+        # ...
+          - *yournewhostname
+
+    ```
+
+3. Update the keys of the related sops file. The following example assumes the current directory is somewhere other than `nix-secrets` and that sops is install or active in the current shell. 
+
+    ```bash
+    sops --config ../nix-secrets/.sops.yaml updatekeys ../nix-secrets/secrets.yaml
+    2024/02/09 12:11:05 Syncing keys for file /home/ta/src/nix-secrets/secrets.yaml
+    The following changes will be made to the file's groups:
+    Group 1
+        age00000000000000000000000000000000000000000000000000
+        age00000000000000000000000000000000000000000000000000
+    +++ age00000000000000000000000000000000000000000000000000
+    Is this okay? (y/n):y
+    2024/02/09 12:16:54 File /home/ta/src/nix-secrets/secrets.yaml synced with new keys
+    ```
+4. Commit and push the changes to the `nix-secrtes` repo.
+5. An a previously installed host, you will have to update the flake inputs to fetch the new secrets. This can be acheived in two ways:
+
+    * Run `nix flake lock --update-input mysecrets` to update the flake input with the new secrets file.
+    * Run `nix flake update` to update all inputs.
+
+    Then rebuild the flake `sudo nixos-rebuild switch --flake .#<host>`
 
 ### Removing keys
 TODO
@@ -273,7 +325,7 @@ These steps assume that you have already installed and configured sops-nix to wo
 
     It's important to include `users.mutableUsers = false` to ensure the user can't modify their password or groups. Furthermore, if the user had already been created prior to setting their password this way, their existing password will not be overwritten unless this option is false.
 
-6. Run `nix flake lock --update-input mysecrets` to update the flake input with the new secrets file
+6. Run `nix flake lock --update-input mysecrets` to update the flake input with the new secrets file.
 7. Rebuild `sudo nixos-rebuild switch --flake .#<host>`
 8. Test out the user credentials
 
@@ -299,7 +351,7 @@ If input succeeds but `secrets.yaml` isn't found in `secretspath` make sure that
 repo AND run `nix flake update` to update the nix store
 
 ### no such identity
-FIXME: getting some complaints about nix-secrets the first time you build a flake but to just wait and then enter the ssh passphrase when it gets to that point. then rerun the build. should also probably figureout how to avoid... he's a terminal dump.  Pretty sure it has somethign to do with the `~/.ssh/config` that gets generated from nix-config.. the first identifyfile for gitlab is "id_yubikey" which isn't a legit key but rather used by our yubikey script to cycle through plugged in keys.
+FIXME: getting some complaints about nix-secrets the first time you build a flake but to just wait and then enter the ssh passphrase when it gets to that point. then rerun the build. should also probably figureout how to avoid... here's a terminal dump.  Pretty sure it has something to do with the `~/.ssh/config` that gets generated from nix-config.. the first identifyfile for gitlab is "id_yubikey" which isn't a legit key but rather used by our yubikey script to cycle through plugged in keys.
 ```bash
          sudo nixos-rebuild switch --flake .#grief
          [sudo] password for ta: 
