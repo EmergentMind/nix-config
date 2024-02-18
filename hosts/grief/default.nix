@@ -17,7 +17,6 @@
     ./hardware-configuration.nix
 
     #################### Host-specific Optional Configs #################### 
-    # TODO yubi
     ../common/optional/yubikey
     ../common/optional/services/clamav.nix # depends on optional/msmtp.nix
     ../common/optional/msmtp.nix #required for emailing clamav alerts

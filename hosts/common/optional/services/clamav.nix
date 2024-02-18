@@ -57,7 +57,7 @@ in {
           # Refer to <https://linux.die.net/man/5/freshclam.conf>,for details on supported values.
         };
       };
-      # TODO stage 2 checkback - this isn't currently avaiable in stable but looks to be coming down the pipe https://github.com/NixOS/nixpkgs/commits/master/nixos/modules/services/security/clamav.nix
+      # TODO stage 3 checkback - this isn't currently avaiable in stable but looks to be coming down the pipe https://github.com/NixOS/nixpkgs/commits/master/nixos/modules/services/security/clamav.nix
       #fangfrisch = {
         #enable = true;
         #interval = "daily";

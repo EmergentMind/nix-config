@@ -339,9 +339,7 @@ Additional reference: https://github.com/Mic92/sops-nix#setting-a-users-password
 
 ## Installing Secrets on a New Host
 
-TODO: stage 2
-  * copying ta/dev age key to host
-  * copying authorized pub keys to host
+  Secrets from this repo are typically "installed" on hosts via the nix-config repos flake. Refer to the [nix-config/docs/addnewhost.md](https://github.com/EmergentMind/nix-config/blob/dev/docs/addnewhost.md#adding-a-new-host) for details on how to add both the nix-config and nix-secrets repos to a new host.
 
 ## Troubleshooting
 

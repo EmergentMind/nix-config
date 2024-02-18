@@ -17,7 +17,7 @@ in
     ./ssh.nix
     ./zsh # primarly shell: includes zsh, oh-my-zsh, and p10k theme
 
-    # TODO stage 2 Not set, need to investigate but will need custom config if used:
+    # TODO Not set, need to investigate but will need custom config if used:
     #./shellcolor.nix
 
   ] ++ (builtins.attrValues outputs.homeManagerModules);

@@ -1,7 +1,6 @@
 #
-#  TODO stage 2: this is a placeholder list for now
+#  TODO this is a placeholder list for now
 #
 
 brave
-  chromium
   firefox

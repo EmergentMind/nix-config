@@ -35,8 +35,6 @@
     autoLogin.enable = true;
     autoLogin.user = "media";
   };
-  # TODO this might be redudnant
-  services.xserver.xkb.layout = "us";
 
   networking = {
     hostName = "gusto";
