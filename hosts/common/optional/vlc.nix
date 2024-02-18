@@ -1,5 +1,8 @@
 # VLC media player
 
+{pkgs,...}:
 {
-    programs.vlc.enable = true;
+    environment.systemPackages = [
+        pkgs.vlc
+    ];
 }
