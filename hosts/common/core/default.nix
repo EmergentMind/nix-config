@@ -5,6 +5,9 @@
     ./nix.nix             # nix settings and garbage collection
     ./sops.nix            # secrets management
     ./zsh.nix             # load a basic shell just incase we need it without home-manager
+
+    ./services/auto-upgrade.nix # auto-upgrade service
+
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   home-manager.extraSpecialArgs = { inherit inputs outputs; };
