@@ -21,6 +21,7 @@
     ../common/optional/xfce.nix # window manager
     ../common/optional/pipewire.nix # audio
     ../common/optional/smbclient.nix # mount the ghost mediashare
+    ../common/optional/vlc.nix # media player
 
     #################### Users to Create ####################
     ../common/users/ta
