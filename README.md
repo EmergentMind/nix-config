@@ -42,16 +42,20 @@ The way out, is through.
 
 ## :sparkles: Feature Highlights
 
-* Flake-based multi-host, multi-user NixOS configurations
+* Flake-based multi-host, multi-user NixOS and Home-Manager configurations
   * Core configs for hosts and users
   * Modular, optional configs for user and host-specifc needs
-* Secrets management via sops-nix
+* Secrets management via sops-nix and a private nix-secrets repo which is included as a flake input
+* Multiple Yubikey detection
 * Basic NixOs and Home-Manager build automation
 
-The roadmap of features is laid across funtionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md). Completed features will be added here as each stage is complete.
+The roadmap of additional features is laid across funtionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
+
+Completed features will be added here as each stage is complete.
 
 ## :pill: Requirements
 
+* NixOS 23.11 or later to properly receive passphrase prompts when building in the private nix-secrets repo
 * Patience
 * Attention to detail
 * Persistance
@@ -60,6 +64,8 @@ The roadmap of features is laid across funtionally thematic stages that can be v
 ## :nut_and_bolt: Structure Quick Reference
 
 For details about design concepts, constraints, and how structural elements interact, see [Anatomy](docs/anatomy.md).
+
+[<img width="400" src="docs/diagrams/anatomy_v1.png" />](docs/anatomy.md)
 
 * `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for boostrapping (`nix develop` or `nix-shell`).
 * `hosts` - NixOS configurations accessible via `sudo nixos-rebuild switch --flake .#[host]`.

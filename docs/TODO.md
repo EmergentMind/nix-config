@@ -4,6 +4,8 @@
 
 ## Short Term
 
+* add current-state diagram to README
+
 * Create main branch for Stage 2 stable
 * Stage 3 planning and refinement
 
@@ -31,7 +33,7 @@ nix-config automation, and core tty that will be common on all machines.
 * ~~Basic automation for rebuilds~~
 * ~~Basic CI testing~~
 
-#### 2. Multihost, multiuser with basic GUI - Current
+#### 2. Multihost, multiuser with basic GUI - Completed: 2024.02.18
 
 This stage will add a second host machine, gusto (theatre). To effectively used gusto, we'll need to introduce gui elements such as a desktop, basic QoL tools for using the desktop, and some basic gui applications to play media, including the requisite audio/visual packages to make it all work.
 
@@ -50,7 +52,7 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 * ~~Review and complete applicable TODO sops, TODO yubi, and TODO stage 2~~
 * ~~Deploy gusto~~
 
-#### 3. Squeaky Clean
+#### 3. Squeaky Clean - Current
 
 Introduce declarative partitioning, custom iso generation, automated machine setup, and impermanence
 Order is important here, get the partitions working the way you want, with impermanence in mind, before actually getting to impermanence.
