@@ -1,6 +1,6 @@
 <div align="center">
 <h1>
-<img width="100" src="https://raw.githubusercontent.com/simple-icons/simple-icons/master/icons/nixos.svg" /> <br>
+<img width="100" src="docs/nixos-ascendancy.png" /> <br>
 </h1>
 </div>
 
