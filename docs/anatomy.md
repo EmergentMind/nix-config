@@ -2,7 +2,7 @@
 
 [README](../README.md) > Anatomy
 
-## Design Concepts and Constratints
+## Design Concepts and Constraints
 
 * Favor readable and intuitive factors over efficiency factors
 * Strive for modular repeatability
