@@ -63,12 +63,14 @@ Completed features will be added here as each stage is complete.
 
 ## :nut_and_bolt: Structure Quick Reference
 
-For details about design concepts, constraints, and how structural elements interact, see [Anatomy](docs/anatomy.md).
+For details about design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
+
+For a large screenshot of most current diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
 
 [<img width="400" src="docs/diagrams/anatomy_v1.png" />](docs/anatomy.md)
 
 * `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for boostrapping (`nix develop` or `nix-shell`).
-* `hosts` - NixOS configurations accessible via `sudo nixos-rebuild switch --flake .#[host]`.
+* `hosts` - NixOS configurations accessible via `sudo nixos-rebuild switch --flake .#<host>`.
   * `common` - Shared configurations consumed by the machine specific ones.
     * `core` - Configurations present across all hosts. This is a hard rule! If something isn't core, it is optional.
     * `optional` - Optional configurations present across more than one host.
@@ -78,11 +80,11 @@ For details about design concepts, constraints, and how structural elements inte
   * `grief` - Lab - VM
   * `gooey` - stage 5
   * `gusto` - Theatre - Ausus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
-* `home/[user]` - Home-manager configurations accessbile via `home-manager switch --flake .#[user]@[host]`.
+* `home/<user>` - Home-manager configurations accessbile via `home-manager switch --flake .#<user>@<host>`.
   * `common` - Shared home-manager configurations consumed the user's machine specific ones.
     * `core` - Home-manager configuartions present for user across all machines. This is a hard rule! If something isn't core, it is optional.
     * `optional` - Optional home-manager configurations that can be added for specific machines. These can be added by category (e.g. options/media) or individually (e.g. options/media/vlc.nix) as needed.
-    The home-manager core and options are defined in host-specific .nix files housed in `home/[user]`.
+    The home-manager core and options are defined in host-specific .nix files housed in `home/<user>`.
 * `modules` - Custom modules to enable special functionality for nixos or home-manager oriented configurations.
 * `overlays` - Custom modifications to upstream packages.
 * `pkgs` - Custom packages meant to be shared or upstreamed.
