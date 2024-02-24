@@ -67,7 +67,9 @@ For details about design concepts, constraints, and how structural elements inte
 
 For a large screenshot of most current diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
 
-[<img width="400" src="docs/diagrams/anatomy_v1.png" />](docs/anatomy.md)
+<div align="center">
+<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v1.png" /></a>
+</div>
 
 * `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for boostrapping (`nix develop` or `nix-shell`).
 * `hosts` - NixOS configurations accessible via `sudo nixos-rebuild switch --flake .#<host>`.
