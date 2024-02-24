@@ -25,22 +25,22 @@ Steady...
 
 The way out, is through.
 
-## :closed_book: Table of Contents
+## Table of Contents
 
-* [Feature Highlights](#sparkles-feature-highlights)
+* [Feature Highlights](#feature-highlights)
 * [Roadmap of TODOs](docs/TODO.md)
-* [Requirements](#pill-requirements)
-* [Structure](#nut_and_bolt-structure-quick-reference)
+* [Requirements](#requirements)
+* [Structure](#structure-quick-reference)
 * [Adding a New Host](docs/addnewhost.md)
 * [Secrets Management](docs/secretsmgmt.md)
 * [Initial Install Notes](docs/installnotes.md)
 * [Troubleshooting](docs/TROUBLESHOOTING.md)
-* [Acknowledgements](#pray-acknowledgements)
-* [Guidance and Resources](#mortar_board-guidance-and-resources)
+* [Acknowledgements](#acknowledgements)
+* [Guidance and Resources](#guidance-and-resources)
 
 ---
 
-## :sparkles: Feature Highlights
+## Feature Highlights
 
 * Flake-based multi-host, multi-user NixOS and Home-Manager configurations
   * Core configs for hosts and users
@@ -53,7 +53,7 @@ The roadmap of additional features is laid across funtionally thematic stages th
 
 Completed features will be added here as each stage is complete.
 
-## :pill: Requirements
+## Requirements
 
 * NixOS 23.11 or later to properly receive passphrase prompts when building in the private nix-secrets repo
 * Patience
@@ -61,7 +61,7 @@ Completed features will be added here as each stage is complete.
 * Persistance
 * More disk space
 
-## :nut_and_bolt: Structure Quick Reference
+## Structure Quick Reference
 
 For details about design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
 
@@ -90,7 +90,7 @@ For a large screenshot of most current diagram, as well as previous iterations, 
 * `pkgs` - Custom packages meant to be shared or upstreamed.
 * `scripts` - Custom scripts for automation.
 
-## :pray: Acknowledgements
+## Acknowledgements
 
 Those who have heavily influenced this strange journey into the unknown.
 
@@ -99,7 +99,7 @@ Those who have heavily influenced this strange journey into the unknown.
 * [Ryan Yin](https://github.com/ryan4yin/nix-config) - A treasure trove of useful documentation and ideas.
 * [VimJoyer](https://github.com/vimjoyer) - Excellent videos on the highlevel concepts required to navigate NixOS.
 
-## :mortar_board: Guidance and Resources
+## Guidance and Resources
 
 * [Official Nix Documentation](https://nix.dev)
   * [Best practices](https://nix.dev/guides/best-practices)
