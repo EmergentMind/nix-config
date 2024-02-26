@@ -14,7 +14,7 @@
 
 Somewhere between then and now you discovered this cairne in the fog. I hope it is useful in some way. Inspiration, reference, or whatever you're looking for.
 
-This is written perhaps as more of a reminder for myself as it is for you, but then again you could be future me or maybe past me stuck in a strange loop...
+This is written perhaps as more of a reminder for myself than it is for you, but then again you could be future me or maybe past me stuck in a strange loop...
 
 ```bash
 $ whoami
@@ -65,7 +65,7 @@ Completed features will be added here as each stage is complete.
 
 For details about design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
 
-For a large screenshot of most current diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
+For a large screenshot of the concept diagram, a current-state visual, as well as previous iterations see [Anatomy](docs/anatomy.md).
 
 <div align="center">
 <a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v1.png" /></a>
