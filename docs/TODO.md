@@ -4,10 +4,27 @@
 
 ## Short Term
 
-* add current-state diagram to README
+* House Keeping
+  * Consider adding network topo to site
 
-* Create main branch for Stage 2 stable
-* Stage 3 planning and refinement
+* Stage 3.1 
+  * research and design
+  * lab testing
+  * refinement and confirmation testing
+  * implement across hosts
+  * docs
+
+* Secrets Mgmt video
+  * planning
+  * storyboard
+  * assets
+  * recording
+  * production
+
+* New tools to integrate
+  * copyq
+  * du-dust
+  * syncthing
 
 ## Long Term
 
@@ -54,28 +71,37 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 
 #### 3. Squeaky Clean - Current
 
-Introduce declarative partitioning, custom iso generation, automated machine setup, and impermanence
-Order is important here, get the partitions working the way you want, with impermanence in mind, before actually getting to impermanence.
+Introduce declarative partitioning, custom iso generation, automated machine setup, and impermanence among other improvements that aim to create a cleaner environment.
 
-!! Some of this needs heavy assessment and consideration given the assumed reliance on theoretical tooling like flake-parts, which is a tangential extension of flakes (which is in fact *still* experimental)
-If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
+##### 3.1
+* Declarative partitioning via disko
+##### 3.2
+* Enable git signing in home/ta/common/core/git.nix using nix-secrets
+* Investigate outstanding yubikey FIXMEs
+* Potentially yubiauth and u2f for passwordless sudo
+    FidgetingBits still encounter significant issues with this when remoting
+##### 3.3
+* Refactor to use specialArgs and extraSpecial Args for common user and host settings
+##### 3.4
+* Impermanence
+    Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
-* enable git signing in home/ta/common/core/git.nix using nix-secrets
-* solve outstanding yubikey FIXMEs
-* separate, specialpurpose bootstrap flake for basic, pre-secrets install from liveISO
+    !! Some of this needs heavy assessment and consideration given the assumed reliance on theoretical tooling like flake-parts, which is a tangential extension of flakes (which is in fact *still* experimental)
+    If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
+##### 3.5
+* Separate, specialpurpose bootstrap flake for basic, pre-secrets install from liveISO
+* Custom iso generation and installer
+##### 3.5
+* Per host branch scheme
+* Automated machine setup
+##### 3.6
+* Migrate bash scripts (see refs below)
+* Overhaul just file
+
+##### Stretch
 * confirm clamav scan notification
     * check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
     * check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
-* custom iso generation and installer
-* refactor to use specialArgs and extraSpecial Args for common user and host settings
-* declarative partitionion via disko
-* automated machine setup
-* per host branch scheme
-* impermanence
-    need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
-* migrate bash scripts
-* overhaul just file
-* Potentially yubiauth and u2f for passwordless sudo
 * Potentially re-enable CI pipelines. These were disabled during stage 2 because I moved to inputing the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
 
 ##### Stage 3 References
@@ -112,7 +138,7 @@ Also start adding more to the GUI experience for machines that are meant for mor
   * look at https://github.com/dandavison/delta
 * gui dev
   * host specific colours via nix-colors
-* dualboot?
+* dualboot for trades?
 
 ##### Stage 4 References
 

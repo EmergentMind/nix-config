@@ -79,6 +79,7 @@ flowchart LR
           nvim
           screen
           ssh
+          zoxide
           zsh
         end
         subgraph ./home/ta/common/optional
