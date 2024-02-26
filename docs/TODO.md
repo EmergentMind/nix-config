@@ -9,12 +9,26 @@
 
 * Stage 3.1 
   * research and design
+    * ~~read nixos-anywhere and disko docs~~
+    * ~~reference ryan4yin installer flake for ideas~~
+    * ~~Map out order of operations for install~~
+      1. boot to installer on target machine
+      2. identify and verify drives to be targetted by disko
+      3. update the related disk-config.nix in the nix-config repo accordingly
+      4. install nixos using a lightweight install flake via nixos-anywhere
+        * see https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix and https://github.com/nix-community/nixos-anywhere/blob/main/docs/quickstart.md for basic template example
+      5. deploy the full config for host
+    * build out ./nixos-installer
+      * flake.nix (pull in selective items from elsewhere in config as needed)
+      * disk-config.nix
+      * README.md
+      * potentially a configuration.nix
   * lab testing
   * refinement and confirmation testing
   * implement across hosts
   * docs
 
-* Secrets Mgmt video
+* Next video
   * planning
   * storyboard
   * assets
@@ -22,6 +36,7 @@
   * production
 
 * New tools to integrate
+  * ~~zoxide~~
   * copyq
   * du-dust
   * syncthing
@@ -73,33 +88,38 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 
 Introduce declarative partitioning, custom iso generation, automated machine setup, and impermanence among other improvements that aim to create a cleaner environment.
 
-##### 3.1
-* Declarative partitioning via disko
-##### 3.2
-* Enable git signing in home/ta/common/core/git.nix using nix-secrets
-* Investigate outstanding yubikey FIXMEs
-* Potentially yubiauth and u2f for passwordless sudo
-    FidgetingBits still encounter significant issues with this when remoting
-##### 3.3
-* Refactor to use specialArgs and extraSpecial Args for common user and host settings
-##### 3.4
-* Impermanence
+##### 3.1 automate nixos installation
+* nixos-anywhere
+* declarative partitioning and formatting via disko
+* light-weight bootstrap flake for basic install, pre-secrets install
+* custom iso generation?
+
+##### 3.2 automate config deployment
+* Per host branch scheme
+* Automated machine update on branch release
+
+##### 3.3 reduce duplication
+* Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
+
+##### 3.4 impermanence
+* declare what needs to persist
+* enable impermance
+
     Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
     !! Some of this needs heavy assessment and consideration given the assumed reliance on theoretical tooling like flake-parts, which is a tangential extension of flakes (which is in fact *still* experimental)
     If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
+
 ##### 3.5
-* Separate, specialpurpose bootstrap flake for basic, pre-secrets install from liveISO
-* Custom iso generation and installer
-##### 3.5
-* Per host branch scheme
-* Automated machine setup
-##### 3.6
 * Migrate bash scripts (see refs below)
 * Overhaul just file
 
-##### Stretch
-* confirm clamav scan notification
+##### 3.x Extras
+* Enable git signing in home/ta/common/core/git.nix using nix-secrets
+* Investigate outstanding yubikey FIXMEs
+* Potentially yubiauth and u2f for passwordless sudo
+    FidgetingBits still encounter significant issues with this when remoting
+* Confirm clamav scan notification
     * check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
     * check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
 * Potentially re-enable CI pipelines. These were disabled during stage 2 because I moved to inputing the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
@@ -109,12 +129,13 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 * Migrating bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA
   Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
 
-These two are the references to follow and integrate. The Primer list below is good review before diving into this:
+__Impermanence__
+These two are the references to follow and integrate. The primer list below is good review before diving into this:
 
 * [blog- setting up my machines nix style](https://aldoborrero.com/posts/2023/01/15/setting-up-my-machines-nix-style/)
 * [template repo for the above](https://github.com/aldoborrero/templates/tree/main/templates/blog/nix/setting-up-machines-nix-style)
 
-Primer:
+__Impermanence Primer__
 
 * [impermanence repo - an implementation of the below concept](https://github.com/nix-community/impermanence)
 * [blog - erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
