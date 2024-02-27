@@ -21,6 +21,9 @@ flowchart LR
     stable ~~~ sops-nix
     unstable ~~~ home-manager
     hardware  ~~~ nixvim
+    subgraph personal-repos
+      nix-secrets
+    end
   end
 
   subgraph flake.nix
