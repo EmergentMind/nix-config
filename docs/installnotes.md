@@ -2,6 +2,44 @@
 
 [README](../README.md) > Install Notes
 
+##  Using nixos-anywhere and ./nixos-installer
+TODO - this section is a WIP
+this process involves remote, unattended installation of nixos on a target machine
+
+Requirements
+ - target machine, reachable by ssh, that will boot into a USB installer image
+    - knowledge of the drives is required for declarativbe partitioning and formatting
+ - a base machine, with flakes enabled that will remotely install nixos on the target.
+
+1. Download nixos-minimal installation iso.
+2. If installing on virtualbox, the following settings have been successful in the past:
+    1. 8GB hdd or higher
+    2. 8GB memory
+    3. Settings / System / Motherboard - Enable EFI
+    4. Settings / System / Processor - Enable PAE/NX
+    5. Settings / System / Processor - Enable VT-x/AMD-V
+    6. Settings / Display / Screen - Video memory 128MB
+    7. Settings / Display / Screen - Select VMSVGA
+    8. Settings / Display / Screen - Enable 3D Acceleration
+    9. Settings / Network / Adapter 1 - Attached to: Bridge Adapter.
+        Note the mac address under Advanced and add a static dhcp entry on guard.
+    10. Load the iso as the boot media
+3. Boot the target machine to the install environment.
+4. On the target machine, set a temporary password for the root user, this will only be used during this installation process.
+    ```bash
+    $ sudo su
+    # passwd
+    New password:
+    Retype new password:
+    passwd: password updated succesfully
+    ```
+5. Note the ip on the address target machine. `$ ip a`
+6. From the source machine, copy the ssh pub key you will use for installation and deployment the target machine. If an unattended install is required, this ssh key pair should not require presence or passphrase. Depending on how the host is configured during install and/or rebuild however, this key could be intentionally wiped out in favor of an "everyday" key that requires presence of some sort.
+    `ssh-copy-id -i path/to/key.pub root@<target ip>`
+7. From the source machine, run the installation. We prepend the SHELL variable to avoid shell mismatches that may be injected from the source machine. We'll also tell ssh to use the private key that matches the pub key from the previous step.
+    `$ SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake <path to configuration>#<configuration name> root@<ip address> -i <local path to ssh key>`
+8.
+
 ## Rebuild - January 22, 2024
 
 This covers installation of NixOS on grief (lab box) as a VirtualBox VM after hosing access to my original secrets.yaml and locking myself out of the original grief lab.
@@ -45,7 +83,6 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
         boot.loader.systemd-boot.enable = true;
         boot.loader.efi.canTouchEfiVariables = true;
         '''
-
     2. hostname 'grief'
     3. under "environment.systempackages" uncomment or enable the following packages:
         * neovim
@@ -53,7 +90,7 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
         * sops
         * age
         * ssh-to-age
-    4. uncomment `services. openssh.enable = true`
+    4. uncomment `services.openssh.enable = true`
     5. at the end of the file at the following entry:
        `nix.settings.experimental-features = [ "nix-command" "flakes" ];`
     6. save and exit the file
