@@ -4,9 +4,6 @@
 
 ## Short Term
 
-* House Keeping
-  * Consider adding network topo to site
-
 * Stage 3.1 
   * research and design
     * ~~read nixos-anywhere and disko docs~~
@@ -18,15 +15,16 @@
       4. install nixos using a lightweight install flake via nixos-anywhere
         * see https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix and https://github.com/nix-community/nixos-anywhere/blob/main/docs/quickstart.md for basic template example
       5. deploy the full config for host
-    * build out ./nixos-installer
-      * flake.nix (pull in selective items from elsewhere in config as needed)
-      * disk-config.nix
-      * README.md
-      * potentially a configuration.nix
+    * ~~build out basic ./nixos-installer~~
+      * ~~flake.nix~~
+      * ~~disk-config.nix~~
+      * ~~README.md~~
+      * ~~potentially a configuration.nix~~
   * lab testing
   * refinement and confirmation testing
   * implement across hosts
   * docs
+    * link installer docs to main readme
 
 * Next video
   * planning
