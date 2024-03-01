@@ -2,14 +2,17 @@
 
 [README](../README.md) > Install Notes
 
-##  Using nixos-anywhere and ./nixos-installer
-TODO - this section is a WIP
-this process involves remote, unattended installation of nixos on a target machine
+## Remote installation using nixos-anywhere and a lightweight ./nixos-installer flake - Feb 27, 2024
 
-Requirements
- - target machine, reachable by ssh, that will boot into a USB installer image
-    - knowledge of the drives is required for declarativbe partitioning and formatting
- - a base machine, with flakes enabled that will remotely install nixos on the target.
+This process involves remote, unattended installation of nixos on a target machine. As usual the steps here will refined during testing and automated, where applicable. A lightweight flake is used so that I can gradually test out new tools (e.g. nixos-anywhere, disko, declarative-disk encryption, impermanence, etc) overtime without compromising anything in the full nix-config.
+
+The endgoal is to remotely deploy the full nix-config to new hosts without the need for an intermediary lightweight step. However, given the risk of unintentional re-installation on an existing host, rather than a remote rebuild for updates for example, some precautionary steps should be considered and added to when the time comes. Whatever script call instantiates the full process shouldn't be similar to more common commands and should require a confirmation warning or something.
+
+Requirements:
+* target machine, reachable by ssh, that will boot into a USB installer image
+    * knowledge of the drives is required for declarativbe partitioning and formatting via disko
+* source machine, with flakes enabled that will remotely install nixos on the target.
+    * musts have working access to the nix-secrets repo
 
 1. Download nixos-minimal installation iso.
 2. If installing on virtualbox, the following settings have been successful in the past:
@@ -31,14 +34,404 @@ Requirements
     # passwd
     New password:
     Retype new password:
-    passwd: password updated succesfully
+    passwd: password updated successfully
     ```
-5. Note the ip on the address target machine. `$ ip a`
+5. If needed, note the ip of the target machine. `$ ip a`
+.  Generate the required hardware config
+    `# nixos-generate-config`
+.  Copy the contents of `/etc/nixos/hardware-configuration.nix` to the appropriate directory in the repo. E.g. `hosts/<hostname>/hardware-configuration.nix`
 6. From the source machine, copy the ssh pub key you will use for installation and deployment the target machine. If an unattended install is required, this ssh key pair should not require presence or passphrase. Depending on how the host is configured during install and/or rebuild however, this key could be intentionally wiped out in favor of an "everyday" key that requires presence of some sort.
     `ssh-copy-id -i path/to/key.pub root@<target ip>`
-7. From the source machine, run the installation. We prepend the SHELL variable to avoid shell mismatches that may be injected from the source machine. We'll also tell ssh to use the private key that matches the pub key from the previous step.
-    `$ SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake <path to configuration>#<configuration name> root@<ip address> -i <local path to ssh key>`
-8.
+7. From the source machine, set up host keys and secrets access for the target:
+    1. In the nix-secrets repo, generate a host ssh host key, and leave the passphrase empty. Replace `guppy` in the example below with whatever you intend to name the target machine via the config.
+
+        For example:
+        ```bash
+        $ cd /path/to/nix-secrets
+        $ ssh-keygen -t ed25519 -f ssh_host_ed25519_key -C root@guppy
+        Generating public/private ed25519 key pair.
+        Enter passphrase (empty for no passphrase): 
+        Enter same passphrase again: 
+        Your identification has been saved in ssh_host_ed25519_key
+        Your public key has been saved in ssh_host_ed25519_key.pub
+        The key fingerprint is:
+        SHA256:0gwWR0Rnlps79k5XACX45EkesEBKH8JP3FkZ/NqcgUA ta@guppy
+        The key's randomart image is:
+        +--[ED25519 256]--+
+        |     .+*OoEB=+.  |
+        |     ..*o**.*o   |
+        |      +o. .X =.  |
+        |     . +. o * o. |
+        |      . S  . + o.|
+        |       .  + . +. |
+        |         . o. .  |
+        |           ...   |
+        |           ..    |
+        +----[SHA256]-----+
+        ```
+    2. Generate an age key for the target machine, based on the ssh hostkey you just created.
+          ```bash
+        $ nix-shell -p ssh-to-age --run 'cat ssh_host_ed25519_key.pub | ssh-to-age'
+        age1jzrpvffcwjtv4e77v24ye44z2yk3nk3hkyjk60tfluuaxszdtf7s0u3xeh
+        ```
+    3. Add the age key as a host entry in the `.sops.yaml` file.
+        ```yaml
+        nix-secrets/.sops.yaml
+
+        ------------------------------
+
+        # pub keys
+        keys:
+        # ...
+        - &hosts:
+            - &guppy age1jzrpvffcwjtv4e77v24ye44z2yk3nk3hkyjk60tfluuaxszdtf7s0u3xeh
+
+        creation_rules:
+        - path_regex: secrets.yaml$
+            key_groups:
+            - age:
+            # ...
+            - *guppy
+
+        ```
+    4. Update the keys for the sops file
+        ```bash
+        $ sops --config path/to/nix-secrets/.sops.yaml updatekeys path/to/nix-secrets/secrets.yaml
+        2024/02/09 12:11:05 Syncing keys for file /home/ta/src/nix-secrets/secrets.yaml
+        The following changes will be made to the file's groups:
+        Group 1
+            age00000000000000000000000000000000000000000000000000
+            age00000000000000000000000000000000000000000000000000
+        +++ age1jzrpvffcwjtv4e77v24ye44z2yk3nk3hkyjk60tfluuaxszdtf7s0u3xeh
+        Is this okay? (y/n):y
+        2024/02/09 12:16:54 File /home/ta/src/nix-secrets/secrets.yaml synced with new keys
+        ```
+    5. Commit and push the changes to nix-secrets so they will be retrieved when the flake is built on the new host.
+    6. Overwrite the auto generated host keys on the target machine with the private and public ssh host keys created in step 7.1 We can authenticate using the private key that matches the public key we added to the target machine's authorized keys in step 6.
+        ```bash
+        scp -i path/to/privsshkey ssh_host_ed25519_key* root@0.0.0.0:/etc/ssh/
+        ```
+    7. Back up the keys and age key to a secure database if required.
+    8. Delete the keys from the source machine
+        `rm ssh-host_ed25519-key*`
+    9. From the nix-config repo on the source machine, be sure to run `nix flake lock --update-input mysecrets` to ensure the latest revisions of nix-secrets is used next time a rebuild occurs.
+    10. Edit the source machine's `~/.ssh/known_hosts` file to remove the entries for the target machine's ip. We need to do this because new host keys will cause a mismatch the next time we remote into the target.
+8. If you will be installing the lightweight test config, navigate to nixos-installer directory. Ortherwise, stay at the root fo the nix-config repo.
+9. Run a remote install on the target. We prepend the SHELL variable to avoid shell mismatches that may be injected from the source machine. We'll also tell ssh to use the private key that matches the pub key from step 6.
+    ```bash
+    $ SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake <path to configuration>#<configuration name> root@<ip address> -i <local path to ssh key>`
+
+    
+    SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake .#guppy root@10.13.37.100 -i ~/.ssh/id_meek      
+    ### Uploading install SSH keys ###
+    /run/current-system/sw/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/tmp/tmp.jn2BRmy99e/nixos-anywhere.pub"
+    Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
+
+    Number of key(s) added: 1
+
+    Now try logging into the machine, with:   "ssh -o 'ConnectTimeout=10' -o 'UserKnownHostsFile=/dev/null' -o 'StrictHostKeyChecking=no' -o 'IdentityFile=/home/ta/.ssh/id_meek' 'root@10.13.37.100'"
+    and check to make sure that only the key(s) you wanted were added.
+
+    ### Gathering machine facts ###
+    Pseudo-terminal will not be allocated because stdin is not a terminal.
+    Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
+    Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
+    copying path '/nix/store/nxgy0s46bw9z3ysqv48nfszbrjxqy2dn-dns-root-data-2023-11-27' from 'https://cache.nixos.org'...
+
+    # ...
+
+    copying path '/nix/store/8qalcd1aj39whvpampmnarhybm7yz3ac-util-linux-2.39.3-bin' from 'https://cache.nixos.org'...
+    ### Formatting hard drive with disko ###
+    Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
+    umount: /mnt: not mounted
+    ++ realpath /dev/sda
+    + disk=/dev/sda
+    + lsblk -a -f
+    NAME   FSTYPE   FSVER            LABEL                      UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+    loop0  squashfs 4.0                                                                                    0   100% /nix/.ro-store
+    loop1                                                                                                           
+    loop2                                                                                                           
+    loop3                                                                                                           
+    loop4                                                                                                           
+    loop5                                                                                                           
+    loop6                                                                                                           
+    loop7                                                                                                           
+    sda                                                                                                             
+    ├─sda1 vfat     FAT16                                       DC53-F142                                           
+    └─sda2 btrfs                                                dc1ac286-2f8d-4bab-aab2-ed611767c043                
+    sr0    iso9660  Joliet Extension nixos-minimal-23.11-x86_64 1980-01-01-00-00-00-00                     0   100% /iso
+    + lsblk --output-all --json
+    + bash -x
+    ++ dirname /nix/store/23hwv0dkl3bzx0fszw7zk154aapb1gdv-disk-deactivate/disk-deactivate
+    + jq -r --arg disk_to_clear /dev/sda -f /nix/store/23hwv0dkl3bzx0fszw7zk154aapb1gdv-disk-deactivate/disk-deactivate.jq
+    + set -fu
+    + wipefs --all -f /dev/sda1
+    /dev/sda1: 8 bytes were erased at offset 0x00000036 (vfat): 46 41 54 31 36 20 20 20
+    /dev/sda1: 1 byte was erased at offset 0x00000000 (vfat): eb
+    /dev/sda1: 2 bytes were erased at offset 0x000001fe (vfat): 55 aa
+    + wipefs --all -f /dev/sda2
+    /dev/sda2: 8 bytes were erased at offset 0x00010040 (btrfs): 5f 42 48 52 66 53 5f 4d
+    ++ zdb -l /dev/sda
+    ++ sed -nr 's/ +name: '\''(.*)'\''/\1/p'
+    + zpool=
+    + [[ -n '' ]]
+    + unset zpool
+    ++ lsblk /dev/sda -l -p -o type,name
+    ++ awk 'match($1,"raid.*") {print $2}'
+    + md_dev=
+    + [[ -n '' ]]
+    + wipefs --all -f /dev/sda
+    /dev/sda: 8 bytes were erased at offset 0x00000200 (gpt): 45 46 49 20 50 41 52 54
+    /dev/sda: 8 bytes were erased at offset 0x63ffffe00 (gpt): 45 46 49 20 50 41 52 54
+    /dev/sda: 2 bytes were erased at offset 0x000001fe (PMBR): 55 aa
+    + dd if=/dev/zero of=/dev/sda bs=440 count=1
+    1+0 records in
+    1+0 records out
+    440 bytes copied, 0.0034589 s, 127 kB/s
+    + lsblk -a -f
+    NAME  FSTYPE   FSVER            LABEL                      UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+    loop0 squashfs 4.0                                                                                    0   100% /nix/.ro-store
+    loop1                                                                                                          
+    loop2                                                                                                          
+    loop3                                                                                                          
+    loop4                                                                                                          
+    loop5                                                                                                          
+    loop6                                                                                                          
+    loop7                                                                                                          
+    sda                                                                                                            
+    sr0   iso9660  Joliet Extension nixos-minimal-23.11-x86_64 1980-01-01-00-00-00-00                     0   100% /iso
+    ++ mktemp -d
+    + disko_devices_dir=/tmp/tmp.6A18VsQCSA
+    + trap 'rm -rf "$disko_devices_dir"' EXIT
+    + mkdir -p /tmp/tmp.6A18VsQCSA
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + sgdisk --align-end --new=1:1M:512M --change-name=1:disk-sda-ESP --typecode=1:EF00 /dev/sda
+    Creating new GPT entries in memory.
+    The operation has completed successfully.
+    + partprobe /dev/sda
+    + udevadm trigger --subsystem-match=block
+    + udevadm settle
+    + device=/dev/disk/by-partlabel/disk-sda-ESP
+    + extraArgs=()
+    + declare -a extraArgs
+    + format=vfat
+    + mountOptions=('defaults')
+    + declare -a mountOptions
+    + mountpoint=/boot
+    + type=filesystem
+    + mkfs.vfat /dev/disk/by-partlabel/disk-sda-ESP
+    mkfs.fat 4.2 (2021-01-31)
+    + sgdisk --align-end --new=2:0:-0 --change-name=2:disk-sda-root --typecode=2:8300 /dev/sda
+    The operation has completed successfully.
+    + partprobe /dev/sda
+    + udevadm trigspiritualslvtVerified
+    + type=btrfs
+    + mkfs.btrfs /dev/disk/by-partlabel/disk-sda-root -f
+    btrfs-progs v6.7.1
+    See https://btrfs.readthedocs.io for more information.
+
+    NOTE: several default settings have changed in version 5.15, please make sure
+        this does not affect your deployments:
+        - DUP for metadata (-m dup)
+        - enabled no-holes (-O no-holes)
+        - enabled free-space-tree (-R free-space-tree)
+
+    Label:              (null)
+    UUID:               660bfc51-f581-43ff-addc-f0f22e24ca86
+    Node size:          16384
+    Sector size:        4096	(CPU page size: 4096)
+    Filesystem size:    24.50GiB
+    Block group profiles:
+    Data:             single            8.00MiB
+    Metadata:         DUP             256.00MiB
+    System:           DUP               8.00MiB
+    SSD detected:       no
+    Zoned device:       no
+    Features:           extref, skinny-metadata, no-holes, free-space-tree
+    Checksum:           crc32c
+    Number of devices:  1
+    Devices:
+    ID        SIZE  PATH                                
+        1    24.50GiB  /dev/disk/by-partlabel/disk-sda-root
+
+    ++ mktemp -d
+    + MNTPOINT=/tmp/tmp.9otThTuzON
+    + mount /dev/disk/by-partlabel/disk-sda-root /tmp/tmp.9otThTuzON -o subvol=/
+    + trap 'umount $MNTPOINT; rm -rf $MNTPOINT' EXIT
+    + SUBVOL_ABS_PATH=/tmp/tmp.9otThTuzON//nix
+    ++ dirname /tmp/tmp.9otThTuzON//nix
+    + mkdir -p /tmp/tmp.9otThTuzON
+    + btrfs subvolume create /tmp/tmp.9otThTuzON//nix
+    Create subvolume '/tmp/tmp.9otThTuzON/nix'
+    ++ umount /tmp/tmp.9otThTuzON
+    ++ rm -rf /tmp/tmp.9otThTuzON
+    ++ mktemp -d
+    + MNTPOINT=/tmp/tmp.tG7E4fbUcH
+    + mount /dev/disk/by-partlabel/disk-sda-root /tmp/tmp.tG7E4fbUcH -o subvol=/
+    + trap 'umount $MNTPOINT; rm -rf $MNTPOINT' EXIT
+    + SUBVOL_ABS_PATH=/tmp/tmp.tG7E4fbUcH//persist
+    ++ dirname /tmp/tmp.tG7E4fbUcH//persist
+    + mkdir -p /tmp/tmp.tG7E4fbUcH
+    + btrfs subvolume create /tmp/tmp.tG7E4fbUcH//persist
+    Create subvolume '/tmp/tmp.tG7E4fbUcH/persist'
+    ++ umount /tmp/tmp.tG7E4fbUcH
+    ++ rm -rf /tmp/tmp.tG7E4fbUcH
+    ++ mktemp -d
+    + MNTPOINT=/tmp/tmp.klJfrnx0TH
+    + mount /dev/disk/by-partlabel/disk-sda-root /tmp/tmp.klJfrnx0TH -o subvol=/
+    + trap 'umount $MNTPOINT; rm -rf $MNTPOINT' EXIT
+    + SUBVOL_ABS_PATH=/tmp/tmp.klJfrnx0TH//root
+    ++ dirname /tmp/tmp.klJfrnx0TH//root
+    + mkdir -p /tmp/tmp.klJfrnx0TH
+    + btrfs subvolume create /tmp/tmp.klJfrnx0TH//root
+    Create subvolume '/tmp/tmp.klJfrnx0TH/root'
+    ++ umount /tmp/tmp.klJfrnx0TH
+    ++ rm -rf /tmp/tmp.klJfrnx0TH
+    ++ mktemp -d
+    + MNTPOINT=/tmp/tmp.xAGjIYRi7p
+    + mount /dev/disk/by-partlabel/disk-sda-root /tmp/tmp.xAGjIYRi7p -o subvol=/
+    + trap 'umount $MNTPOINT; rm -rf $MNTPOINT' EXIT
+    + SUBVOL_ABS_PATH=/tmp/tmp.xAGjIYRi7p//swap
+    ++ dirname /tmp/tmp.xAGjIYRi7p//swap
+    + mkdir -p /tmp/tmp.xAGjIYRi7p
+    + btrfs subvolume create /tmp/tmp.xAGjIYRi7p//swap
+    Create subvolume '/tmp/tmp.xAGjIYRi7p/swap'
+    + btrfs filesystem mkswapfile --size 8196M /tmp/tmp.xAGjIYRi7p//swap/swapfile
+    create swapfile /tmp/tmp.xAGjIYRi7p//swap/swapfile size 8.00GiB (8594128896)
+    ++ umount /tmp/tmp.xAGjIYRi7p
+    ++ rm -rf /tmp/tmp.xAGjIYRi7p
+    + set -efux
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + device=/dev/disk/by-partlabel/disk-sda-root
+    + extraArgs=('-f')
+    + declare -a extraArgs
+    + mountOptions=('defaults')
+    + declare -a mountOptions
+    + mountpoint=
+    + type=btrfs
+    + findmnt /dev/disk/by-partlabel/disk-sda-root /mnt/
+    + mount /dev/disk/by-partlabel/disk-sda-root /mnt/ -o defaults -o subvol=/root -o X-mount.mkdir
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + device=/dev/disk/by-partlabel/disk-sda-root
+    + extraArgs=('-f')
+    + declare -a extraArgs
+    + mountOptions=('defaults')
+    + declare -a mountOptions
+    + mountpoint=
+    + type=btrfs
+    + findmnt /dev/disk/by-partlabel/disk-sda-root /mnt/.swapvol
+    + mount /dev/disk/by-partlabel/disk-sda-root /mnt/.swapvol -o noatime -o subvol=/swap -o X-mount.mkdir
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + device=/dev/disk/by-partlabel/disk-sda-ESP
+    + extraArgs=()
+    + declare -a extraArgs
+    + format=vfat
+    + mountOptions=('defaults')
+    + declare -a mountOptions
+    + mountpoint=/boot
+    + type=filesystem
+    + findmnt /dev/disk/by-partlabel/disk-sda-ESP /mnt/boot
+    + mount /dev/disk/by-partlabel/disk-sda-ESP /mnt/boot -t vfat -o defaults -o X-mount.mkdir
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + device=/dev/disk/by-partlabel/disk-sda-root
+    + extraArgs=('-f')
+    + declare -a extraArgs
+    + mountOptions=('defaults')
+    + declare -a mountOptions
+    + mountpoint=
+    + type=btrfs
+    + findmnt /dev/disk/by-partlabel/disk-sda-root /mnt/nix
+    + mount /dev/disk/by-partlabel/disk-sda-root /mnt/nix -o compress=zstd -o noatime -o subvol=/nix -o X-mount.mkdir
+    + device=/dev/sda
+    + imageSize=2G
+    + name=sda
+    + type=disk
+    + device=/dev/sda
+    + efiGptPartitionFirst=1
+    + type=gpt
+    + device=/dev/disk/by-partlabel/disk-sda-root
+    + extraArgs=('-f')
+    + declare -a extraArgs
+    + mountOptions=('defaults')
+    + declare -a mountOptions
+    + mountpoint=
+    + type=btrfs
+    + findmnt /dev/disk/by-partlabel/disk-sda-root /mnt/persist
+    + mount /dev/disk/by-partlabel/disk-sda-root /mnt/persist -o compress=zstd -o subvol=/persist -o X-mount.mkdir
+    + rm -rf /tmp/tmp.6A18VsQCSA
+    Connection to 10.13.37.100 closed.
+    ### Uploading the system closure ###
+    Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
+    copying path '/nix/store/n5gg6g0bninn45dq46ksw68ij6m407lj-alsa-firmware-1.2.4-xz' from 'https://cache.nixos.org'...
+    # ...
+    copying path '/nix/store/38l9qlglbavgascs0yzjpwd2h4rk4r74-etc-modprobe.d-firmware.conf' from 'https://cache.nixos.org'...
+    ### Installing NixOS ###
+    Pseudo-terminal will not be allocated because stdin is not a terminal.
+    Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
+    installing the boot loader...
+    setting up /etc...
+    Initializing machine ID from random generator.
+    Created "/boot/EFI".
+    Created "/boot/EFI/systemd".
+    Created "/boot/EFI/BOOT".
+    Created "/boot/loader".
+    Created "/boot/loader/entries".
+    Created "/boot/EFI/Linux".
+    Copied "/nix/store/s5dx34869kl4fd5p913j5mis32c7f98k-systemd-255.2/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/systemd/systemd-bootx64.efi".
+    Copied "/nix/store/s5dx34869kl4fd5p913j5mis32c7f98k-systemd-255.2/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/BOOT/BOOTX64.EFI".
+    ! Mount point '/boot' which backs the random seed file is world accessible, which is a security hole! !
+    ! Random seed file '/boot/loader/.#bootctlrandom-seeded02790bc930e4ca' is world accessible, which is a security hole! !
+    Random seed file /boot/loader/random-seed successfully written (32 bytes).
+    Created EFI boot entry "Linux Boot Manager".
+    installation finished!
+    umount: /mnt/.swapvol unmounted
+    umount: /mnt/boot unmounted
+    umount: /mnt/nix unmounted
+    umount: /mnt/persist unmounted
+    umount: /mnt unmounted
+    ### Waiting for the machine to become reachable again ###
+    ### Done! ###
+    ```
+10. Now we can deploy the full nix-config
+TODO: see if we can deploy the full config from the get go
+
 
 ## Rebuild - January 22, 2024
 

@@ -32,7 +32,7 @@ in
     packages = [ pkgs.home-manager ];
   };
 
-# FIXME this should probably be host specific. Also need to confirm that this is the correct place to do this
+# FIXME This should probably be host specific. Also need to confirm that this is the correct place to do this.
   security.sudo.extraConfig = ''
     Defaults timestamp_timeout=120 # only ask for password every 120 minutes
   '';

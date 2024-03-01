@@ -23,6 +23,26 @@
         "type": "github"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1708910350,
+        "narHash": "sha256-cTuJVlOm05aQFIgGuYikgkrI61P2vTO2OfXwIRWEzUg=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "a13f36255cf4ce99cc4236a34251c2e7106e101d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -136,10 +156,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1709141419,
-        "narHash": "sha256-ohQbR5wTv/Vb3dMblvjuI/qnw6eHpHXcCqssDNa7UWk=",
+        "lastModified": 1709244143,
+        "narHash": "sha256-5SB+MAYVH189TQTRvvX2zBqTRVuWS40lZRGbWMB6Ffo=",
         "ref": "main",
-        "rev": "1f5f2ea319b99ba64557ef32921d7aa660583c5e",
+        "rev": "15fe192dc3ea047e8f37de456186aedaec9854fd",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
@@ -293,6 +313,7 @@
     },
     "root": {
       "inputs": {
+        "disko": "disko",
         "hardware": "hardware",
         "home-manager": "home-manager",
         "mysecrets": "mysecrets",

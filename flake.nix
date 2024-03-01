@@ -7,8 +7,14 @@
 
     nixpkgs.url = "github:NixOS/nixpkgs/release-23.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable"; # also see 'unstable-packages' overlay at 'overlays/default.nix" 
-    
+
     #################### Utilities ####################
+
+    # Declarative partitioning and formatting
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Official NixOS hardware packages
     hardware.url = "github:nixos/nixos-hardware";
@@ -100,6 +106,12 @@
         modules = [ ./hosts/grief ];
         specialArgs = { inherit inputs outputs;};
       };
+      # remote install lab
+      guppy = lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./hosts/guppy];
+        specialArgs = { inherit inputs outputs;};
+      };
       # theatre
       gusto = lib.nixosSystem {
         modules = [ ./hosts/gusto ];
@@ -115,6 +127,11 @@
     homeConfigurations = {
       "ta@grief" = lib.homeManagerConfiguration {
         modules = [ ./home/ta/grief.nix ];
+        pkgs = pkgsFor.x86_64-linux;
+        extraSpecialArgs = {inherit inputs outputs;};
+      };
+      "ta@guppy" = lib.homeManagerConfiguration {
+        modules = [ ./home/ta/guppy.nix ];
         pkgs = pkgsFor.x86_64-linux;
         extraSpecialArgs = {inherit inputs outputs;};
       };

@@ -20,8 +20,11 @@
       * ~~disk-config.nix~~
       * ~~README.md~~
       * ~~potentially a configuration.nix~~
-  * lab testing
+  * ~~lab testing~~
   * refinement and confirmation testing
+    * modify installed config to better represent somethign useful
+    * test on guppy as part of full config
+    * automation scripts
   * implement across hosts
   * docs
     * link installer docs to main readme
