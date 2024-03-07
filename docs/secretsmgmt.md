@@ -102,9 +102,9 @@ See [Editing  `secrets.yaml`](#editing-secretsyaml), above for an example of inp
 
 ## Initializing Secrets and Keys
 
-This is a log of the steps taken to create the repo contents on grief (lab):
+This is a log of the steps taken to create the private repo contents for grief but performed on my arch/manjaro box prior so that I can more conveniently push changes... that is, until grief is able to use the secrets :D
 
-1. Create the nix-secrets repository
+1. On ghost create the nix-secrets repository
 
     ```bash
     mkdir ~/src/nix-secrets
@@ -127,7 +127,7 @@ This is a log of the steps taken to create the repo contents on grief (lab):
     ```
     This does not need to be based on an ssh key.
 
-4. Generate age keys for grief based on its ssh host keys (these would have been auto-created when enabling ssh earlier on)
+4. On grief, generate age keys for grief based on its ssh host keys (these would have been auto-created when enabling ssh earlier on)
 
     ```bash
     $ nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
@@ -142,11 +142,22 @@ This is a log of the steps taken to create the repo contents on grief (lab):
     ```bash
     $ nvim ~/src/nix-secrets/.sops.yaml
 
-    .sops.yamlthese instructions
-        - age:
-        - *ta
-        - *grief
+    .sops.yaml
+    ---------
+    # pub keys
+    keys:
+    - &users:
+        - &ta age10000000000000000000000000000000000000000000000000000000000
+    - &hosts: # nix-shell -p ssh-to-age --run 'cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age'
+        - &grief age10000000000000000000000000000000000000000000000000000000000
 
+    creation_rules:
+        #path should be relative to location of this file (.sops.yaml)
+    - path_regex: hosts/common/secrets.yaml$
+        key_groups:
+        - age:
+          - *ta
+          - *grief
     ```
 
 6. Back up all of the age keys.

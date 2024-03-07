@@ -5,24 +5,25 @@
 ## Short Term
 
 * Stage 3.1 
-  * research and design
+  * ~~research and design~~
     * ~~read nixos-anywhere and disko docs~~
     * ~~reference ryan4yin installer flake for ideas~~
     * ~~Map out order of operations for install~~
-      1. boot to installer on target machine
-      2. identify and verify drives to be targetted by disko
-      3. update the related disk-config.nix in the nix-config repo accordingly
-      4. install nixos using a lightweight install flake via nixos-anywhere
-        * see https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix and https://github.com/nix-community/nixos-anywhere/blob/main/docs/quickstart.md for basic template example
-      5. deploy the full config for host
+      1. ~~boot to installer on target machine~~
+      2. ~~identify and verify drives to be targetted by disko~~
+      3. ~~update the related disk-config.nix in the nix-config repo accordingly~~
+      4. ~~install nixos using a lightweight install flake via nixos-anywhere~~
+        * ~~see https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix and https://github.com/nix-community/nixos-anywhere/blob/main/docs/quickstart.md for basic template example~~
+      5. ~~deploy the full config for host~~
     * ~~build out basic ./nixos-installer~~
       * ~~flake.nix~~
       * ~~disk-config.nix~~
       * ~~README.md~~
       * ~~potentially a configuration.nix~~
   * ~~lab testing~~
+  * add msmtp email and host to secrets
   * refinement and confirmation testing
-    * modify installed config to better represent somethign useful
+    * modify install config to better represent somethign useful
     * test on guppy as part of full config
     * automation scripts
   * implement across hosts
@@ -30,8 +31,8 @@
     * link installer docs to main readme
 
 * Next video
-  * planning
-  * storyboard
+  * ~~planning~~
+  * ~~storyboard~~
   * assets
   * recording
   * production
@@ -116,6 +117,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 * Overhaul just file
 
 ##### 3.x Extras
+* Rename pkgs -> custom_pkgs and modules -> custom_modules
 * Enable git signing in home/ta/common/core/git.nix using nix-secrets
 * Investigate outstanding yubikey FIXMEs
 * Potentially yubiauth and u2f for passwordless sudo
