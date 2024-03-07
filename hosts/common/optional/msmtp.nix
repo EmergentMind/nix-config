@@ -5,6 +5,14 @@
       owner = config.users.users.ta.name;
       inherit (config.users.users.ta) group;
     };
+    "msmtp-host" = {
+      owner = config.users.users.ta.name;
+      inherit (config.users.users.ta) group;
+    };
+    "msmtp-address" = {
+      owner = config.users.users.ta.name;
+      inherit (config.users.users.ta) group;
+    };
   };
 
   programs.msmtp = {
@@ -13,13 +21,13 @@
     
     accounts = {
       "default" = {
-        host = "smtp.protonmail.ch";
+        host = "cat ${config.sops.secrets."msmtp-host".path}";
         port = 587;
         auth = true;
         tls = true;
         tls_starttls = true;
-        from = "notifier@hexagon.cx";
-        user = "notifier@hexagon.cx";
+        from = "cat ${config.sops.secrets."msmtp-address".path}";
+        user = "cat ${config.sops.secrets."msmtp-address".path}";
         passwordeval = "cat ${config.sops.secrets."msmtp-password".path}";
         logfile = "~/.msmtp.log";
       };
