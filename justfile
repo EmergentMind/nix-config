@@ -65,7 +65,7 @@ diff:
 # Run `home-manager --impure --flake . switch` and `just check-sops`
 home:
   # HACK: This is is until the home manager bug is fixed, otherwise any adding extensions deletes all of them
-  #rm $HOME/.vscode/extensions/extensions.json || true
+  # rm $HOME/.vscode/extensions/extensions.json || true
   home-manager --impure --flake . switch
   just check-sops
 
@@ -75,14 +75,15 @@ home-update:
   just home
 
 #################### Secrets Management ####################
+
 # TODO sops: update or relocate to nix-secrets?
-#SOPS_FILE := "./hosts/common/secrets.yaml"
+# SOPS_FILE := "./hosts/common/secrets.yaml"
 
 # TODO sops: update or relocate to nix-secrets?
 # Edit the sops files using nix-shell
-#sops:
-#echo "Editing {{SOPS_FILE}}"
-#nix-shell -p sops --run "SOPS_AGE_KEY_FILE=~/.age-key.txt sops {{SOPS_FILE}}"
+# sops:
+#   @echo "Editing {{SOPS_FILE}}"
+#   nix-shell -p sops --run "SOPS_AGE_KEY_FILE=~/.age-key.txt sops {{SOPS_FILE}}"
 
 # Maybe redundant, but this was used to generate the key on the system that is actually
 # managing secrets.yaml. If you don't want to use existing ssh key

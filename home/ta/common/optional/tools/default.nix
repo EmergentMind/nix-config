@@ -23,4 +23,3 @@ keepassxc
 # imaging
 rpi-imager
 etcher
-

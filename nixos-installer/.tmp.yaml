@@ -7,10 +7,10 @@ keys:
     - &gusto age1
 
 creation_rules:
-    #path should be relative to location of this file (.sops.yaml)
+  #path should be relative to location of this file (.sops.yaml)
   - path_regex: secrets.yaml$
     key_groups:
-    - age:
-      - *ta
-      - *grief
-      - *gusto
+      - age:
+          - *ta
+          - *grief
+          - *gusto

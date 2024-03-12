@@ -18,7 +18,7 @@
   programs.msmtp = {
     enable = true;
     setSendmail = true; # set the system sendmail to msmtp's
-    
+
     accounts = {
       "default" = {
         host = "cat ${config.sops.secrets."msmtp-host".path}";

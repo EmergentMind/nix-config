@@ -4,16 +4,16 @@
 
 ## TOC
 
-* [The user systemd session is degraded](#the-user-systemd-session-is-degraded)
-* [Pre-commit shit](#pre-commit-shit)
-* [sops](#sops)
-* [couldn't find efi system partition](#couldnt-find-efi-system-partition)
+- [The user systemd session is degraded](#the-user-systemd-session-is-degraded)
+- [Pre-commit shit](#pre-commit-shit)
+- [sops](#sops)
+- [couldn't find efi system partition](#couldnt-find-efi-system-partition)
 
 ---
 
 ## The user systemd session is degraded
 
-This issue was encountered during a  home-manager switch without any substantial changes to the config.
+This issue was encountered during a home-manager switch without any substantial changes to the config.
 Including --refresh seemed to solve the problem: `home-manager switch --refresh --flake .#ta@grief`
 
 If adding `--refresh` does not solve the issue, you can run `systemctl --user reset-failed` prior to runninng `home-manager switch --flake .#ta@grief`
@@ -45,7 +45,7 @@ installing 'home-manager-path'
 Activating onFilesChange
 Activating reloadSystemd
 The user systemd session is degraded:
-  UNIT             LOAD   ACTIVE SUB    DESCRIPTION        
+  UNIT             LOAD   ACTIVE SUB    DESCRIPTION
 ● sops-nix.service loaded failed failed sops-nix activation
 
 LOAD   = Reflects whether the unit definition was properly loaded.
@@ -68,7 +68,7 @@ Read them by running the command "home-manager news".
     error: linker `cc` not found
       |
       = note: No such file or directory (os error 2)
-    
+
     error: could not compile `serde` (build script) due to previous error
     warning: build failed, waiting for other jobs to finish...
     error: failed to compile `nixpkgs-fmt v1.3.0 (/home/ta/.cache/pre-commit/repoqqkxe5ls)`, intermediate artifacts can be found at `/home/ta/.cache/pre-commit/repoqqkxe5ls/target`.
@@ -83,9 +83,9 @@ seems to be because rust isn't installed as expected by pre-commit and isn't alr
 Further searching leads to this thread: https://github.com/numtide/devshell/issues/16
 which has a solid argument about pre-commit being too late and looking for a solution that would shift format tooling left. Towars the end of the threat (which is dated May 30th, 2022 as of this entry on Dec 21,2023) there is a potential solution with treefmt.
 
-TODO Needs further investigation to determine if this is a suitable solution. 
+TODO Needs further investigation to determine if this is a suitable solution.
 NOTE needed to run `pre-commit uninstall` for now so it wouldn't be looking for .precommit.config.yml
-  will need to `pre-commit install` again when the time comes
+will need to `pre-commit install` again when the time comes
 
 ## SOPS
 
@@ -110,9 +110,9 @@ For example:
 
 ```yaml
 example-secret-key: |
-    -----START PRIVATE KEY----
-    [some data]
-    -----END PRIVATE KEY----
+  -----START PRIVATE KEY----
+  [some data]
+  -----END PRIVATE KEY----
 ```
 
 ## Couldnt' find EFI system partition
@@ -195,7 +195,9 @@ Boot Loaders Listed in EFI Variables:
 [nix-shell:~/src/nix-config]$ nixos-rebuild boot --install-bootloader
 
 ```
+
 ---
+
 [Return to top](#troubleshooting)
 
 [README](../README.md) > Troubleshooting

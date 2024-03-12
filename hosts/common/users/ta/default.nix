@@ -1,5 +1,5 @@
 { pkgs, inputs, config, ... }:
-let 
+let
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in
 {
@@ -10,7 +10,7 @@ in
   users.users.ta = {
     isNormalUser = true;
     hashedPasswordFile = config.sops.secrets.ta-password.path;
-    shell = pkgs.zsh; #default shell
+    shell = pkgs.zsh; # default shell
     extraGroups = [
       "wheel"
       "audio"
@@ -32,7 +32,7 @@ in
     packages = [ pkgs.home-manager ];
   };
 
-# FIXME This should probably be host specific. Also need to confirm that this is the correct place to do this.
+  # FIXME This should probably be host specific. Also need to confirm that this is the correct place to do this.
   security.sudo.extraConfig = ''
     Defaults timestamp_timeout=120 # only ask for password every 120 minutes
   '';

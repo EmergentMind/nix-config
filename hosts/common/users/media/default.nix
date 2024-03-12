@@ -22,5 +22,4 @@
 
   # Import this user's personal/home configurations
   home-manager.users.media = import ../../../../home/media/${config.networking.hostName}.nix;
-
 }

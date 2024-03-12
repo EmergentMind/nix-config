@@ -14,102 +14,106 @@ Because this repo relies on a private `nix-secrets` repository input as a flake 
 2. Add users to `hosts/common/users/<usern>.nix` if needed
 3. Create a host-specific home config for each user that will be accessing the host at `home/<user>/<hostname>.nix`. Refer to exiting user configs and defint the config as needed.
 4. Edit `flake.nix` to include a the following entries:
-    * Host information, under the `nixosConfigurations` option.
- 
-        ```nix
-          ...
-          nixosConfigurations = {
-            # This is an example of an existing host called "grief"
-            grief = lib.nixosSystem {
-              modules = [ ./hosts/grief ];
-              specialArgs = { inherit inputs outputs;};
-            }
-            # Add a descripton of your host
-            yournewhostname = lib.nixosSystem {
-              modules = [ ./hosts/yournewhostname ];
-              specialArgs = { inherit inputs outputs;};
-            }
-            ...
-          };
-          ...
-        ```
 
-   * Primary user information for the primary user on each host, under the `homeConfigurations` option.
+   - Host information, under the `nixosConfigurations` option.
 
-        ```nix
-          ...
-          homeConfigurations = {
-            "ta@grief" = lib.homeManagerConfiguration {
-              modules = [ ./home/ta/grief.nix ];
-              pkgs = pkgsFor.x86_64-linux;
-              extraSpecialArgs = {inherit inputs outputs;};
-            };
-            "username@yournewhostname" = lib.homeManagerConfiguration {
-              modules = [ ./home/username/yournewhostname.nix ];
-              pkgs = pkgsFor.x86_64-linux;
-              extraSpecialArgs = {inherit inputs outputs;};
-            };
-            ...
-          };
-          ...
-        ```
+     ```nix
+       ...
+       nixosConfigurations = {
+         # This is an example of an existing host called "grief"
+         grief = lib.nixosSystem {
+           modules = [ ./hosts/grief ];
+           specialArgs = { inherit inputs outputs;};
+         }
+         # Add a descripton of your host
+         yournewhostname = lib.nixosSystem {
+           modules = [ ./hosts/yournewhostname ];
+           specialArgs = { inherit inputs outputs;};
+         }
+         ...
+       };
+       ...
+     ```
+
+   - Primary user information for the primary user on each host, under the `homeConfigurations` option.
+
+     ```nix
+       ...
+       homeConfigurations = {
+         "ta@grief" = lib.homeManagerConfiguration {
+           modules = [ ./home/ta/grief.nix ];
+           pkgs = pkgsFor.x86_64-linux;
+           extraSpecialArgs = {inherit inputs outputs;};
+         };
+         "username@yournewhostname" = lib.homeManagerConfiguration {
+           modules = [ ./home/username/yournewhostname.nix ];
+           pkgs = pkgsFor.x86_64-linux;
+           extraSpecialArgs = {inherit inputs outputs;};
+         };
+         ...
+       };
+       ...
+     ```
+
 5. Commit and push the changes
 
 ### On the new host
- 
+
 These steps assume:
-* installation on an UEFI system
+
+- installation on an UEFI system
 
 0. Boot the new machine into a NixOS live environment and wait for a shell, or for the graphical installer to automatically open if you used a graphical ISO.
 
 1. If in the graphical installer, and open a terminal.
-  Confirm the boot process brought up networking successfully and a ip was acquired. Check `ip a`. If no ip was assigned, refer to <https://nixos.org/manual/nixos/stable/#sec-installation-manual-networking>
+   Confirm the boot process brought up networking successfully and a ip was acquired. Check `ip a`. If no ip was assigned, refer to <https://nixos.org/manual/nixos/stable/#sec-installation-manual-networking>
 
 2. To gain remote access right away, set a temporary password for the root user using `passwd root` and following the prompts. Then from a remote machine, `ssh root@0.0.0.0` using the ip printed in step 1.
 
-3.  Most of the following steps require root. If you are remoted in from step 2 you should have a root shell. Otherwise, `sudo su`
+3. Most of the following steps require root. If you are remoted in from step 2 you should have a root shell. Otherwise, `sudo su`
 
-   > IMPORTANT: the code samples below assume installation on the `sda` device. Modify if necessary.
-   These are instructions come directly from <https://nixos.org/manual/nixos/stable/#sec-installation-manual-partitioning> with little to no modification.
+> IMPORTANT: the code samples below assume installation on the `sda` device. Modify if necessary.
+> These are instructions come directly from <https://nixos.org/manual/nixos/stable/#sec-installation-manual-partitioning> with little to no modification.
 
 3. Create a GPT partition table.
 
-    `# parted /dev/sda -- mklabel gpt`
+   `# parted /dev/sda -- mklabel gpt`
 
 4. Add the root partition. This will fill the disk except for the end part, where the swap will live, and the space left in front (512MiB) which will be used by the boot partition.
 
-    `# parted /dev/sda -- mkpart root ext4 512MB -8GB`
+   `# parted /dev/sda -- mkpart root ext4 512MB -8GB`
 
-    If you do not require swap, replace `-8GB` with `100%`
+   If you do not require swap, replace `-8GB` with `100%`
 
 5. _If you are adding a swap partition_, the size required will vary according to needs, here a 8GB one is created. NixOS uses the standard linux swap file needs so this will depend on how much memory the host has.
 
-    `# parted /dev/sda -- mkpart swap linux-swap -8GB 100%`
-
+   `# parted /dev/sda -- mkpart swap linux-swap -8GB 100%`
 
 6. Finally, the boot partition. NixOS by default uses the ESP (EFI system partition) as its /boot partition. It uses the initially reserved 512MiB at the start of the disk.
-    
-    ```bash
-    # parted /dev/sda -- mkpart ESP fat32 1MB 512MB
-    # parted /dev/sda -- set 3 esp on
-    ```
+
+   ```bash
+   # parted /dev/sda -- mkpart ESP fat32 1MB 512MB
+   # parted /dev/sda -- set 3 esp on
+   ```
+
 7. Initialize the Ext4 partitions using mkfs.ext4 and assign a unique symbolic label using the `-L label` argument. For example:
 
-    `# mkfs.ext4 -L nixos /dev/sda1`
+   `# mkfs.ext4 -L nixos /dev/sda1`
 
 8. For swap, _if required_, use `mkswap` and assign a label using the `-L label` argument. For example:
 
-    `# mkswap -L swap /dev/sda2`
+   `# mkswap -L swap /dev/sda2`
 
 9. For UEFI system boot partitions use `mkfs.fat` and assign a label using `-n label`. For example:
 
-    `# mkfs.fat -F 32 -n BOOT /dev/sda3`
+   `# mkfs.fat -F 32 -n BOOT /dev/sda3`
 
-10.  Mount the target file system on which NixOS should be installed on /mnt, e.g.
+10. Mount the target file system on which NixOS should be installed on /mnt, e.g.
 
     `# mount /dev/disk/by-label/nixos /mnt`
 
 11. Mount the boot file system on /mnt/boot, e.g.
+
     ```bash
     # mkdir -p /mnt/boot
     # mount /dev/disk/by-label/BOOT /mnt/boot
@@ -133,45 +137,46 @@ These steps assume:
 
     1. Verify:
 
-        ```nix
-        boot.loader.systemd-boot.enable = true;
-        boot.loader.efi.canTouchEfiVariables = true;
-        ```
+       ```nix
+       boot.loader.systemd-boot.enable = true;
+       boot.loader.efi.canTouchEfiVariables = true;
+       ```
 
     2. Uncomment this line and replace `nixos` with your desired host name:
 
-        ```nix
-        # networking.hostname = "nixos";
-        ```
-      This step isn't technically required but will make connected to the machine faster if you have aliases already setup.
+       ```nix
+       # networking.hostname = "nixos";
+       ```
+
+       This step isn't technically required but will make connected to the machine faster if you have aliases already setup.
 
     3. Delete or comment out the following lines if the are present.
 
-        ```nix
-        # services.xserver.enable = true;
+       ```nix
+       # services.xserver.enable = true;
 
-        # services.xserver.displayManager.gdm.enable = true;
-      
-        # services.xserver.desktopManager.gnome.enable = true;
-        ```
-    
+       # services.xserver.displayManager.gdm.enable = true;
+
+       # services.xserver.desktopManager.gnome.enable = true;
+       ```
+
     4. Uncomment the `users.users.alice` section and create a basic use. For example:
 
-        ```nix
-        #users.users.ta := {
-          #isNormalUser = true;
-          #extraGroups = [ "wheel" ];
-          #initialPassword = "temp";
-        #};
-        #users.mutableUsers = true;
-        ```
-    
+       ```nix
+       #users.users.ta := {
+         #isNormalUser = true;
+         #extraGroups = [ "wheel" ];
+         #initialPassword = "temp";
+       #};
+       #users.mutableUsers = true;
+       ```
+
     5. Uncomment `services.openssh.enable = true`
 
     6. At the end of the file, but prior to the final `}`, add the following line:
 
        `nix.settings.experimental-features = [ "nix-command" "flakes" ];`
-       
+
     7. Save and exit the file
 
 16. Do the installation.
@@ -199,7 +204,7 @@ These steps assume:
     $ nix develop
     ```
 
-21. Generate an age key on the new host, based on it's ssh host key.
+22. Generate an age key on the new host, based on it's ssh host key.
 
     ```bash
     $ cat /etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age
@@ -251,6 +256,7 @@ These steps assume:
     ```bash
     $ scp ~/.ssh/key_name* user@0.0.0.0:.ssh/
     ```
+
 ### Back on the new host
 
 26. Back on the new hosts, create a `~/.ssh/config` so the correct keys are used.
@@ -279,7 +285,7 @@ These steps assume:
     ```bash
     $ nix flake lock --update-input mysecrets
     warning: Git tree '/home/ta/src/nix-config' is dirty
-    Enter passphrase for key '/home/ta/.ssh/id_manu': 
+    Enter passphrase for key '/home/ta/.ssh/id_manu':
     warning: updating lock file '/home/ta/src/nix-config/flake.lock':
     • Updated input 'mysecrets':
      'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=aa0165aff5f74d367b523cc27dbd028b0251c30d&shallow=1' (2024-02-09)
@@ -294,23 +300,25 @@ These steps assume:
     `$ cp /etc/nixos/hardware-configuration.nix ~/src/nix-config/hosts/NEWHOSTNAME/hardware-configuration.nix`
 
 29. Build and switch to the flake:
-    
+
     ```bash
     $ sudo nixos-rebuild switch --flake .#newhostname`
     ```
 
 30. Once the build is finished build home-manager configs for each user on the system:
 
-    ```bash 
+    ```bash
     $ home-manager build --flake .#user@newhostname
 
     ...
-    
+
     $ home-manager build --flake .#user@newhostname
     ```
-30. Commit and push the new hardware-configuration that was copied in step 2
+
+31. Commit and push the new hardware-configuration that was copied in step 2
 
 ---
+
 [Return to top](#adding-a-new-host)
 
 [README](../README.md) > Adding A New Host

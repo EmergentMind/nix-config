@@ -3,5 +3,5 @@
 #
 
 calibre
-vlc
-spotify
+  vlc
+  spotify

@@ -10,7 +10,7 @@ in
 
   ] ++ (builtins.attrValues outputs.homeManagerModules);
 
-   home = {
+  home = {
     username = lib.mkDefault "media";
     homeDirectory = lib.mkDefault "/home/${config.home.username}";
     stateVersion = lib.mkDefault "23.05";
@@ -25,11 +25,11 @@ in
   home.packages = builtins.attrValues {
     inherit (pkgs)
 
-    # Packages that don't have custom configs go here
-    nix-tree;
+      # Packages that don't have custom configs go here
+      nix-tree;
   };
 
- nixpkgs = {
+  nixpkgs = {
     overlays = builtins.attrValues outputs.overlays;
     config = {
       allowUnfree = true;

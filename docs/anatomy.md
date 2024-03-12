@@ -3,10 +3,12 @@
 [README](../README.md) > Anatomy
 
 ## Structural Concept
+
 The following diagram depicts the conceptual anatomy of my nix-config. It is not an accurate representation of the current state but will be updated over time to represent additional elements and details as the config evolves.
 ![Anatomy v1](diagrams/anatomy_v1.png)
 
 ## Details
+
 For details about the design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
 
 ## Fugly visual of the current state as of Feb 25, 2024
@@ -46,7 +48,7 @@ flowchart LR
       nix
       sops
       zsh
-      end 
+      end
 
       subgraph ./hosts/common/optional
       optional-services
@@ -108,7 +110,7 @@ flowchart LR
 
   flakeurls --> inputs
   outputs --> ./modules/nixos
-  outputs --> ./modules/home-manager 
+  outputs --> ./modules/home-manager
   outputs --> ./overlays
   outputs --> ./pkgs
   outputs --> ./shell.nix
@@ -142,6 +144,7 @@ flowchart LR
 ```
 
 ---
+
 [Return to top](#anatomy)
 
 [README](../README.md) > Anatomy
