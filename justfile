@@ -1,7 +1,3 @@
-alias c := check
-alias f := format
-alias t := test
-
 # Default recipe to display help information
 default:
   @just --list
@@ -9,18 +5,6 @@ default:
 # List all recipes
 list:
   @just --list
-
-# Check all (TODO: use pre-commit)
-check:
-  just check-sops
-
-## Check all (TODO: use pre-commit)
-format:
-  nixpkgs-fmt .
-
-# Check all (TODO: use pre-commit)
-test:
-  @echo "Running tests (Not implemented yet)"
 
 # Run ci using pre-commit
 ci:
