@@ -14,7 +14,7 @@
         };
         "ssh://git@gitlab.com" = {
           insteadOf = "https://gitlab.com";
-        }; 
+        };
       };
 
       user.signing.key = "41B7B2ECE0FAEF890343124CE8AA1A8F75B56D39";

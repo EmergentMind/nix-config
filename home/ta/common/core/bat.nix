@@ -1,5 +1,5 @@
 # https://github.com/sharkdp/bat
-# https://github.com/eth-p/bat-extras 
+# https://github.com/eth-p/bat-extras
 
 { pkgs, ... }: {
   programs.bat = {

@@ -10,17 +10,17 @@
   };
 
   outputs = { nixpkgs, disko, ... }:
-  {
-    nixosConfigurations = {
-      # Installer test lab
-      guppy = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          disko.nixosModules.disko
-          ./configuration.nix
-          ./std-disk-config.nix
-        ];
+    {
+      nixosConfigurations = {
+        # Installer test lab
+        guppy = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            disko.nixosModules.disko
+            ./configuration.nix
+            ./std-disk-config.nix
+          ];
+        };
       };
-    }; 
-  };
+    };
 }

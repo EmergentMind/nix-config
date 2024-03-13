@@ -6,8 +6,8 @@ let
     name = "yubikey-up";
     runtimeInputs = builtins.attrValues {
       inherit (pkgs)
-      gawk
-      yubikey-manager;
+        gawk
+        yubikey-manager;
     };
     text = builtins.readFile ./scripts/yubikey-up.sh;
   };
@@ -19,21 +19,21 @@ in
 with pkgs;  #FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
 {
   environment.systemPackages = [
-      gnupg
-      # yubikey-personalization
-      # Yubico's official tools
-      #    yubikey-manager
-      #    yubikey-manager-qt
-      #    yubikey-personalization
-      #    yubikey-personalization-gui
-      #    yubico-piv-tool
-      #    yubioath-flutter # yubioath-desktop on older nixpkg channels
-      pam_u2f # for yubikey with sudo
+    gnupg
+    # yubikey-personalization
+    # Yubico's official tools
+    #    yubikey-manager
+    #    yubikey-manager-qt
+    #    yubikey-personalization
+    #    yubikey-personalization-gui
+    #    yubico-piv-tool
+    #    yubioath-flutter # yubioath-desktop on older nixpkg channels
+    pam_u2f # for yubikey with sudo
 
-      yubikey-up
-      yubikey-down
-      yubikey-manager # For ykman
-    ];
+    yubikey-up
+    yubikey-down
+    yubikey-manager # For ykman
+  ];
 
   # FIXME: Put this behind an option for yubikey ssh
   # Create ssh files
@@ -59,7 +59,7 @@ with pkgs;  #FIXME needs to be refactored according to best practices but not su
     sudo.u2fAuth = true;
   };
 
-  # enable pam.u2f 
+  # enable pam.u2f
   # u2f_keys are extracted from secrets.yaml to default `~/.config/Yubico/u2f_keys` location via ../../core/sops.nix
 
   #FIXME /etc/pam.d/sudo is being written but there is other stuff in there with higher order that may be interfering. Also doesn't seem that this will work over ssh either so may have to wait.

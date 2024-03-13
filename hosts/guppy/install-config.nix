@@ -4,7 +4,7 @@
 # Includes declaritve disk partitioning and formatting executed via disko
 #
 
-{inputs, modulesPath, ...}: {
+{ inputs, modulesPath, ... }: {
   #import modules used by nixos-anywhere
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -49,7 +49,7 @@
                     mountOptions = [ "compress=zstd" ];
                     mountpoint = "/persist";
                   };
-                  
+
                   "/nix" = {
                     mountOptions = [ "compress=zstd" "noatime" ];
                     mountpoint = "/nix";

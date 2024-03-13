@@ -1,28 +1,28 @@
 #############################################################
 #
-#  Guppy - Remote Installation Test Lab 
+#  Guppy - Remote Installation Test Lab
 #  NixOS running on VirtualBox VM
 #
 ###############################################################
 
 { inputs, ... }: {
   imports = [
-    #################### Hardware Modules #################### 
+    #################### Hardware Modules ####################
 
-    #################### Hardware Modules #################### 
+    #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     inputs.hardware.nixosModules.common-pc-ssd
 
-    #################### Required Configs #################### 
+    #################### Required Configs ####################
     ./install-config.nix # disko spec
-   # ./hardware-configuration.nix
-    ../common/core 
+    # ./hardware-configuration.nix
+    ../common/core
 
-    #################### Optional Configs #################### 
+    #################### Optional Configs ####################
     ../optional/services/openssh.nix
 
-    #################### Users to Create #################### 
+    #################### Users to Create ####################
     ../common/users/ta
 
   ];

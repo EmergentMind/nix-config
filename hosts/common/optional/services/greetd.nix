@@ -3,9 +3,9 @@
 # display manager -> greetd https://man.sr.ht/~kennylevinsen/greetd/
 #
 
-{ config, pkgs, lib, ... } :
+{ config, pkgs, lib, ... }:
 
-let 
+let
   cfg = config.autoLogin;
 in
 {
@@ -21,7 +21,7 @@ in
   };
 
   config = {
-#    environment.systemPackages = with pkgs; [ greetd.tuigreet ];
+    #    environment.systemPackages = with pkgs; [ greetd.tuigreet ];
     services.greetd = {
       enable = true;
 
@@ -33,8 +33,8 @@ in
         };
 
         initial_session = lib.mkIf cfg.enable {
-              command = "${pkgs.hyprland}/bin/Hyprland";
-              user = "${cfg.username}";
+          command = "${pkgs.hyprland}/bin/Hyprland";
+          user = "${cfg.username}";
         };
       };
     };

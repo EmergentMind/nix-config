@@ -4,7 +4,7 @@ let
 in
 {
   imports = [
-    #################### Hardware Modules #################### 
+    #################### Hardware Modules ####################
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-cpu-intel
     # inputs.hardware.nixosModules.common-gpu-nvidia
@@ -12,10 +12,10 @@ in
     # inputs.hardware.nixosModules.common-pc-ssd
 
 
-    #################### Required Configs #################### 
+    #################### Required Configs ####################
     ./common/core #required
 
-    #################### Host-specific Optional Configs #################### 
+    #################### Host-specific Optional Configs ####################
 
 
   ];

@@ -2,7 +2,7 @@
 
 { pkgs ? import <nixpkgs> { } }: rec {
 
-  #################### Packages with external source #################### 
+  #################### Packages with external source ####################
 
   cd-gitroot = pkgs.callPackage ./cd-gitroot { };
   zhooks = pkgs.callPackage ./zhooks { };

@@ -2,16 +2,16 @@
 # Dunst
 # Notifcation Daemon
 #
-{pkgs, ...}:{
+{ pkgs, ... }: {
   home.packages = builtins.attrValues {
     inherit (pkgs)
-    libnotify; # required by dunst
+      libnotify; # required by dunst
   };
 
   services.dunst = {
     enable = true;
-#    waylandDisplay = ""; # set the service's WAYLAND_DISPLAY environment variable
-#    configFile = "";
+    #    waylandDisplay = ""; # set the service's WAYLAND_DISPLAY environment variable
+    #    configFile = "";
     iconTheme = {
       name = "Adwaita";
       package = pkgs.gnome.adwaita-icon-theme;
@@ -39,7 +39,7 @@
         font = "Droid Sans 9";
 
         # Options are "left", "center", and "right".
-        alignment = "left"; 
+        alignment = "left";
 
         # Sort messages by urgency.
         sort = "yes";
@@ -87,10 +87,10 @@
         #   mouse: follow mouse pointer
         #   keyboard: follow window with keyboard focus
         #   none: don't follow anything
-        # 
+        #
         # "keyboard" needs a windowmanager that exports the _NET_ACTIVE_WINDOW property.
         # This should be the case for almost all modern windowmanagers.
-        # 
+        #
         # If this option is set to mouse or keyboard, the monitor option will be ignored.
         follow = "mouse";
 
@@ -135,13 +135,13 @@
         # Print a notification on startup.
         # This is mainly for error detection, since dbus (re-)starts dunst
         # automatically after a crash.
-      
-#FIXME change to false once working
+
+        #FIXME change to false once working
         startup_notification = false;
 
         # Align icons left/right/off
         icon_position = "left";
- 
+
         width = 300;
         height = 300;
         offset = "30x50";
@@ -159,7 +159,7 @@
         #TODO dynamic colours
         color = "#dc7f41";
       };
-    
+
       shortcuts = {
         # Shortcuts are specified as [modifier+][modifier+]...key
         # Available modifiers are "ctrl", "mod1" (the alt-key), "mod2",

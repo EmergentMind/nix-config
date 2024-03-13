@@ -1,8 +1,8 @@
 # VLC media player
 
-{pkgs,...}:
+{ pkgs, ... }:
 {
-    environment.systemPackages = [
-        pkgs.vlc
-    ];
+  environment.systemPackages = [
+    pkgs.vlc
+  ];
 }

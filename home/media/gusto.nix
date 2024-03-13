@@ -1,8 +1,8 @@
 {
   imports = [
-    #################### Required Configs #################### 
-    common/core  #required
+    #################### Required Configs ####################
+    common/core # required
 
-    #################### Host-specific Optional Configs #################### 
+    #################### Host-specific Optional Configs ####################
   ];
 }

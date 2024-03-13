@@ -11,8 +11,9 @@
 The events associated with insertion/removal to help with writing the udev rules.
 
 When you are writing the UDEV rules there are a few important things:
-* removal cannot access ATTR{} values. You must use ENV{..}
-* be careful to check the subsystem! ex: you may add on SUBSYSTEM usb, but removal may require SUBSYSTEM input
+
+- removal cannot access ATTR{} values. You must use ENV{..}
+- be careful to check the subsystem! ex: you may add on SUBSYSTEM usb, but removal may require SUBSYSTEM input
 
 ```bash
 [aa@onyx:~/dev/nix-config]$ udevadm monitor --environment --udev

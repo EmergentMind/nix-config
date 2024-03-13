@@ -27,5 +27,5 @@
       options = "--delete-older-than +5";
     };
 
- };
+  };
 }
