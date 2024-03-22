@@ -251,7 +251,7 @@ These steps assume:
 
 24. Commit and push the changes to `nix-secrets` so they will be retrieved when the flake is built on the new host.
 
-25. Before we build the flake and home-manager confgs on the new host, we need to ensure that it can access the private `nix-secrets` repo. From a system with the required priv/pub key set, cp the keys to the newhost:
+25. Before we build the flake and home-manager confgs on the new host, we need to ensure that it can access the private `nix-secrets` repo. From a system with the required priv/pub key-pair, cp the keys to the newhost:
 
     ```bash
     $ scp ~/.ssh/key_name* user@0.0.0.0:.ssh/

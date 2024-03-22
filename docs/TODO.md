@@ -22,7 +22,7 @@
       - ~~README.md~~
       - ~~potentially a configuration.nix~~
   - ~~lab testing~~
-  - add msmtp email and host to secrets
+  - ~~add msmtp email and host to secrets~~
   - refinement and confirmation testing
     - modify install config to better represent somethign useful
     - test on guppy as part of full config
@@ -35,8 +35,8 @@
 
   - ~~planning~~
   - ~~storyboard~~
-  - assets
-  - recording
+  - ~~assets~~
+  - ~~recording~~
   - production
 
 - New tools to integrate

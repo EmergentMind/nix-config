@@ -526,7 +526,7 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 11. Save and exit the file and then open a new terminal on ghost. Connect to grief over ssh again and confirm that it asks for authorization against one of the authorized keys we just added.
     If not, diagnose the issue.
 
-12. Now we will need to copy the keys required to clone our private repo(s). On ghost, navigate to the .ssh directory and secure copy the appropriate public and private key set(s) to grief.
+12. Now we will need to copy the keys required to clone our private repo(s). On ghost, navigate to the .ssh directory and secure copy the appropriate public and private key-pair(s) to grief.
 
     on ghost:
 

@@ -34,7 +34,7 @@ The way out, is through.
 - [Requirements](#requirements)
 - [Structure](#structure-quick-reference)
 - [Adding a New Host](docs/addnewhost.md)
-- [Secrets Management](docs/secretsmgmt.md)
+- [Secrets Management](#secrets-management)
 - [Initial Install Notes](docs/installnotes.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
 - [Acknowledgements](#acknowledgements)
@@ -93,6 +93,12 @@ For a large screenshot of the concept diagram, a current-state visual, as well a
 - `overlays` - Custom modifications to upstream packages.
 - `pkgs` - Custom packages meant to be shared or upstreamed.
 - `scripts` - Custom scripts for automation.
+
+## Secrets Management
+
+Secrets for this config are stored in a private repository called nix-secrets that is pulled in as a flake input and managed using the sops-nix tool.
+
+For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
 
 ## Acknowledgements
 
