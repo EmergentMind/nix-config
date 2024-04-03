@@ -26,7 +26,7 @@ in
       (builtins.readFile ./keys/id_maya.pub)
       (builtins.readFile ./keys/id_mara.pub)
       (builtins.readFile ./keys/id_manu.pub)
-      (builtins.readFile ./keys/id_meek.pub)
+      #exclude id_meek which should only be used during installation
     ];
 
     packages = [ pkgs.home-manager ];

@@ -6,14 +6,19 @@
 
 This process involves remote, unattended installation of nixos on a target machine. As usual the steps here will refined during testing and automated, where applicable. A lightweight flake is used so that I can gradually test out new tools (e.g. nixos-anywhere, disko, declarative-disk encryption, impermanence, etc) overtime without compromising anything in the full nix-config.
 
-The endgoal is to remotely deploy the full nix-config to new hosts without the need for an intermediary lightweight step. However, given the risk of unintentional re-installation on an existing host, rather than a remote rebuild for updates for example, some precautionary steps should be considered and added to when the time comes. Whatever script call instantiates the full process shouldn't be similar to more common commands and should require a confirmation warning or something.
+The endgoal is to remotely deploy the full nix-config to new hosts with as little manual attention as possible.
 
-Requirements:
+I attempted to remotely install the full nix-config from the get go but of course, home-manager needs to be run after the install is complete and the nix-config source isn't loaded to the target so doing a home-manager switch isn't possible.
+The solution then, is to perform the lightweight install first, to establish secrets access keys, an ssh key that doesn't require passphrase, and install nixos, then remote into the host, clone the full repo and build from there. The passphrase-free key will then get wiped out.
+
+### Requirements:
 
 - target machine, reachable by ssh, that will boot into a USB installer image
-  - knowledge of the drives is required for declarativbe partitioning and formatting via disko
+    - IMPORTANT: as of Mar 28, 2024 you must still use NixOS version 23.05. NixOS-anywhere relies on rsync which is not included
+        in the 23.11 iso. There is an open issue to address this and while it could be worked around in the remote_install.sh script, the effort isn't worth the gain at this time.
+    - knowledge of the drives is required for declarativbe partitioning and formatting via disko
 - source machine, with flakes enabled that will remotely install nixos on the target.
-  - musts have working access to the nix-secrets repo
+- must have working access to the nix-secrets repo and able to modify the secrets
 
 1. Download nixos-minimal installation iso.
 2. If installing on virtualbox, the following settings have been successful in the past:
@@ -38,12 +43,11 @@ Requirements:
    passwd: password updated successfully
    ```
 5. If needed, note the ip of the target machine. `$ ip a`
-   . Generate the required hardware config
-   `# nixos-generate-config`
-   . Copy the contents of `/etc/nixos/hardware-configuration.nix` to the appropriate directory in the repo. E.g. `hosts/<hostname>/hardware-configuration.nix`
-6. From the source machine, copy the ssh pub key you will use for installation and deployment the target machine. If an unattended install is required, this ssh key pair should not require presence or passphrase. Depending on how the host is configured during install and/or rebuild however, this key could be intentionally wiped out in favor of an "everyday" key that requires presence of some sort.
+7. This step should be optional. If we're installing the config right away, the basic root password we set up for install will get wiped out during build.
+
+From the source machine, copy the ssh pub key you will use for installation and deployment on the target machine. If an unattended install is required, this ssh key pair should not require presence or passphrase. Depending on how the host is configured during install and/or rebuild however, this key could be intentionally wiped out in favor of an "everyday" key that requires presence of some sort.
    `ssh-copy-id -i path/to/key.pub root@<target ip>`
-7. From the source machine, set up host keys and secrets access for the target:
+8. From the source machine, set up host keys and secrets access for the target:
 
    1. In the nix-secrets repo, generate a host ssh host key, and leave the passphrase empty. Replace `guppy` in the example below with whatever you intend to name the target machine via the config.
 
@@ -115,16 +119,16 @@ Requirements:
    5. Commit and push the changes to nix-secrets so they will be retrieved when the flake is built on the new host.
    6. Overwrite the auto generated host keys on the target machine with the private and public ssh host keys created in step 7.1 We can authenticate using the private key that matches the public key we added to the target machine's authorized keys in step 6.
       ```bash
-      scp -i path/to/privsshkey ssh_host_ed25519_key* root@0.0.0.0:/etc/ssh/
+      scp -i path/to/private/sshkey ssh_host_ed25519_key* root@0.0.0.0:/etc/ssh/
       ```
    7. Back up the keys and age key to a secure database if required.
    8. Delete the keys from the source machine
-      `rm ssh-host_ed25519-key*`
+      `rm ssh_host_ed25519_key*`
    9. From the nix-config repo on the source machine, be sure to run `nix flake lock --update-input mysecrets` to ensure the latest revisions of nix-secrets is used next time a rebuild occurs.
    10. Edit the source machine's `~/.ssh/known_hosts` file to remove the entries for the target machine's ip. We need to do this because new host keys will cause a mismatch the next time we remote into the target.
 
-8. If you will be installing the lightweight test config, navigate to nixos-installer directory. Ortherwise, stay at the root fo the nix-config repo.
-9. Run a remote install on the target. We prepend the SHELL variable to avoid shell mismatches that may be injected from the source machine. We'll also tell ssh to use the private key that matches the pub key from step 6.
+9. If you will be installing the lightweight test config, navigate to nixos-installer directory. Ortherwise, stay at the root fo the nix-config repo.
+10. Run a remote install on the target. We prepend the SHELL variable to avoid shell mismatches that may be injected from the source machine. We'll also tell ssh to use the private key that matches the pub key from step 6.
 
    ```bash
    $ SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake <path to configuration>#<configuration name> root@<ip address> -i <local path to ssh key>`
@@ -438,8 +442,19 @@ Requirements:
    ### Done! ###
    ```
 
-10. Now we can deploy the full nix-config
-    TODO: see if we can deploy the full config from the get go
+11. Now we can remote into the host and prepare to  deploy the full nix-config
+12. Connect to host
+13. Generate the hardware config based on the work done by dikso
+   `# nixos-generate-config`
+14. ! this step should probably be done on the source with an scp so that the host doesn't need access to the source. Copy the contents of `/etc/nixos/hardware-configuration.nix` to the appropriate directory in the repo. E.g. `hosts/<hostname>/hardware-configuration.nix`
+15. commit and push the config
+16. connect back to host
+17. clone repo
+18. nixos-rebuild switch
+19. homemanager switch
+
+
+
 
 ## Rebuild - January 22, 2024
 

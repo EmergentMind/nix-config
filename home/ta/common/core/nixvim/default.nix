@@ -172,7 +172,7 @@
             position = "center";
           };
           type = "text";
-          val = "Question authority. Think for yourself.";
+          val = "The way out is through.";
         }
       ];
     };

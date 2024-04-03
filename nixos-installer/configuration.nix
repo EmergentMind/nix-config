@@ -6,20 +6,16 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # boot.loader.grub = {
-  ## no need to set devices, disko will add all devices that have a EF02 partition to the list already
-  ## devices = [ ];
-  # efiSupport = true;
-  # efiInstallAsRemovable = true;
-  # };
 
   services.openssh.enable = true;
+  services.openssh.settings.PermitRootLogin = "yes";
 
   environment.systemPackages = map lib.lowPrio [
     pkgs.curl
     pkgs.gitMinimal
   ];
 
+  users.users.root.password = "root";
   users.users.root.openssh.authorizedKeys.keys = [
     # Change these to your own ssh key(s)
     # Each key entered below should be one of the following:
@@ -30,7 +26,10 @@
     (builtins.readFile ../hosts/common/users/ta/keys/id_maya.pub)
     (builtins.readFile ../hosts/common/users/ta/keys/id_mara.pub)
     (builtins.readFile ../hosts/common/users/ta/keys/id_manu.pub)
+    (builtins.readFile ../hosts/common/users/ta/keys/id_meek.pub)
   ];
 
-  system.stateVersion = "23.11";
+  # Need 23.05 image until nixos-anywhere switches away from using rsync https://github.com/nix-community/nixos-anywhere/pull/295/files
+  system.stateVersion = "23.05";
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }

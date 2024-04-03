@@ -24,8 +24,8 @@
   - ~~lab testing~~
   - ~~add msmtp email and host to secrets~~
   - refinement and confirmation testing
-    - modify install config to better represent somethign useful
-    - test on guppy as part of full config
+    - modify install config to better represent something useful
+    - ~~test on guppy as part of full config~~ This won't work because the process doesn't install the config-src on target and hence, home-manager can't be built after installation. An intermediary, lightweight flake will be required for install, followed by cloning src to target and building full config from there.
     - automation scripts
   - implement across hosts
   - docs
@@ -43,7 +43,7 @@
   - ~~zoxide~~
   - copyq
   - du-dust
-  - syncthing
+  - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
 
 ## Long Term
 
@@ -104,9 +104,10 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - Per host branch scheme
 - Automated machine update on branch release
 
-##### 3.3 reduce duplication
+##### 3.3 reduce duplication and modularize
 
 - Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
+- Re-implement modules to make use of options for enablement
 
 ##### 3.4 impermanence
 
@@ -125,7 +126,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.x Extras
 
-- Rename pkgs -> custom_pkgs and modules -> custom_modules
+- maybe rename pkgs -> custom_pkgs and modules -> custom_modules  meh?
 - Enable git signing in home/ta/common/core/git.nix using nix-secrets
 - Investigate outstanding yubikey FIXMEs
 - Potentially yubiauth and u2f for passwordless sudo

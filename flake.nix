@@ -37,6 +37,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Installation Generator
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     # Windows management
     # for now trying to avoid this one because I want stability for my wm
     # this is the hyprland development flake package / unstable
@@ -116,6 +122,15 @@
         # theatre
         gusto = lib.nixosSystem {
           modules = [ ./hosts/gusto ];
+          specialArgs = { inherit inputs outputs; };
+        };
+        # Installers
+        # run using: `nix build .#foo.config.system.build.isoImage
+        # OR `nix run nixpkgs-unstable#nixos-generators -- --format iso --flake .#foo -o result`  where iso, foo, and result are customized as needed.
+        vboxIso = inputs.nixos-generators.nixosGenerate {
+          system = "x86_64-linux";
+          format = "virtualbox";
+          modules = [ ./hosts/isos/vbox.nix ];
           specialArgs = { inherit inputs outputs; };
         };
       };
