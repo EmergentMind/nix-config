@@ -15,8 +15,8 @@
     inputs.hardware.nixosModules.common-pc-ssd
 
     #################### Required Configs ####################
-    ./install-config.nix # disko spec
-    # ./hardware-configuration.nix
+    #./install-config.nix # disko spec
+    ./hardware-configuration.nix
     ../common/core
 
     #################### Optional Configs ####################
