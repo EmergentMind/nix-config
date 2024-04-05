@@ -33,6 +33,9 @@ in
       "private_keys/manu" = {
         path = "/home/ta/.ssh/id_manu";
       };
+      "private_keys/mila" = {
+        path = "/home/ta/.ssh/id_mila";
+      };
       "private_keys/meek" = {
         path = "/home/ta/.ssh/id_meek";
       };

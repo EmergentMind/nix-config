@@ -9,6 +9,7 @@
         identitiesOnly = true;
         identityFile = [
           "~/.ssh/id_yubikey" # This is an auto symlink to whatever yubikey is plugged in. See hosts/common/optional/yubikey
+          "~/.ssh/id_mila"
           "~/.ssh/id_manu" # fallback to id_manu if yubis aren't present
         ];
       };
