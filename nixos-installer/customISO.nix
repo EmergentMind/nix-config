@@ -3,9 +3,17 @@
     "${toString modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
   ];
 
-  nixpkgs.hostPlatform = "x86_64-linux";
+  # override installation-cd-base and enable wpa and sshd start at boot
+  systemd.services.wpa_supplicant.wantedBy = lib.mkForce [ "multi-user.target" ];
+  systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
 
-  users.users.ta = {
+  isoImage.isoName = "${hostname}"
+    #formatAttr = "isoImage";
+    #fileExtension = ".iso";
+
+    nixpkgs.hostPlatform = "x86_64-linux";
+
+  users.users.nixos = {
     isNormalUser = true;
     password = "temp";
     extraGroups = [ "wheel" ];

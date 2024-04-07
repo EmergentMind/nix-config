@@ -78,7 +78,7 @@ echo "Preparing a new ssh_host_ed25519_key pair for $target_hostname."
 install -d -m755 "$temp/etc/ssh"
 
 # Generate host keys without a passphrase
-ssh-keygen -t ed25519 -f $temp/etc/ssh/ssh_host_ed25519_key -C ta@$target_hostname -N ""
+ssh-keygen -t ed25519 -f $temp/etc/ssh/ssh_host_ed25519_key -C $target_user@$target_hostname -N ""
 
 # Set the correct permissions so sshd will accept the key
 chmod 600 "$temp/etc/ssh/ssh_host_ed25519_key"
@@ -130,7 +130,7 @@ sed -i "/$target_destination/ d" ~/.ssh/known_hosts
 #--flake .#$target_hostname \
 #root@$target_destination
 
-SHELL=/bin/sh nix run github:nix-community/nixos-anywhere ----flake .#$target_hostname $target_user@$target_destination
+SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake .#$target_hostname $target_user@$target_destination
 
 echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 ssh-keyscan $target_destination >>~/.ssh/known_hosts
