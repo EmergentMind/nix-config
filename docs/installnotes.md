@@ -9,18 +9,22 @@ This process involves remote, unattended installation of nixos on a target machi
 The endgoal is to remotely deploy the full nix-config to new hosts with as little manual attention as possible.
 
 I attempted to remotely install the full nix-config from the get go but of course, home-manager needs to be run after the install is complete and the nix-config source isn't loaded to the target so doing a home-manager switch isn't possible.
-The solution then, is to perform the lightweight install first, to establish secrets access keys, an ssh key that doesn't require passphrase, and install nixos, then remote into the host, clone the full repo and build from there. The passphrase-free key will then get wiped out.
+The solution then, is to perform the lightweight install first to establish secrets access keys, an ssh key that doesn't require passphrase, and install nixos, then remote into the host, clone the full repo and build from there. The passphrase-free key will then get wiped out.
 
 ### Requirements:
 
-- target machine, reachable by ssh, that will boot into a USB installer image
+- target machine, reachable by ssh, that will boot into a custom generated installer image
     - IMPORTANT: as of Mar 28, 2024 you must still use NixOS version 23.05. NixOS-anywhere relies on rsync which is not included
         in the 23.11 iso. There is an open issue to address this and while it could be worked around in the remote_install.sh script, the effort isn't worth the gain at this time.
-    - knowledge of the drives is required for declarativbe partitioning and formatting via disko
+    - knowledge of the drives is required for declarative partitioning and formatting via disko
 - source machine, with flakes enabled that will remotely install nixos on the target.
 - must have working access to the nix-secrets repo and able to modify the secrets
 
-1. Download nixos-minimal installation iso.
+1. ~~Download nixos-minimal installation iso.~~
+    Generate the custom installer
+    example:
+    `nix build ../nixos-installer/#vboxImage`
+
 2. If installing on virtualbox, the following settings have been successful in the past:
    1. 8GB hdd or higher
    2. 8GB memory
@@ -416,16 +420,7 @@ From the source machine, copy the ssh pub key you will use for installation and 
    copying path '/nix/store/38l9qlglbavgascs0yzjpwd2h4rk4r74-etc-modprobe.d-firmware.conf' from 'https://cache.nixos.org'...
    ### Installing NixOS ###
    Pseudo-terminal will not be allocated because stdin is not a terminal.
-   Warning: Permanently added '10.13.37.100' (ED25519) to the list of known hosts.
-   installing the boot loader...
-   setting up /etc...
-   Initializing machine ID from random generator.
-   Created "/boot/EFI".
-   Created "/boot/EFI/systemd".
-   Created "/boot/EFI/BOOT".
-   Created "/boot/loader".
-   Created "/boot/loader/entries".
-   Created "/boot/EFI/Linux".
+   Warning: Permanently added '10.13.37.100hmmm thinking that tho
    Copied "/nix/store/s5dx34869kl4fd5p913j5mis32c7f98k-systemd-255.2/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/systemd/systemd-bootx64.efi".
    Copied "/nix/store/s5dx34869kl4fd5p913j5mis32c7f98k-systemd-255.2/lib/systemd/boot/efi/systemd-bootx64.efi" to "/boot/EFI/BOOT/BOOTX64.EFI".
    ! Mount point '/boot' which backs the random seed file is world accessible, which is a security hole! !

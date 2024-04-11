@@ -23,16 +23,14 @@
       # Available through `nix build .#nixosConfigurations.[targetConfig].config.system.build.isoImage`
       #
       # Generated images will be output to ./results
-      customISO = nixpkgs.lib.nixosSystem {
+      iso = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
-        modules = [ ./customISO.nix ];
+        modules = [
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+          ./customISO.nix
+        ];
       };
-      #vboxImage = nixos-generators.nixosGenerate {
-      #format = "virtualbox";
-      #modules = [ ./iso.nix];
-      #specialArgs = { inherit inputs outputs; };
-      #};
-
 
       #################### Target Hosts ####################
       #

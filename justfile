@@ -87,3 +87,10 @@ check-sops:
 # Update the `mysecrets` flake input when changes have been made to the private nix-secrets repo
 secrets-update:
   nix flake lock --update-input mysecrets
+
+#################### Installation ####################
+
+iso:
+	# If we dont remove this folder, libvirtd VM doesnt run with the new iso...
+	rm -rf result
+	nix build .#nixosConfigurations.iso.config.system.build.isoImage

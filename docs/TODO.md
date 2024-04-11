@@ -126,6 +126,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.x Extras
 
+- automatic scheduled sops rotate
 - maybe rename pkgs -> custom_pkgs and modules -> custom_modules  meh?
 - Enable git signing in home/ta/common/core/git.nix using nix-secrets
 - Investigate outstanding yubikey FIXMEs

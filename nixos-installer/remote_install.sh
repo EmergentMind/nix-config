@@ -3,9 +3,9 @@ set -euo pipefail
 
 target_hostname=""
 target_destination=""
-target_user="ta"
+target_user="root"
 ssh_key=""
-remote_passwd="temp"
+remote_passwd="nixos"
 # Create a temp directory for generated host keys
 temp=$(mktemp -d)
 
@@ -28,9 +28,9 @@ help_and_exit() {
 	echo ""
 	echo "options:"
 	echo "  -u=<target_user>  				specify target_user with sudo access. nix-config will be cloned to their home."
-	echo "                              Default='ta'."
+	echo "                              Default='root'."
 	echo "  -p=<remote_passwd>        Specify a password for target machine user. This is temporary until install is complete."
-	echo "                              Default='temp'."
+	echo "                              Default='nixos'."
 	echo "  -h | --help               Print this help."
 	exit 0
 }
@@ -130,13 +130,13 @@ sed -i "/$target_destination/ d" ~/.ssh/known_hosts
 #--flake .#$target_hostname \
 #root@$target_destination
 
-SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake .#$target_hostname $target_user@$target_destination
+SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake .#$target_hostname $target_user@$target_destination -i $ssh_key
 
 echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 ssh-keyscan $target_destination >>~/.ssh/known_hosts
 
 # connect to the new install and generate a hardware config based on the work declared by disko
-ssh $target_user@$target_destination -i $ssh_key "nixos-generate-config"
+ssh -i $ssh_key $target_user@$target_destination "nixos-generate-config"
 
 # copy the target hardware config to nix-config on the source
 scp -i $ssh_key $target_user@$target_destination:/etc/nixos/hardware-configuration.nix ../hosts/$target_hostname/hardware-configuration.nix
@@ -144,8 +144,12 @@ scp -i $ssh_key $target_user@$target_destination:/etc/nixos/hardware-configurati
 git commit -am "feat: add hardware config for $target_hostname"
 git push
 
-echo "Clone nix-config on $target_hostname"
-ssh $target_user@$target_destination -i $ssh_key "git clone https://github.com/EmergentMind/nix-config.git"
+echo "Copying nix-config on $target_hostname"
+
+# NOTE For the --filter switch, there's a space before ".gitignore", which tells rsync to do a directory merge with .gitignore files and have them exclude per git's rules.
+rsync -rv --filter=':- .gitignore' ../* $target_user@$target_destination:nix-config/
+#scp -r -i $ssh_key ../* $target_user@$target_destination:nix-config/
+#ssh $target_user@$target_destination -i $ssh_key "git clone https://github.com/EmergentMind/nix-config.git"
 
 #TODO prune all previous generations
 
