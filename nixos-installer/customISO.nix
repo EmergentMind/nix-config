@@ -1,5 +1,8 @@
-{ pkgs, lib, config, ... }: {
-
+{ pkgs, lib, config, configLib, ... }:
+let
+  pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "keys/");
+in
+{
   # The default compression-level is (6) and takes quite(>30m). 3 takes <2m
   #  isoImage.squashfsCompression = "zstd -Xcompression-level 3";
 
@@ -43,12 +46,7 @@
   users.users.root = {
     password = "nixos";
 
-    openssh.authorizedKeys.keys = [
-      (builtins.readFile ../hosts/common/users/ta/keys/id_maya.pub)
-      (builtins.readFile ../hosts/common/users/ta/keys/id_mara.pub)
-      (builtins.readFile ../hosts/common/users/ta/keys/id_manu.pub)
-      (builtins.readFile ../hosts/common/users/ta/keys/id_meek.pub)
-    ];
+    openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
   };
 
   environment.systemPackages = builtins.attrValues {

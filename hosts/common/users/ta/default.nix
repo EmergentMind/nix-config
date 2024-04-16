@@ -2,6 +2,7 @@
 let
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
   sopsHashedPasswordFile = lib.optionalString (lib.hasAttr "sops" inputs) config.sops.secrets."${configVars.username}/password".path;
+  pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "keys/");
 in
 {
   # Decrypt ta-password to /run/secrets-for-users/ so it can be used to create the user
@@ -21,12 +22,8 @@ in
       "git"
       "networkmanager"
     ];
-
-    openssh.authorizedKeys.keys = [
-      (builtins.readFile ./keys/id_maya.pub)
-      (builtins.readFile ./keys/id_mara.pub)
-      (builtins.readFile ./keys/id_manu.pub)
-    ];
+    # These get placed into /etc/ssh/authorized_keys.d/<name> on nixos
+    openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
 
     shell = pkgs.zsh; # default shell
 
