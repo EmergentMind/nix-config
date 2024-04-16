@@ -5,7 +5,7 @@
 #
 ###############################################################
 
-{ inputs, ... }: {
+{ inputs, configLib, ... }: {
   imports = [
     #################### Hardware Modules ####################
 
@@ -15,15 +15,14 @@
     inputs.hardware.nixosModules.common-pc-ssd
 
     #################### Required Configs ####################
-    #./install-config.nix # disko spec
     ./hardware-configuration.nix
-    ../common/core
+    (configLib.relativeToRoot "hosts/common/core")
 
     #################### Optional Configs ####################
-    ../common/optional/services/openssh.nix
+    (configLib.relativeToRoot "hosts/common/optional/services/openssh.nix")
 
     #################### Users to Create ####################
-    ../common/users/ta
+    (configLib.relativeToRoot "hosts/common/users/ta")
 
   ];
 

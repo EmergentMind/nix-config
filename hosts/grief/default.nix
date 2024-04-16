@@ -13,21 +13,21 @@
     inputs.hardware.nixosModules.common-pc-ssd
 
     #################### Required Configs ####################
-    ../common/core
     ./hardware-configuration.nix
+    (configLib.relativeToRoot "hosts/common/core")
 
     #################### Host-specific Optional Configs ####################
-    ../common/optional/yubikey
-    ../common/optional/services/clamav.nix # depends on optional/msmtp.nix
-    ../common/optional/msmtp.nix # required for emailing clamav alerts
-    ../common/optional/services/openssh.nix
+    (configLib.relativeToRoot "hosts/common/optional/yubikey")
+    (configLib.relativeToRoot "hosts/common/optional/services/clamav.nix") # depends on optional/msmtp.nix
+    (configLib.relativeToRoot "hosts/common/optional/msmtp.nix") # required for emailing clamav alerts
+    (configLib.relativeToRoot "hosts/common/optional/services/openssh.nix")
 
     # Desktop
-    ../common/optional/services/greetd.nix # display manager
-    ../common/optional/hyprland.nix # window manager
+    (configLib.relativeToRoot "hosts/common/optional/services/greetd.nix") # display manager
+    (configLib.relativeToRoot "hosts/common/optional/hyprland.nix") # window manager
 
     #################### Users to Create ####################
-    ../common/users/ta
+   (configLib.relativeToRoot "hosts/common/users/ta")
 
   ];
   # set custom autologin options. see greetd.nix for details
