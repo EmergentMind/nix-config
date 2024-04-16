@@ -2,7 +2,7 @@
 
 { inputs, config, ... }:
 let
-  secretspath = builtins.toString inputs.mysecrets;
+  secretsDirectory = builtins.toString inputs.nix-secrets;
 in
 {
   imports = [
@@ -10,10 +10,8 @@ in
   ];
 
   sops = {
-
-    defaultSopsFile = "${secretspath}/secrets.yaml";
+    defaultSopsFile = "${secretsDirectory}/secrets.yaml";
     validateSopsFiles = false;
-
     age = {
       # automatically import host SSH keys as age keys
       sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];

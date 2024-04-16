@@ -1,9 +1,11 @@
 # home level sops. see hosts/common/optional/sops.nix for hosts level
 # TODO should I split secrtets.yaml into a home level and a hosts level or move to a single sops.nix entirely?
 
-{ inputs, ... }:
+{ inputs, config, ... }:
 let
-  secretspath = builtins.toString inputs.mysecrets;
+  secretsDirectory = builtins.toString inputs.nix-secrets;
+  secretsFile = "${secretsDirectory}/secrets.yaml";
+  homeDirectory = config.home.homeDirectory;
 in
 {
   imports = [
@@ -11,33 +13,27 @@ in
   ];
 
   sops = {
-    # gnupg = {
-    #   home = "/var/lib/sops";
-    #   sshKeyPaths = [ ];
-    # }
-
     # This is the ta/dev key and needs to have been copied to this location on the host
-    age.keyFile = "/home/ta/.config/sops/age/keys.txt";
+    age.keyFile = "${homeDirectory}/.config/sops/age/keys.txt";
 
-    defaultSopsFile = "${secretspath}/secrets.yaml";
-    #    defaultSopsFile = ../../../../hosts/common/secrets.yaml;
+    defaultSopsFile = "${secretsFile}";
     validateSopsFiles = false;
 
     secrets = {
       "private_keys/maya" = {
-        path = "/home/ta/.ssh/id_maya";
+        path = "${homeDirectory}/.ssh/id_maya";
       };
       "private_keys/mara" = {
-        path = "/home/ta/.ssh/id_mara";
+        path = "${homeDirectory}/.ssh/id_mara";
       };
       "private_keys/manu" = {
-        path = "/home/ta/.ssh/id_manu";
+        path = "${homeDirectory}/.ssh/id_manu";
       };
       "private_keys/mila" = {
-        path = "/home/ta/.ssh/id_mila";
+        path = "${homeDirectory}/.ssh/id_mila";
       };
       "private_keys/meek" = {
-        path = "/home/ta/.ssh/id_meek";
+        path = "${homeDirectory}/.ssh/id_meek";
       };
     };
   };

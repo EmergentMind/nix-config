@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, config, outputs, ... }:
+{ configVars, ... }:
 {
   imports = [
     #################### Required Configs ####################
@@ -7,4 +7,9 @@
     #################### Host-specific Optional Configs ####################
 
   ];
+
+  home = {
+    username = configVars.username;
+    homeDirectory = "/home/${configVars.username}";
+  };
 }

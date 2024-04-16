@@ -1,4 +1,4 @@
-{ inputs, lib, pkgs, config, outputs, ... }:
+{ configVars, ... }:
 {
   imports = [
     #################### Required Configs ####################
@@ -11,4 +11,9 @@
     common/optional/desktops/gtk.nix
     common/optional/browsers/brave.nix # for testing against 'media' user
   ];
+
+  home = {
+    username = configVars.username;
+    homeDirectory = "/home/${configVars.username}";
+  };
 }

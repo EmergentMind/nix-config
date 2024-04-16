@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, configVars, ... }:
 let
 
 in
@@ -19,6 +19,11 @@ in
 
 
   ];
+
+  home = {
+    username = configVars.username;
+    homeDirectory = "/home/${configVars.username}";
+  };
   # Disable impermanence
   #home.persistence = lib.mkForce { };
 }
