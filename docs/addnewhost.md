@@ -283,11 +283,11 @@ These steps assume:
 27. Since we've updated nix-secrets, we'll have to update the flake lock file to ensure that the latest revision is retrieved.
 
     ```bash
-    $ nix flake lock --update-input mysecrets
+    $ nix flake lock --update-input nix-secrets
     warning: Git tree '/home/ta/src/nix-config' is dirty
     Enter passphrase for key '/home/ta/.ssh/id_manu':
     warning: updating lock file '/home/ta/src/nix-config/flake.lock':
-    • Updated input 'mysecrets':
+    • Updated input 'nix-secrets':
      'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=aa0165aff5f74d367b523cc27dbd028b0251c30d&shallow=1' (2024-02-09)
     → 'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=2ef287a53f19be75a4ff1f5ba28595686d4b5cbb&shallow=1' (2024-02-13)
     warning: Git tree '/home/ta/src/nix-config' is dirty

@@ -128,7 +128,7 @@ From the source machine, copy the ssh pub key you will use for installation and 
    7. Back up the keys and age key to a secure database if required.
    8. Delete the keys from the source machine
       `rm ssh_host_ed25519_key*`
-   9. From the nix-config repo on the source machine, be sure to run `nix flake lock --update-input mysecrets` to ensure the latest revisions of nix-secrets is used next time a rebuild occurs.
+   9. From the nix-config repo on the source machine, be sure to run `nix flake lock --update-input nix-secrets` to ensure the latest revisions of nix-secrets is used next time a rebuild occurs.
    10. Edit the source machine's `~/.ssh/known_hosts` file to remove the entries for the target machine's ip. We need to do this because new host keys will cause a mismatch the next time we remote into the target.
 
 9. If you will be installing the lightweight test config, navigate to nixos-installer directory. Ortherwise, stay at the root fo the nix-config repo.
