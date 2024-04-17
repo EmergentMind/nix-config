@@ -3,7 +3,6 @@ let
   pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "keys/");
 in
 {
-
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -13,7 +12,7 @@ in
   services.openssh.settings.PermitRootLogin = "yes";
 
   #FIXME this gets worse with every additional yubikey. eventually overhaul this config to leverage existing user configs similar to fidgetingbits
-  programs.ssh.extraConfig = "Host gitlab.com\n  IdentitiesOnly yes\n  IdentityFile ~/.ssh/id_maya\n  IdentityFile ~/.ssh/id_mara\n  IdentityFile ~/.ssh/id_manu ~/.ssh/id_meek ~/.ssh/id_mila";
+  programs.ssh.extraConfig = "Host gitlab.com\n  IdentitiesOnly yes\n  IdentityFile ~/.ssh/id_manu\n  IdentityFile ~/.ssh/id_mara\n  IdentityFile ~/.ssh/id_maya\n  IdentityFile ~/.ssh/id_meek\n  IdentityFile ~/.ssh/id_mila";
 
    # ssh-agent is used to pull my private secrets repo from gitlab when deploying nix-config.
   programs.ssh.startAgent = true;

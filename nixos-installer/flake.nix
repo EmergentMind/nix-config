@@ -16,7 +16,13 @@
     };
   };
 
-  outputs = { nixpkgs, disko, ... }@inputs: {
+  outputs = { nixpkgs, disko, ... }@inputs:
+  let
+    inherit (nixpkgs) lib;
+    configLib = import ../lib { inherit lib; };
+    specialArgs = { inherit inputs configLib; };
+  in
+  {
     nixosConfigurations = {
       #################### NixOS Installer Images ####################
       #
@@ -24,7 +30,7 @@
       #
       # Generated images will be output to ./results
       iso = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        inherit specialArgs;
         modules = [
           "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
           "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
@@ -38,6 +44,7 @@
       #
       guppy = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+        inherit specialArgs;
         modules = [
           disko.nixosModules.disko
           ./configuration.nix

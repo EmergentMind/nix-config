@@ -24,7 +24,7 @@
   - ~~lab testing~~
   - ~~add msmtp email and host to secrets~~
   - refinement and confirmation testing
-    - modify install config to better represent something useful
+    - ~~modify install config to better represent something useful~~
     - ~~test on guppy as part of full config~~ This won't work because the process doesn't install the config-src on target and hence, home-manager can't be built after installation. An intermediary, lightweight flake will be required for install, followed by cloning src to target and building full config from there.
     - automation scripts
   - implement across hosts
@@ -37,7 +37,7 @@
   - ~~storyboard~~
   - ~~assets~~
   - ~~recording~~
-  - production
+  - ~~production~~
 
 - New tools to integrate
   - ~~zoxide~~
@@ -97,19 +97,9 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - nixos-anywhere
 - declarative partitioning and formatting via disko
 - light-weight bootstrap flake for basic install, pre-secrets install
-- custom iso generation?
+- custom iso generation
 
-##### 3.2 automate config deployment
-
-- Per host branch scheme
-- Automated machine update on branch release
-
-##### 3.3 reduce duplication and modularize
-
-- Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
-- Re-implement modules to make use of options for enablement
-
-##### 3.4 impermanence
+##### 3.2 impermanence
 
 - declare what needs to persist
 - enable impermance
@@ -119,10 +109,20 @@ Introduce declarative partitioning, custom iso generation, automated machine set
   !! Some of this needs heavy assessment and consideration given the assumed reliance on theoretical tooling like flake-parts, which is a tangential extension of flakes (which is in fact _still_ experimental)
   If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
 
-##### 3.5
+##### 3.3 reduce duplication and modularize
+
+- Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
+- Re-implement modules to make use of options for enablement
+
+##### 3.4
 
 - Migrate bash scripts (see refs below)
 - Overhaul just file
+
+##### 3.5 automate config deployment
+
+- Per host branch scheme
+- Automated machine update on branch release
 
 ##### 3.x Extras
 

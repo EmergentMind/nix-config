@@ -53,6 +53,9 @@ while [[ $# -gt 0 ]]; do
 	-p=*)
 		remote_passwd="${1#-p=}"
 		;;
+	--debug)
+		set -x
+		;;
 	-h | --help) help_and_exit ;;
 	*)
 		echo "Invalid option detected."
@@ -63,15 +66,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate required options
-if [ -z "${target_hostname}" ] || [ -z "${target_destination}" || [ -z "${ssh_key}" ]; then
+if [ -z "${target_hostname}" ] || [ -z "${target_destination}" ] || [ -z "${ssh_key}" ]; then
 	echo "Error: -n -d and -k are required"
 	help_and_exit
 fi
-
-echo "Installing NixOS on remote host $target_hostname at $target_destination"
-
-echo "Adding installer ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
-ssh-keyscan $target_destination >>~/.ssh/known_hosts
 
 echo "Preparing a new ssh_host_ed25519_key pair for $target_hostname."
 # Create the directory where sshd expects to find the host keys
@@ -84,7 +82,6 @@ ssh-keygen -t ed25519 -f $temp/etc/ssh/ssh_host_ed25519_key -C $target_user@$tar
 chmod 600 "$temp/etc/ssh/ssh_host_ed25519_key"
 
 echo "Generating an age key based on the new ssh_host_ed25519_key."
-
 age_key=$(nix-shell -p ssh-to-age --run "cat $temp/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age")
 
 if grep -qv '^age1' <<<"$age_key"; then
@@ -96,64 +93,67 @@ else
 	echo "$age_key"
 fi
 
+echo "Installing NixOS on remote host $target_hostname at $target_destination"
+# We don't want to use $target_user here because the iso only provides a root user
+#SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake .#$target_hostname root@$target_destination -i $ssh_key --ssh-option "UserKnownHostsFile=/dev/null"
+SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --extra-files "$temp" --flake .#$target_hostname $target_user@$target_destination -i $ssh_key --ssh-option "UserKnownHostsFile=/dev/null"
+
+echo "Connect to $target_destination and generate a hardware config based on the work declared by disko"
+ssh -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $target_user@$target_destination "nixos-generate-config"
+
+echo "Copy the target hardware config to nix-config on the source"
+scp -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $target_user@$target_destination:/etc/nixos/hardware-configuration.nix ../hosts/$target_hostname/hardware-configuration.nix
+
+echo "Copying nix-config on $target_hostname"
+# NOTE For the --filter switch, there's a space before ".gitignore", which tells rsync to do a directory merge with .gitignore files and have them exclude per git's rules.
+rsync -av -e "ssh -l root -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --filter=':- .gitignore' ../* $target_user@$target_destination:nix-config/
+
 echo "Updating nix-secrets/.sops.yaml"
+#cd ../../nix-secrets
 
-# The spacing here MUST match that of the .sops.yaml file you are formatting.
-sops_str1="\    - &$target_hostname $age_key"
-sops_str2="\          - *$target_hostname"
-
-sed -i "/&hosts:/ a\
-$sops_str1" ../../nix-secrets/.sops.yaml
-
-sed -i "/age:/ a\
-$sops_str2" ../../nix-secrets/.sops.yaml
+SOPS_FILE="../../nix-secrets/.sops.yaml"
+sed -i "{
+	# Remove any * and & entries for this host
+	/[*&]$target_hostname/ d;
+	# Inject a new age: entry
+	# n matches the first line following age: and p prints it, then we transform it while reusing the spacing
+	/age:/{n; p; s/\(.*- \*\).*/\1$target_hostname/};
+	# Inject a new hosts: entry
+	/&hosts:/{n; p; s/\(.*- &\).*/\1$target_hostname $age_key/}
+	}" $SOPS_FILE
 
 echo "Updating nix-secrets/.sops.yaml"
-sops --config ../../nix-secrets/.sops.yaml updatekeys -y ../../nix-secrets/secrets.yaml
+sops --config $SOPS_FILE updatekeys -y ../../nix-secrets/secrets.yaml
 
 echo "Pushing new host key to secrets"
 cd ../../nix-secrets
+
 git commit -am "feat: added key for $target_hostname"
 git push
 
 echo "Updating flake lock on source machine with new .sops.yaml info"
 cd ../nix-config
-nix flake lock --update-input mysecrets
-
-## clear the existing host entry for the target to prevent mismatch between the default keys and the new host keys we generated
-cd nixos-installer
-sed -i "/$target_destination/ d" ~/.ssh/known_hosts
-
-# Execute installation
-# nixos-anywhere --extra-files "$temp" --flake '.#your-host' root@yourip
-#SHELL=/bin/sh nix run github:nix-community/nixos-anywhere --\
-#--flake .#$target_hostname \
-#root@$target_destination
-
-SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --flake .#$target_hostname $target_user@$target_destination -i $ssh_key
+nix flake lock --update-input nix-secrets
 
 echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 ssh-keyscan $target_destination >>~/.ssh/known_hosts
 
-# connect to the new install and generate a hardware config based on the work declared by disko
-ssh -i $ssh_key $target_user@$target_destination "nixos-generate-config"
-
-# copy the target hardware config to nix-config on the source
-scp -i $ssh_key $target_user@$target_destination:/etc/nixos/hardware-configuration.nix ../hosts/$target_hostname/hardware-configuration.nix
-
-git commit -am "feat: add hardware config for $target_hostname"
-git push
-
-echo "Copying nix-config on $target_hostname"
-
-# NOTE For the --filter switch, there's a space before ".gitignore", which tells rsync to do a directory merge with .gitignore files and have them exclude per git's rules.
-rsync -rv --filter=':- .gitignore' ../* $target_user@$target_destination:nix-config/
-#scp -r -i $ssh_key ../* $target_user@$target_destination:nix-config/
-#ssh $target_user@$target_destination -i $ssh_key "git clone https://github.com/EmergentMind/nix-config.git"
-
 #TODO prune all previous generations
+
+#git commit -am "feat: add hardware config for $target_hostname"
+#git push
 
 echo ""
 echo "NixOS installed and nix-config cloned."
-echo "Sign into $target_hostname and run the following command from ~/nix-config"
-echo "sudo nixos-rebuild switch --flake .#target_hostname"
+echo ""
+echo "Preparing for nix-secrets input"
+scp -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /home/ta/.ssh/id_manu* $target_user@$target_destination:.ssh/
+
+echo "Adding gitlab.com fingerprint"
+ssh -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $target_user@$target_destination "ssh-keyscan gitlab.com >>~/.ssh/known_hosts"
+
+# Need to build manually until I'm running nix on ghost or genoa because agent forwarding isn't setup
+echo -e "Prepped for rebuild\n\nssh into the box and run 'nixos-rebuild switch --flake nix-config/#<hostname>"
+
+#echo "Building nix-config"
+#ssh -i $ssh_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $target_user@$target_destination "nixos-rebuild switch --flake nix-config/#$target_hostname"
