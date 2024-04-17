@@ -3,9 +3,15 @@
   programs.ssh = {
     enable = true;
 
+    extraConfig = ''
+      #req'd for enabling yubikey-agent
+      AddKeysToAgent yes
+    '';
+
     matchBlocks = {
       "yubikey-hosts" = {
         host = "gitlab.com github.com";
+        forwardAgent = true;
         identitiesOnly = true;
         identityFile = [
           "~/.ssh/id_yubikey" # This is an auto symlink to whatever yubikey is plugged in. See hosts/common/optional/yubikey

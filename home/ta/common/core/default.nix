@@ -18,8 +18,9 @@
 
     # TODO: Not set, need to investigate but will need custom config if used:
     # ./shellcolor.nix
-
   ] ++ (builtins.attrValues outputs.homeManagerModules);
+
+  services.ssh-agent.enable = true;
 
   home = {
     username = lib.mkDefault "ta";

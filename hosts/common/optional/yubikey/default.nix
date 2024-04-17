@@ -19,7 +19,6 @@ in
 with pkgs;  #FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
 {
   environment.systemPackages = [
-    gnupg
     # yubikey-personalization
     # Yubico's official tools
     #    yubikey-manager
@@ -51,7 +50,6 @@ with pkgs;  #FIXME needs to be refactored according to best practices but not su
   '';
 
   # FIXME: Need to create symlinks to the sops-decrypted keys
-  #
 
   # enable pam services to allow u2f auth for login and sudo
   security.pam.services = {
@@ -59,22 +57,7 @@ with pkgs;  #FIXME needs to be refactored according to best practices but not su
     sudo.u2fAuth = true;
   };
 
-  # enable pam.u2f
-  # u2f_keys are extracted from secrets.yaml to default `~/.config/Yubico/u2f_keys` location via ../../core/sops.nix
-
-  #FIXME /etc/pam.d/sudo is being written but there is other stuff in there with higher order that may be interfering. Also doesn't seem that this will work over ssh either so may have to wait.
-  security.pam.u2f = {
-    enable = true;
-    control = "sufficient";
-    cue = true; # A reminder message will be displayed prompting user to use u2f device
-
-    # override defaults `pam://$HOSTNAME` so that they match the keys and work across hosts
-    origin = "pam://hostname";
-    appId = "pam://hostname";
-  };
-
-  # Yubikey required services and config. See Dr. Duh NixOS config for
-  # reference
+  # Yubikey required services and config. See Dr. Duh NixOS config for reference
   services.pcscd.enable = true; # smartcard service
 
   services.udev.packages = [
