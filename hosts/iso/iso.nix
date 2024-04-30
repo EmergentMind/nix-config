@@ -1,6 +1,6 @@
 { pkgs, lib, config, configLib, ... }:
 let
-  pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "keys/");
+  pubKeys = lib.filesystem.listFilesRecursive (../common/users/ta/keys);
 in
 {
   # The default compression-level is (6) and takes quite(>30m). 3 takes <2m

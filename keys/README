@@ -1,1 +1,0 @@
-Pub keys are located at the root of nix-config so I don't have to deep dive for them in hosts/common/<users>/keys when adding them to authorized keys in various modules. In particular nixos-installer.

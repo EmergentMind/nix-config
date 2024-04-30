@@ -1,8 +1,10 @@
 { modulesPath, config, lib, pkgs, configLib, ... }:
 let
-  pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "keys/");
+  #FIXME use dynamic username
+  pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "hosts/common/users/ta/keys/");
 in
 {
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
