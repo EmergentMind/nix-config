@@ -15,9 +15,6 @@ in
 #??     packages = [ pkgs.home-manager ];
     home-manager.users.${configVars.primaryUser} = import (configLib.relativeToRoot "home/${configVars.primaryUser}/${config.networking.hostName}.nix");
   } // {
-    # Decrypt ta-password to /run/secrets-for-users/ so it can be used to create the user
-    sops.secrets."${configVars.primaryUser}/password".neededForUsers = true;
-
     users.mutableUsers = false; # Required for password to be set via sops during system activation!
     users.users.${configVars.primaryUser} = {
       isNormalUser = true;

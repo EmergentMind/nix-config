@@ -12,6 +12,7 @@ in
   sops = {
     defaultSopsFile = "${secretsDirectory}/secrets.yaml";
     validateSopsFiles = false;
+
     age = {
       # automatically import host SSH keys as age keys
       sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
@@ -26,6 +27,10 @@ in
     # secrets required for user creation are handled in respective ./users/<username>.nix files
     # because they will be output to /run/secrets-for-users and only when the user is assigned to a host.
     secrets = {
+      # Decrypt ta-password to /run/secrets-for-users/ so it can be used to create the user
+      "${configVars.primaryUser}/password".neededForUsers = true;
+
+#FIXME move to mstmp.nix and also have host and address being assigne to configVars as per fidgetingbits
       msmtp-host = { };
       msmtp-address = { };
       msmtp-password = { };
