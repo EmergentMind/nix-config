@@ -13,6 +13,7 @@ in
     name = configVars.username;
     isNormalUser = true;
     hashedPasswordFile = sopsHashedPasswordFile;
+    password = "nixos"; # This gets overridden if sops is working
     extraGroups = [
       "wheel"
     ] ++ ifTheyExist [
@@ -22,6 +23,7 @@ in
       "git"
       "networkmanager"
     ];
+
     # These get placed into /etc/ssh/authorized_keys.d/<name> on nixos
     openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
 
@@ -33,4 +35,11 @@ in
   # Import this user's personal/home configurations
   home-manager.users.${configVars.username} = import (configLib.relativeToRoot "home/${configVars.username}/${config.networking.hostName}.nix");
 
+  # proper root use required for borg and some other specific operations
+  users.users.root = {
+    hashedPasswordFile = config.users.users.${configVars.username}.hashedPasswordFile;
+    password = lib.mkForce config.users.users.${configVars.username}.password;
+    # root's ssh keys are mainly used for remote deployment.
+    openssh.authorizedKeys.keys = config.users.users.${configVars.username}.openssh.authorizedKeys.keys;
+  };
 }
