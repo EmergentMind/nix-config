@@ -1,39 +1,52 @@
 { modulesPath, config, lib, pkgs, configLib, ... }:
-let
-  #FIXME use dynamic username
-  pubKeys = lib.filesystem.listFilesRecursive (configLib.relativeToRoot "hosts/common/users/ta/keys/");
-in
 {
+  imports = [ ../hosts/common/users/ta ];
 
-  boot.loader.systemd-boot.enable = true;
+  fileSystems."/boot".options = ["umask=0077"]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot = {
+    enable = true;
+    # we use Git for version control, so we don't need to keep too many generations.
+    # FIXME  lower this even more after testing complete
+    configurationLimit = lib.mkDefault 10;
+    # pick the highest resolution for systemd-boot's console.
+    consoleMode = lib.mkDefault "max";
+  };
+  boot.initrd.systemd.enable = true;
 
-  virtualisation.virtualbox.guest.enable = true;
+  networking = {
+    # configures the network interface(include wireless) via `nmcli` & `nmtui`
+    networkmanager.enable = true;
+  };
 
-  services.openssh.enable = true;
-  services.openssh.settings.PermitRootLogin = "yes";
+  services.openssh = {
+    enable = true;
+    ports = [22]; # FIXME: Change this to use configVars.networking eventually
+    settings = {
+      PermitRootLogin = "yes";
+    };
+  };
 
-  #FIXME this gets worse with every additional yubikey. eventually overhaul this config to leverage existing user configs similar to fidgetingbits
-  programs.ssh.extraConfig = "Host gitlab.com\n  IdentitiesOnly yes\n  IdentityFile ~/.ssh/id_manu\n  IdentityFile ~/.ssh/id_mara\n  IdentityFile ~/.ssh/id_maya\n  IdentityFile ~/.ssh/id_meek\n  IdentityFile ~/.ssh/id_mila";
-
-   # ssh-agent is used to pull my private secrets repo from gitlab when deploying nix-config.
+  # ssh-agent is used to pull my private secrets repo from gitlab when deploying nix-config.
   programs.ssh.startAgent = true;
+
+  # yubikey login / sudo
+  security.pam = {
+    enableSSHAgentAuth = true;
+    services = {
+      sudo.u2fAuth = true;
+    };
+  };
 
   environment.systemPackages = builtins.attrValues {
     inherit(pkgs)
     wget
     curl
     rsync
-    gitMinimal;
   };
 
-  users.users.root = {
-    password = "nixos";
+  virtualisation.virtualbox.guest.enable = true;
 
-    # These get placed into /etc/ssh/authorized_keys.d/<name> on nixos
-    openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
-  };
-
-  system.stateVersion = "23.11";
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  system.stateVersion = "23.11";
 }

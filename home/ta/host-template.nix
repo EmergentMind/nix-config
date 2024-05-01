@@ -21,8 +21,8 @@ in
   ];
 
   home = {
-    username = configVars.username;
-    homeDirectory = "/home/${configVars.username}";
+    username = configVars.primaryUser;
+    homeDirectory = "/home/${configVars.primaryUser}";
   };
   # Disable impermanence
   #home.persistence = lib.mkForce { };
