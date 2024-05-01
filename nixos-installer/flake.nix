@@ -5,9 +5,6 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     # Declarative partitioning and formatting
     disko.url = "github:nix-community/disko";
-    # Image and iso generator
-    nixos-generators.url = "github:nix-community/nixos-generators";
-    };
   };
 
   outputs = { self, nixpkgs, disko, ... }@inputs:
@@ -27,24 +24,6 @@
   in
   {
     nixosConfigurations = {
-      #################### NixOS Installer Images ####################
-      #
-      # Available through `nix build .#nixosConfigurations.[targetConfig].config.system.build.isoImage`
-      # Generated images will be output to ./results
-      #
-      iso = nixpkgs.lib.nixosSystem {
-        inherit specialArgs;
-        modules = [
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-          ../hosts/iso
-        ];
-      };
-
-      #################### Target Hosts ####################
-      #
-      # Installer test lab
-      #
       guppy = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = minimalSpecialArgs;

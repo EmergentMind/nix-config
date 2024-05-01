@@ -22,7 +22,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-
     # Secrets management. See ./docs/secretsmgmt.md
     sops-nix = {
       url = "github:mic92/sops-nix";
@@ -101,8 +100,40 @@
     #
     # Building configurations available through `just rebuild` or `nixos-rebuild --flake .#hostname`
 
-    nixosConfigurations = {
-      # devlab
+    nixosConfigurations = let
+      isoConfigVars = lib.recursiveUpdate configVars {
+        username = "nixos";
+      };
+      isoSpecialArgs = {
+        inherit inputs outputs configLib;
+        configVars = isoConfigVars;
+      };
+    in {
+      # Custom ISO
+      #
+      # `just iso` - to generate the iso standalon
+      # 'just iso-install <drive>` - to generate and copy directly to USB drive
+      # `nix build .#nixosConfigurations.iso.config.system.build.isoImage`
+      #
+      # Generated images will be output to ./results unless drive is specified
+      iso = let
+        hostVars = {hostName = "iso";};
+        hostSpecialArgs = isoSpecialArgs // {inherit hostVars;};
+      in
+        lib.nixosSystem {
+          specialArgs = hostSpecialArgs;
+          modules = [
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = hostSpecialArgs;
+            }
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+            "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+            ./hosts/iso
+          ];
+        };
+
+      # VirtualBox devlab
       grief = lib.nixosSystem {
         inherit specialArgs;
         modules = [
@@ -112,7 +143,7 @@
           ./hosts/grief
         ];
       };
-      # remote install lab
+      # VirtualBox deployment test lab
       guppy = lib.nixosSystem {
         inherit specialArgs;
         modules = [
@@ -122,7 +153,7 @@
           ./hosts/guppy
         ];
       };
-      # theatre
+      # Theatre - ASUS VivoPC VM40B-S081M
       gusto = lib.nixosSystem {
         inherit specialArgs;
         modules = [
