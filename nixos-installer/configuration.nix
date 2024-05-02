@@ -32,7 +32,7 @@
 
   # yubikey login / sudo
   security.pam = {
-    enableSSHAgentAuth = true;
+    sshAgentAuth.enable = true;
     services = {
       sudo.u2fAuth = true;
     };
