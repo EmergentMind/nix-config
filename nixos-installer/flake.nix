@@ -17,7 +17,7 @@
     minimalConfigVars = lib.recursiveUpdate configVars {
       isMinimal = true;
     };
-    minimalSpecialArgas = {
+    minimalSpecialArgs = {
       inherit inputs outputs configLib;
       configVars = minimalConfigVars;
     };
@@ -31,7 +31,7 @@
           disko.nixosModules.disko
           ../hosts/common/disks/std-disk-config.nix
           ./configuration.nix
-          ../hosts/common/guppy/hardware-configuration.nix
+          ../hosts/guppy/hardware-configuration.nix
         ];
       };
     };

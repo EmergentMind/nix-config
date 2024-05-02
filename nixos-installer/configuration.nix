@@ -1,4 +1,4 @@
-{ modulesPath, config, lib, pkgs, configLib, ... }:
+{  lib, pkgs, ... }:
 {
   imports = [ ../hosts/common/users/ta ];
 
@@ -42,7 +42,7 @@
     inherit(pkgs)
     wget
     curl
-    rsync
+    rsync;
   };
 
   virtualisation.virtualbox.guest.enable = true;
