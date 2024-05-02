@@ -28,7 +28,7 @@ in
     # because they will be output to /run/secrets-for-users and only when the user is assigned to a host.
     secrets = {
       # Decrypt ta-password to /run/secrets-for-users/ so it can be used to create the user
-      "${configVars.primaryUser}/password".neededForUsers = true;
+      "${configVars.username}/password".neededForUsers = true;
 
 #FIXME move to mstmp.nix and also have host and address being assigne to configVars as per fidgetingbits
       msmtp-host = { };

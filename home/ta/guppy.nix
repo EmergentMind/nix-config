@@ -11,7 +11,7 @@
   services.yubikey-touch-detector.enable = true;
 
   home = {
-    username = configVars.primaryUser;
-    homeDirectory = "/home/${configVars.primaryUser}";
+    username = configVars.username;
+    homeDirectory = "/home/${configVars.username}";
   };
 }

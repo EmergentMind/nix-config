@@ -2,7 +2,7 @@
 {
   # FIXME: We will want to override the username probably
   imports = [
-    (configLib.relativeToRoot "hosts/common/users/${configVars.primaryUser}")
+    (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
   ];
 
   # The default compression-level is (6) and takes too long on some machines (>30m). 3 takes <2m
@@ -47,20 +47,19 @@
     };
   };
 
-  # FIXME This should come from users/ta/nixos.nix, but it uses sops which I don't want to use for iso
-  # TODO switch ta to configVars
-  users.users.${configVars.primaryUser} = {
-    isNormalUser = true;
+ # # FIXME This should come from users/ta/nixos.nix, but it uses sops which I don't want to use for iso
+  #users.users.${configVars.username} = {
+    #isNormalUser = true;
 
-    hashedPassword = "";
-    extraGroups = [ "wheel" ];
-  };
+    #hashedPassword = "";
+    #extraGroups = [ "wheel" ];
+  #};
 
-  # root's ssh key are mainly used for remote deployment
-  users.extraUsers.root = {
-    inherit (config.users.users.${configVars.primaryUser}) hashedPassword;
-    openssh.authorizedKeys.keys = config.users.users.${configVars.primaryUser}.openssh.authorizedKeys.keys;
-  };
+  ## root's ssh key are mainly used for remote deployment
+  #users.extraUsers.root = {
+    #inherit (config.users.users.${configVars.username}) hashedPassword;
+    #openssh.authorizedKeys.keys = config.users.users.${configVars.username}.openssh.authorizedKeys.keys;
+  #};
 
   #environment.systemPackages = builtins.attrValues {
     #inherit (pkgs)

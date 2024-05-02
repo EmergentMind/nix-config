@@ -1,6 +1,6 @@
 { inputs, lib }:
 {
-  primaryuser = "ta";
+  username = "ta";
   domain = inputs.nix-secrets.domain;
   userFullName = inputs.nix-secrets.full-name;
   handle = "emergentmind";

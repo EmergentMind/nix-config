@@ -2,16 +2,16 @@
 {
   sops.secrets = {
     "msmtp-password" = {
-      owner = config.users.users.${configVars.primaryUser}.name;
-      inherit (config.users.users.${configVars.primaryUser}) group;
+      owner = config.users.users.${configVars.username}.name;
+      inherit (config.users.users.${configVars.username}) group;
     };
     "msmtp-host" = {
-      owner = config.users.users.${configVars.primaryUser}.name;
-      inherit (config.users.users.${configVars.primaryUser}) group;
+      owner = config.users.users.${configVars.username}.name;
+      inherit (config.users.users.${configVars.username}) group;
     };
     "msmtp-address" = {
-      owner = config.users.users.${configVars.primaryUser}.name;
-      inherit (config.users.users.${configVars.primaryUser}) group;
+      owner = config.users.users.${configVars.username}.name;
+      inherit (config.users.users.${configVars.username}) group;
     };
   };
 
