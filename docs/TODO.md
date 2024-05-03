@@ -26,10 +26,14 @@
   - refinement and confirmation testing
     - ~~modify install config to better represent something useful~~
     - ~~test on guppy as part of full config~~ This won't work because the process doesn't install the config-src on target and hence, home-manager can't be built after installation. An intermediary, lightweight flake will be required for install, followed by cloning src to target and building full config from there.
-    - automation scripts
+    - ~~automation scripts~~
+    - final testing
   - implement across hosts
   - docs
     - link installer docs to main readme
+
+- ~~go back to keys stored under host/common/<user>~~
+- ~~Revise nixos-installer configuration.nix to match figitingbits more heavily~~
 
 - Next video
 
@@ -38,6 +42,7 @@
   - ~~assets~~
   - ~~recording~~
   - ~~production~~
+
 
 - New tools to integrate
   - ~~zoxide~~
@@ -126,8 +131,10 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.x Extras
 
+- move to alejandra / deadnix isntead of nix-fmt ... may want to wait for whatever the official one ends up being but I dont' like the look of many nix-fmt rules
+- update sops to make use of per host age keys for home-manager level secrets
 - automatic scheduled sops rotate
-- maybe rename pkgs -> custom_pkgs and modules -> custom_modules  meh?
+- don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~
 - Enable git signing in home/ta/common/core/git.nix using nix-secrets
 - Investigate outstanding yubikey FIXMEs
 - Potentially yubiauth and u2f for passwordless sudo
