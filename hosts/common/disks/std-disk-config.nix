@@ -44,7 +44,7 @@
                   "/swap" = {
                     mountOptions = [ "noatime" ];
                     mountpoint = "/.swapvol";
-                    swap.swapfile.size = "8196M";
+                    swap.swapfile.size = "8192M";
                   };
                 };
               };
