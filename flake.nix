@@ -83,6 +83,7 @@
         in import ./pkgs { inherit pkgs; }
       );
 
+    # TODO change this to something that has better looking output rules
     # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
     formatter = forAllSystems
       (system:
@@ -102,37 +103,13 @@
 
     nixosConfigurations = let
       isoConfigVars = lib.recursiveUpdate configVars {
-        username = "nixos";
+        isMinimal = true;
       };
       isoSpecialArgs = {
         inherit inputs outputs configLib;
         configVars = isoConfigVars;
       };
     in {
-      # Custom ISO
-      #
-      # `just iso` - to generate the iso standalon
-      # 'just iso-install <drive>` - to generate and copy directly to USB drive
-      # `nix build .#nixosConfigurations.iso.config.system.build.isoImage`
-      #
-      # Generated images will be output to ./results unless drive is specified
-      iso = let
-        hostVars = {hostName = "iso";};
-        hostSpecialArgs = isoSpecialArgs // {inherit hostVars;};
-      in
-        lib.nixosSystem {
-          specialArgs = hostSpecialArgs;
-          modules = [
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.extraSpecialArgs = hostSpecialArgs;
-            }
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
-            "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
-            ./hosts/iso
-          ];
-        };
-
       # VirtualBox devlab
       grief = lib.nixosSystem {
         inherit specialArgs;
@@ -161,6 +138,29 @@
             home-manager.extraSpecialArgs = specialArgs;
           }
           ./hosts/gusto
+        ];
+      };
+
+      # Custom ISO
+      #
+      # `just iso` - to generate the iso standalon
+      # 'just iso-install <drive>` - to generate and copy directly to USB drive
+      # `nix build .#nixosConfigurations.iso.config.system.build.isoImage`
+      #
+      # Generated images will be output to ./results unless drive is specified
+      iso = let
+        hostVars = {hostName = "iso";};
+        hostSpecialArgs = isoSpecialArgs // {inherit hostVars;};
+      in lib.nixosSystem {
+        specialArgs = hostSpecialArgs;
+        modules = [
+          #home-manager.nixosModules.home-manager
+          #{
+            #home-manager.extraSpecialArgs = hostSpecialArgs;
+          #}
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix"
+          "${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix"
+          ./hosts/iso
         ];
       };
     };

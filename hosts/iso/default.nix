@@ -1,6 +1,5 @@
 { pkgs, lib, config, configLib, configVars, ... }:
 {
-  # FIXME: We will want to override the username probably
   imports = [
     (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
   ];
@@ -20,7 +19,6 @@
   };
 
   services = {
-#    qemuGuest.enable = true;
     openssh = {
       ports = [22]; # FIXME: Make this use configVars.networking
       settings.PermitRootLogin = lib.mkForce "yes";
@@ -46,23 +44,4 @@
       hybrid-sleep.enable = false;
     };
   };
-
- # # FIXME This should come from users/ta/nixos.nix, but it uses sops which I don't want to use for iso
-  #users.users.${configVars.username} = {
-    #isNormalUser = true;
-
-    #hashedPassword = "";
-    #extraGroups = [ "wheel" ];
-  #};
-
-  ## root's ssh key are mainly used for remote deployment
-  #users.extraUsers.root = {
-    #inherit (config.users.users.${configVars.username}) hashedPassword;
-    #openssh.authorizedKeys.keys = config.users.users.${configVars.username}.openssh.authorizedKeys.keys;
-  #};
-
-  #environment.systemPackages = builtins.attrValues {
-    #inherit (pkgs)
-      #rsync;
-  #};
 }

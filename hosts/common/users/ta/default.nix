@@ -5,8 +5,8 @@ let
   pubKeys = lib.filesystem.listFilesRecursive (./keys);
 in
 {
-  # isMinimal is true during nixos-installer boostrapping (see /nixos-installer/flake.nix) where we want
-  # to limit the depth of user configuration
+  # isMinimal is typically true during nixos-installer boostrapping (see /nixos-installer/flake.nix) and for
+  # iso where we want to limit the depth of user configuration
   # FIXME  this should just pass an isIso style thing that we can check instead
   config = lib.optionalAttrs (!(lib.hasAttr "isMinimal" configVars))
   {

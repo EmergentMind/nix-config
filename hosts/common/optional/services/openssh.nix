@@ -6,7 +6,6 @@ let
 
   # Sops needs access to the keys before the persist dirs are even mounted; so
   # just persisting the keys won't work, we must point at /persist
-  # hasOptinPersistence = config.environment.persistence ? "/persist";
   hasOptinPersistence = false;
 in
 
@@ -14,14 +13,15 @@ in
   services.openssh = {
     enable = true;
     ports = [ sshPort ];
+    # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
+    authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
+
     settings = {
       # Harden
       PasswordAuthentication = false;
       PermitRootLogin = "no";
-
       # Automatically remove stale sockets
       StreamLocalBindUnlink = "yes";
-
       # Allow forwarding ports to everywhere
       GatewayPorts = "clientspecified";
     };

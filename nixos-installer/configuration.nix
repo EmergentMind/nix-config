@@ -31,6 +31,7 @@
   programs.ssh.startAgent = true;
 
   # yubikey login / sudo
+  #FIXME this throws a security error
   security.pam = {
     sshAgentAuth.enable = true;
     services = {
