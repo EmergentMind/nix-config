@@ -7,7 +7,9 @@
 
 { inputs, configLib, ... }: {
   imports = [
-    #################### Hardware Modules ####################
+    #################### Disko Spec ####################
+    inputs.disko.nixosModules.disko
+    (configLib.relativeToRoot "hosts/common/disks/std-disk-config.nix")
 
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-amd
