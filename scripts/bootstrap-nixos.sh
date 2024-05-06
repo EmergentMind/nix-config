@@ -8,7 +8,6 @@ target_destination=""
 target_user="ta"
 ssh_key=""
 ssh_port="22"
-remote_passwd="nixos"
 persist_dir=""
 # Create a temp directory for generated host keys
 temp=$(mktemp -d)
@@ -71,8 +70,6 @@ function help_and_exit() {
 	echo "OPTIONS:"
 	echo "  -u=<target_user>          specify target_user with sudo access. nix-config will be cloned to their home."
 	echo "                            Default='${target_user}'."
-	echo "  -p=<remote_passwd>        Specify a password for target machine user. This is temporary until install is complete."
-	echo "                            Default='${remote_passwd}'."
 	echo "  --port=<ssh_port>         specify the ssh port to use for remote access. Default=${ssh_port}."
 	echo "  --impermanence            Use this flag if the target machine has impermanence enabled. WARNING: Assumes /persist path."
 	echo "  --debug                   Enable debug mode."
@@ -94,9 +91,6 @@ while [[ $# -gt 0 ]]; do
 		;;
 	-k=*)
 		ssh_key="${1#-k=}"
-		;;
-	-p=*)
-		remote_passwd="${1#-p=}"
 		;;
 	--port=*)
 		ssh_port="${1#--port=}"
