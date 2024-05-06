@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+# User variables
 config_location="git://git@gitlab.com/emergentmind/nix-config.git"
 target_hostname=""
 target_destination=""
@@ -17,6 +18,7 @@ function cleanup() {
 	rm -rf "$temp"
 }
 trap cleanup exit
+
 
 function red() {
 	echo -e "\x1B[31m[!] $1 \x1B[0m"
@@ -46,6 +48,16 @@ function yes_or_no() {
 		[Nn]*) return 1 ;;
 		esac
 	done
+}
+
+# SSH commands 
+ssh_cmd="ssh -oport=${ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $ssh_key -t $target_user@$target_destination"
+ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
+scp_cmd="scp -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
+
+function sync() {
+	# $1 = user, $2 = source, $3 = destination
+	rsync -av --filter=':- .gitignore' -e "ssh -l $1" $2 $1@${target_destination}:
 }
 
 function help_and_exit() {
@@ -144,10 +156,10 @@ function nixos_anywhere() {
 
 	# copy our repo there via rsync for speed
 	green "Syncing nix-config to $target_hostname"
-	just sync root "$target_destination"
+	sync root $PWD
 	$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
 	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix ../hosts/"$target_hostname"/hardware-configuration.nix
-	just sync root "$target_destination"
+	sync root $PWD
 
 	# --extra-files here picks up the ssh host key we generated earlier and puts it onto the target machine
 	# FIXME: Double check that it will delete them?
@@ -157,12 +169,13 @@ function nixos_anywhere() {
 	# This will fail if we already know the host, but that's fine
 	ssh-keyscan -p $ssh_port "$target_destination" >>~/.ssh/known_hosts || true
 
-	# These might fail if /persist folder already exists
 	# FIXME: Do we need this? I get errors:
 	# /etc/tmpfiles.d/journal-nocow.conf:26: Failed to resolve specifier: uninitialized /etc/ detected, skipping.
 	# And there is no /etc/machine-id after first rebuild...
-	$ssh_root_cmd "cp /etc/machine-id $persist_dir/etc/machine-id || true"
-	$ssh_root_cmd "cp -R /etc/ssh/ $persist_dir/etc/ssh/ || true"
+	if [ -n "$persist_dir" ]; then
+		$ssh_root_cmd "cp /etc/machine-id $persist_dir/etc/machine-id || true"
+		$ssh_root_cmd "cp -R /etc/ssh/ $persist_dir/etc/ssh/ || true"
+	fi
 	cd -
 }
 
@@ -203,6 +216,7 @@ function generate_age_keys() {
 	nix flake lock --update-input nix-secrets
 }
 
+
 # Validate required options
 if [ -z "${target_hostname}" ] || [ -z "${target_destination}" ] || [ -z "${ssh_key}" ]; then
 	red "ERROR: -n, -d, and -k are all required"
@@ -214,10 +228,6 @@ fi
 green "Wiping known_hosts of $target_destination"
 sed -i "/$target_hostname/d; /$target_destination/d" ~/.ssh/known_hosts
 
-ssh_cmd="ssh -oport=${ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $ssh_key $target_user@$target_destination"
-ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
-scp_cmd="scp -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
-
 if yes_or_no "Do you want to run nixos-anywhere installation?"; then
 	nixos_anywhere
 fi
@@ -226,31 +236,33 @@ if yes_or_no "Do you want to run age key generation?"; then
 	generate_age_keys
 fi
 
-if [ "$target_user" == "root" ]; then
-	home_path="/root"
-else
-	home_path="/home/$target_user"
+if yes_or_no "Do you want to add ssh host fingerprints for gitlab and github? If this is the first time running this script on $target_hostname, this will be required for the following steps?"; then
+	if [ "$target_user" == "root" ]; then
+		home_path="/root"
+	else
+		home_path="/home/$target_user"
+	fi
+	green "Adding ssh host fingerprints for gitlab and github"
+	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com >>$home_path/.ssh/known_hosts"
 fi
-$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com >>$home_path/.ssh/known_hosts"
 
 if yes_or_no "Do you want to copy your full nix-config and private keys to $target_hostname?"; then
 	echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
 	# This will fail if we already know the host, but that's fine
 	ssh-keyscan -p $ssh_port "$target_destination" >>~/.ssh/known_hosts || true
 	green "Copying full nix-config to $target_hostname"
-	just sync "$target_user" "$target_destination"
-	# FIXME drop this copying in favor of getting forwarding and yubi passthrough working for multiple ssh hops from ghost -> grief -> target
-	green "Copying private key to /home/$target_user/.ssh on $target_destination for nix-secrets access on rebuild"
-	scp_cmd /home/ta/.ssh/id_manu* $target_user@$target_destination:.ssh/
+	sync "$target_user" $PWD
+	green "Copying full nix-secrets to $target_hostname"
+	sync "$target_user" ../nix-secrets
 
 	if yes_or_no "Do you want to rebuild immediately?"; then
 		green "Rebuilding nix-config on $target_hostname"
-		$ssh_cmd "cd nix-config && just rebuild"
+		$ssh_cmd "cd nix-config && sudo nixos-rebuild --show-trace switch --flake .#$target_hostname"
 	fi
 else
 	echo
-	green "NixOS installed"
-	echo "Post-install instructions:"
+	green "NixOS was succcefully installed!"
+	echo "Post-install config build instructions:"
 	echo "To copy nix-config from this machine to the $target_hostname, run the following command from ~/nix-config"
 	echo "just sync $target_user $target_destination"
 	echo "To rebuild, sign into $target_hostname and run the following command from ~/nix-config"
@@ -259,15 +271,11 @@ else
 	echo
 fi
 
-yellow "WARNING: Answering 'y' will add, commit, and push ALL currently modified files in your nix-config!"
 if yes_or_no "You can now commit and push the nix-config, which includes the hardware-configuration.nix for $target_hostname?"; then
-	(pre-commit run --all-files || true) &&
-		git add -a && (git commit -m "feat: hardwware-configuration.nix for $target_hostname" || true) && git push
+	(pre-commit run --all-files 2>/dev/null || true) &&
+		git add hosts/$target_hostname/hardware-configuration.nix && (git commit -m "feat: hardware-configuration.nix for $target_hostname" || true) && git push
 fi
-
-# If we used just sync, the ownership will be our local user, but we may be running as root, so git will fail.
-#	$ssh_cmd "chown -R $target_user:users nix-config"
 
 #TODO prune all previous generations?
 
-green "All done!"
+green "Success!"
