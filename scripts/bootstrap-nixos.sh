@@ -50,11 +50,6 @@ function yes_or_no() {
 	done
 }
 
-# SSH commands 
-ssh_cmd="ssh -oport=${ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $ssh_key -t $target_user@$target_destination"
-ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
-scp_cmd="scp -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
-
 function sync() {
 	# $1 = user, $2 = source, $3 = destination
 	rsync -av --filter=':- .gitignore' -e "ssh -l $1" $2 $1@${target_destination}:
@@ -123,6 +118,11 @@ while [[ $# -gt 0 ]]; do
 	esac
 	shift
 done
+
+# SSH commands 
+ssh_cmd="ssh -oport=${ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i $ssh_key -t $target_user@$target_destination"
+ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
+scp_cmd="scp -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
 
 function nixos_anywhere() {
 	green "Installing NixOS on remote host $target_hostname at $target_destination"
