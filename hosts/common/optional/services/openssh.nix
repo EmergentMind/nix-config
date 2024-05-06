@@ -13,8 +13,6 @@ in
   services.openssh = {
     enable = true;
     ports = [ sshPort ];
-    # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
-    authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
 
     settings = {
       # Harden
@@ -30,11 +28,19 @@ in
       path = "${lib.optionalString hasOptinPersistence "/persist"}/etc/ssh/ssh_host_ed25519_key";
       type = "ed25519";
     }];
+    # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
+    authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
   };
-  networking.firewall.allowedTCPPorts = [ sshPort ];
+  # yubikey login / sudo
+  # this potentially causes a security issue that we mitigated above
+  security.pam = {
+    enableSSHAgentAuth = true;
+    #FIXME the above is deprecated in 24.05 but we will wait until release
+    #sshAgentAuth.enable = true;
+    services = {
+      sudo.u2fAuth = true;
+    };
+  };
 
-  # Passwordless sudo when SSH'ing with keys
-  # NOTE: Hello future self! When you enabled this you ran into errors, and turned it off.
-  # See: https://unix.stackexchange.com/questions/626143/sign-and-send-pubkey-signing-failed-for-rsa-key-from-agent-agent-refused-oper
-  # security.pam.enableSSHAgentAuth = true;
+  networking.firewall.allowedTCPPorts = [ sshPort ];
 }

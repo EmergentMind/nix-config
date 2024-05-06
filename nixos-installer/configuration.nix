@@ -25,19 +25,23 @@
     settings = {
       PermitRootLogin = "yes";
     };
+    # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
+    # this mitigates the security issue caused by enabling u2fAuth in pam
+    authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
   };
-
-  # ssh-agent is used to pull my private secrets repo from gitlab when deploying nix-config.
-  programs.ssh.startAgent = true;
-
   # yubikey login / sudo
-  #FIXME this throws a security error
+  # this potentially causes a security issue that we mitigated above
   security.pam = {
-    sshAgentAuth.enable = true;
+    enableSSHAgentAuth = true;
+    #FIXME the above is deprecated in 24.05 but we will wait until release
+    #sshAgentAuth.enable = true;
     services = {
       sudo.u2fAuth = true;
     };
   };
+
+  # ssh-agent is used to pull my private secrets repo from gitlab when deploying nix-config.
+ # programs.ssh.startAgent = true;
 
   environment.systemPackages = builtins.attrValues {
     inherit(pkgs)
