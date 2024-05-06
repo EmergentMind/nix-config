@@ -150,7 +150,8 @@ function nixos_anywhere() {
 	###
 	cd nixos-installer
 
-	# disko expects a passphrase on /tmp/disko-password, so we set it for now and will update the passphrase later
+	# when using luks, disko expects a passphrase on /tmp/disko-password, so we set it for now and will update the passphrase later
+	# via the config
 	green "Preparing a temporary password for disko."
 	$ssh_root_cmd "/bin/sh -c 'echo passphrase > /tmp/disko-password'"
 
@@ -182,7 +183,7 @@ function nixos_anywhere() {
 function generate_age_keys() {
 	green "Generating an age key based on the new ssh_host_ed25519_key."
 
-	target_key=$(ssh-keyscan -p $ssh_port -t ssh-ed25519 "$target_destination" 2>&1 | rg ssh-ed25519 | cut -f2- -d" ")
+	target_key=$(ssh-keyscan -p $ssh_port -t ssh-ed25519 "$target_destination" 2>&1 | grep ssh-ed25519 | cut -f2- -d" ")
 	age_key=$(nix shell nixpkgs#ssh-to-age.out -c sh -c "echo $target_key | ssh-to-age")
 
 	if grep -qv '^age1' <<<"$age_key"; then
