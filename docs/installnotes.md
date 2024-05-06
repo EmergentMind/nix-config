@@ -685,7 +685,7 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 
     secrets.yaml
     -------
-    private_keys:
+    ssh_keys:
         maya: <private key data>
         mara: <private key data>
         manu: <private key data>

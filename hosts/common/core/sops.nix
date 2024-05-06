@@ -33,7 +33,18 @@ in
     # secrets required for user creation are handled in respective ./users/<username>.nix files
     # because they will be output to /run/secrets-for-users and only when the user is assigned to a host.
     secrets = {
-      # Decrypt ta-password to /run/secrets-for-users/ so it can be used to create the user
+      # For home-manager a separate age key is used to decrypt secrets and must be placed onto the host. This is because
+      # the user doesn't have read permission for the ssh service private key. However, we can bootstrap the age key from
+      # the secrets decrypted by the host key, which allows home-manager secrets to work without manually copying over
+      # the age key.
+      "age_keys/${config.networking.hostName}" = {
+        owner = config.users.users.${configVars.username}.name;
+        inherit (config.users.users.${configVars.username}) group;
+        # We need to ensure the entire directory structure is that of the user...
+        path = "${homeDirectory}/.config/sops/age/keys.txt";
+      };
+
+      # ta-password to /run/secrets-for-users/ so it can be used to create the user
       "${configVars.username}/password".neededForUsers = true;
 
       #FIXME move to mstmp.nix and also have host and address being assigned to configVars as per fidgetingbits
@@ -41,11 +52,9 @@ in
       msmtp-address = { };
       msmtp-password = { };
 
-      # smb-secrets are extracted in hosts/common/optional/smbclient.nix
-
       # extract to default pam-u2f authfile location for passwordless sudo. see ../optional/yubikey
       "yubico/u2f_keys" = {
-        path = "/home/ta/.config/Yubico/u2f_keys";
+        path = "/home/${configVars.username}/.config/Yubico/u2f_keys";
       };
     };
   };

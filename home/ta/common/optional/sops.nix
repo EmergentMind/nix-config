@@ -20,19 +20,19 @@ in
     validateSopsFiles = false;
 
     secrets = {
-      "private_keys/maya" = {
+      "ssh_keys/maya" = {
         path = "${homeDirectory}/.ssh/id_maya";
       };
-      "private_keys/mara" = {
+      "ssh_keys/mara" = {
         path = "${homeDirectory}/.ssh/id_mara";
       };
-      "private_keys/manu" = {
+      "ssh_keys/manu" = {
         path = "${homeDirectory}/.ssh/id_manu";
       };
-      "private_keys/mila" = {
+      "ssh_keys/mila" = {
         path = "${homeDirectory}/.ssh/id_mila";
       };
-      "private_keys/meek" = {
+      "ssh_keys/meek" = {
         path = "${homeDirectory}/.ssh/id_meek";
       };
     };
