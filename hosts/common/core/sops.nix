@@ -1,8 +1,14 @@
 # hosts level sops. see home/[user]/common/optional/sops.nix for home/user level
 
-{ inputs, config, ... }:
+{ pkgs, inputs, config, configVars, ... }:
 let
   secretsDirectory = builtins.toString inputs.nix-secrets;
+   
+  # FIXME: Switch to a configLib function
+  homeDirectory =
+    if pkgs.stdenv.isLinux
+    then "/home/${configVars.username}"
+    else "/Users/${configVars.username}";
 in
 {
   imports = [
@@ -30,7 +36,7 @@ in
       # Decrypt ta-password to /run/secrets-for-users/ so it can be used to create the user
       "${configVars.username}/password".neededForUsers = true;
 
-#FIXME move to mstmp.nix and also have host and address being assigne to configVars as per fidgetingbits
+      #FIXME move to mstmp.nix and also have host and address being assigned to configVars as per fidgetingbits
       msmtp-host = { };
       msmtp-address = { };
       msmtp-password = { };
@@ -43,4 +49,15 @@ in
       };
     };
   };
+  # The containing folders are created as root and if this is the first ~/.config/ entry,
+  # the ownership is busted and home-manager can't target because it can't write into .config...
+  # FIXME: We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
+  system.activationScripts.sopsSetAgeKeyOwnwership = let
+    ageFolder = "${homeDirectory}/.config/sops/age";
+    user = config.users.users.${configVars.username}.name;
+    group = config.users.users.${configVars.username}.group;
+  in ''
+    mkdir -p ${ageFolder} || true
+    chown -R ${user}:${group} ${homeDirectory}/.config
+  '';
 }
