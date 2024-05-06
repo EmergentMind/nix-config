@@ -11,13 +11,14 @@ in
   config = lib.optionalAttrs (!(lib.hasAttr "isMinimal" configVars))
   {
     # Import this user's personal/home configurations
-#??     packages = [ pkgs.home-manager ];
     home-manager.users.${configVars.username} = import (configLib.relativeToRoot "home/${configVars.username}/${config.networking.hostName}.nix");
-  } // {
+
+    # The next two lines will conflict with isMinimal settings that can't access sops so they must be here for !isMinimal only
     users.mutableUsers = false; # Required for password to be set via sops during system activation!
+    users.users.${configVars.username}.hashedPasswordFile = sopsHashedPasswordFile;
+  } // {
     users.users.${configVars.username} = {
       isNormalUser = true;
-      hashedPasswordFile = sopsHashedPasswordFile;
       password = "nixos"; # This gets overridden if sops is working
 
       extraGroups = [
@@ -34,7 +35,6 @@ in
       openssh.authorizedKeys.keys = lib.lists.forEach pubKeys (key: builtins.readFile key);
 
       shell = pkgs.zsh; # default shell
-
     };
 
     # Proper root use required for borg and some other specific operations
