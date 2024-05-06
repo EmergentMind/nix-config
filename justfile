@@ -20,19 +20,17 @@ rebuild-post:
 rebuild:
 	just rebuild-pre
 	scripts/system-flake-rebuild.sh
-	just rebuild-extensions-lite
-	just rebuild-post
 
+#requires sops to be running, must have reboot after inital rebuild
 rebuild-full:
 	just rebuild-pre
 	scripts/system-flake-rebuild.sh
-	just rebuild-extensions
 	just rebuild-post
 
+#requires sops to be running, must have reboot after inital rebuild
 rebuild-trace:
 	just rebuild-pre
 	scripts/system-flake-rebuild-trace.sh
-	just rebuild-extensions-lite
 	just rebuild-post
 
 update:
@@ -73,20 +71,8 @@ check-sops:
 	scripts/check-sops.sh
 
 update-nix-secrets:
-	(cd ~/dev/nix/nix-secrets && git fetch && git rebase) || true
+	(cd ../nix-secrets && git fetch && git rebase) || true
 	nix flake lock --update-input nix-secrets
-
-#################### Voice related vscode extensions stuff for fidgetingbits ####################
-# Until I know how to pin pre-built vscode extensions, this rebuilds and
-# installs custom extensions after a rebuild
-rebuild-extensions:
-	build-cursorless-pr-bundle || true
-	build-command-server-pr-bundle || true
-
-# Faster, don't build the extensions, just install them
-rebuild-extensions-lite:
-	build-cursorless-pr-bundle lite || true
-	build-command-server-pr-bundle lite || true
 
 #################### Installation ####################
 iso:
@@ -109,3 +95,6 @@ disko DRIVE PASSWORD:
 
 sync USER HOST:
 	rsync -av --filter=':- .gitignore' -e "ssh -l {{USER}}" . {{USER}}@{{HOST}}:nix-config/
+
+sync-secrets USER HOST:
+	rsync -av --filter=':- .gitignore' -e "ssh -l {{USER}}" . {{USER}}@{{HOST}}:nix-secrets/
