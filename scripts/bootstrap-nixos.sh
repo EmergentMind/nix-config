@@ -219,11 +219,10 @@ if [ -z "${target_hostname}" ] || [ -z "${target_destination}" ] || [ -z "${ssh_
 	help_and_exit
 fi
 
-# Clear the keys, since they should be newly generated for the iso
-green "Wiping known_hosts of $target_destination"
-sed -i "/$target_hostname/d; /$target_destination/d" ~/.ssh/known_hosts
-
 if yes_or_no "Do you want to run nixos-anywhere installation?"; then
+  # Clear the keys, since they should be newly generated for the iso
+	green "Wiping known_hosts of $target_destination"
+	sed -i "/$target_hostname/d; /$target_destination/d" ~/.ssh/known_hosts
 	nixos_anywhere
 fi
 
