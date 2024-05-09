@@ -3,23 +3,32 @@ let
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
   sopsHashedPasswordFile = lib.optionalString (lib.hasAttr "sops-nix" inputs) config.sops.secrets."${configVars.username}/password".path;
   pubKeys = lib.filesystem.listFilesRecursive (./keys);
+
+  # these are values we don't want to set if the environment is minimal. E.g. ISO or nixos-installer
+  # isMinimal is true in the nixos-installer/flake.nix
+  fullUserConfig = lib.optionalAttrs (!(lib.hasAttr "isMinimal" configVars))
+    {
+      users.mutableUsers = false; # Required for password to be set via sops during system activation!
+      #users.users.${configVars.username}.hashedPasswordFile = config.sops.secrets."${configVars.username}/password".path;
+      users.users.${configVars.username} = {
+        hashedPasswordFile = sopsHashedPasswordFile;
+        packages = [ pkgs.home-manager ];
+      };
+
+      # Import this user's personal/home configurations
+      home-manager.users.${configVars.username} = import (configLib.relativeToRoot "home/${configVars.username}/${config.networking.hostName}.nix");
+    };
 in
 {
-  # isMinimal is typically true during nixos-installer boostrapping (see /nixos-installer/flake.nix) and for
+  # isMinimal is set /nixos-installer/flake.nix) and for
   # iso where we want to limit the depth of user configuration
   # FIXME  this should just pass an isIso style thing that we can check instead
-  config = lib.optionalAttrs (!(lib.hasAttr "isMinimal" configVars))
-  {
-    # Import this user's personal/home configurations
-    home-manager.users.${configVars.username} = import (configLib.relativeToRoot "home/${configVars.username}/${config.networking.hostName}.nix");
-
-    # The next two lines will conflict with isMinimal settings that can't access sops so they must be here for !isMinimal only
-    users.mutableUsers = false; # Required for password to be set via sops during system activation!
-    users.users.${configVars.username}.hashedPasswordFile = sopsHashedPasswordFile;
-  } // {
+  config = lib.recursiveUpdate fullUserConfig 
+    #this is the second argument to recursiveUpdate
+    {
     users.users.${configVars.username} = {
       isNormalUser = true;
-      password = "nixos"; # This gets overridden if sops is working
+      password = "nixos"; # Overridden if sops is working
 
       extraGroups = [
         "wheel"
