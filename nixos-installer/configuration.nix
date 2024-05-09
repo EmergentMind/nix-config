@@ -1,6 +1,10 @@
-{  lib, pkgs, ... }:
+{  lib, pkgs, configLib, configVars, ... }:
 {
-  imports = [ ../hosts/common/users/ta ];
+  imports = [
+    (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
+  ];
+
+  #virtualisation.virtualbox.guest.enable = true;
 
   fileSystems."/boot".options = ["umask=0077"]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -19,16 +23,18 @@
     networkmanager.enable = true;
   };
 
-  services.openssh = {
-    enable = true;
-    ports = [22]; # FIXME: Change this to use configVars.networking eventually
-    settings = {
-      PermitRootLogin = "yes";
+  services = {
+    qemuGuest.enable = true;
+    openssh = {
+      enable = true;
+      ports = [22]; # FIXME: Make this use configVars.networking
+      settings.PermitRootLogin = "yes";
+      # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
+      # this mitigates the security issue caused by enabling u2fAuth in pam
+      authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
     };
-    # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
-    # this mitigates the security issue caused by enabling u2fAuth in pam
-    authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
   };
+
   # yubikey login / sudo
   # this potentially causes a security issue that we mitigated above
   security.pam = {
@@ -50,7 +56,6 @@
     rsync;
   };
 
-  virtualisation.virtualbox.guest.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "23.11";

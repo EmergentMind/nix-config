@@ -19,6 +19,7 @@
   };
 
   services = {
+    qemuGuest.enable = true;
     openssh = {
       ports = [22]; # FIXME: Make this use configVars.networking
       settings.PermitRootLogin = lib.mkForce "yes";

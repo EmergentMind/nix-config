@@ -1,9 +1,11 @@
 {
   disko.devices = {
     disk = {
-      sda = {
+      #FIXME change to proper device or make dynamic like figdetingbits
+      vda = {
         type = "disk";
-        device = "/dev/sda";
+        # FIXME change to proper device or make dynamic like figdetingbits
+        device = "/dev/vda";
         content = {
           type = "gpt";
           partitions = {
