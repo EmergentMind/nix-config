@@ -4,10 +4,6 @@ SOPS_FILE := "../nix-secrets/secrets.yaml"
 default:
   @just --list
 
-build:
-	git add *.nix
-	scripts/build.sh
-
 rebuild-pre:
 	nix flake lock --update-input nixvim-flake
 	just update-nix-secrets
@@ -43,16 +39,6 @@ rebuild-update:
 diff:
 	git diff ':!flake.lock'
 
-#################### Home Manager ####################
-home:
-	just rebuild-pre
-	home-manager --impure --flake . switch
-	just rebuild-post
-
-home-update:
-	just update
-	just home
-
 #################### Secrets Management ####################
 sops:
 	echo "Editing {{SOPS_FILE}}"
@@ -78,7 +64,7 @@ update-nix-secrets:
 iso:
 	# If we dont remove this folder, libvirtd VM doesnt run with the new iso...
 	rm -rf result
-	nix build .#nixosConfigurations.iso.config.system.build.isoImage
+	nix build ./nixos-installer#nixosConfigurations.iso.config.system.build.isoImage
 
 iso-install DRIVE:
 	just iso

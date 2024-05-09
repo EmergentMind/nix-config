@@ -43,7 +43,6 @@
   - ~~recording~~
   - ~~production~~
 
-
 - New tools to integrate
   - ~~zoxide~~
   - copyq
@@ -99,10 +98,10 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.1 automate nixos installation
 
-- nixos-anywhere
-- declarative partitioning and formatting via disko
-- light-weight bootstrap flake for basic install, pre-secrets install
-- custom iso generation
+- ~~nixos-anywhere~~
+- ~~declarative partitioning and formatting via disko~~
+- ~~light-weight bootstrap flake for basic install, pre-secrets install~~
+- ~~custom iso generation~~
 
 ##### 3.2 impermanence
 
@@ -132,7 +131,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 ##### 3.x Extras
 
 - move to alejandra / deadnix isntead of nix-fmt ... may want to wait for whatever the official one ends up being but I dont' like the look of many nix-fmt rules
-- update sops to make use of per host age keys for home-manager level secrets
+- ~~update sops to make use of per host age keys for home-manager level secrets~~
 - automatic scheduled sops rotate
 - don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~
 - Enable git signing in home/ta/common/core/git.nix using nix-secrets
