@@ -3,12 +3,15 @@
 { pkgs, inputs, config, configVars, ... }:
 let
   secretsDirectory = builtins.toString inputs.nix-secrets;
+  secretsFile = "${secretsDirectory}/secrets.yaml";
    
   # FIXME: Switch to a configLib function
+  # this is some stuff for distinguishing linux from darwin. Likely just remove it.
   homeDirectory =
     if pkgs.stdenv.isLinux
     then "/home/${configVars.username}"
     else "/Users/${configVars.username}";
+  #homeDirectory = "/home/${configVars.username}";
 in
 {
   imports = [
@@ -16,16 +19,12 @@ in
   ];
 
   sops = {
-    defaultSopsFile = "${secretsDirectory}/secrets.yaml";
+    defaultSopsFile = "${secretsFile}";
     validateSopsFiles = false;
 
     age = {
       # automatically import host SSH keys as age keys
       sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
-      # this will use an age key that is expected to already be in the filesystem
-      keyFile = "/var/lib/sops-nix/key.txt";
-      # generate a new key if the key specified above does not exist
-      generateKey = true;
     };
 
     # secrets will be output to /run/secrets
@@ -44,7 +43,7 @@ in
         path = "${homeDirectory}/.config/sops/age/keys.txt";
       };
 
-      # ta-password to /run/secrets-for-users/ so it can be used to create the user
+      # extract username/password to /run/secrets-for-users/ so it can be used to create the user
       "${configVars.username}/password".neededForUsers = true;
 
       #FIXME move to mstmp.nix and also have host and address being assigned to configVars as per fidgetingbits
