@@ -27,6 +27,16 @@
     #
     # Minimal configuration for bootstrapping hosts
     nixosConfigurations = {
+      grief = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = minimalSpecialArgs;
+        modules = [
+          disko.nixosModules.disko
+          ../hosts/common/disks/std-disk-config.nix
+          ./minimal-configuration.nix
+          ../hosts/grief/hardware-configuration.nix
+        ];
+      };
       guppy = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = minimalSpecialArgs;
