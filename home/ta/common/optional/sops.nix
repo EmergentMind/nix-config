@@ -1,5 +1,5 @@
 # home level sops. see hosts/common/optional/sops.nix for hosts level
-# TODO should I split secrtets.yaml into a home level and a hosts level or move to a single sops.nix entirely?
+# TODO should I split secrets.yaml into a home level and a hosts level or move to a single sops.nix entirely?
 
 { inputs, config, ... }:
 let
@@ -13,7 +13,7 @@ in
   ];
 
   sops = {
-    # This is the ta/dev key and needs to have been copied to this location on the host
+    # This is the location of the host specific age-key for ta and will to have been extracted to this location via hosts/common/core/sops.nix on the host
     age.keyFile = "${homeDirectory}/.config/sops/age/keys.txt";
 
     defaultSopsFile = "${secretsFile}";

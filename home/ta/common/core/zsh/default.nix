@@ -99,7 +99,7 @@
       edu = "cd $HOME/src/edu";
       dfs = "cd $HOME/src/dotfiles";
       dfsw = "cd $HOME/src/dotfiles.wiki";
-      nfs = "cd $HOME/src/nix-config";
+      nfs = "cd $HOME/nix-config";
       uc = "cd $HOME/src/unmovedcentre";
       l = "eza -lah";
       la = "eza -lah";
