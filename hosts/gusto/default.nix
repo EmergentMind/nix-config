@@ -4,7 +4,7 @@
 #  NixOS running on ASUS VivoPC VM40B-S081M
 #
 ###############################################################
-.
+
 { inputs, configLib, ... }: {
   imports = [
     #################### Hardware Modules ####################
@@ -12,6 +12,7 @@
     inputs.hardware.nixosModules.common-gpu-intel
 
     #################### Required Configs ####################
+  #TODO move gusto to disko
     ./hardware-configuration.nix
     (configLib.relativeToRoot "hosts/common/core")
 
@@ -37,6 +38,7 @@
 
   networking = {
     hostName = "gusto";
+    networkmanager.enable = true;
     enableIPv6 = false;
   };
 
