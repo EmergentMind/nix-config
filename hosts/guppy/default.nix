@@ -1,7 +1,7 @@
 #############################################################
 #
 #  Guppy - Remote Installation Test Lab
-#  NixOS running on VirtualBox VM
+#  NixOS running on Qemu VM
 #
 ###############################################################
 
@@ -35,7 +35,7 @@
 
   networking = {
     hostName = "guppy";
-    #networkmanager.enable = true;
+    networkmanager.enable = true;
     enableIPv6 = false;
   };
 
