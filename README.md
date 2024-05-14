@@ -42,16 +42,19 @@ The way out, is through.
 
 ---
 
+Watch NixOS related videos on my (YouTube channel)[https://www.youtube.com/@Emergent_Mind].
+
 ## Feature Highlights
 
 - Flake-based multi-host, multi-user NixOS and Home-Manager configurations
   - Core configs for hosts and users
-  - Modular, optional configs for user and host-specifc needs
+  - Modular, optional configs for user and host-specific needs
 - Secrets management via sops-nix and a private nix-secrets repo which is included as a flake input
-- Multiple Yubikey detection
-- Basic NixOs and Home-Manager build automation
+- Automated remote-bootstrapping of NixOS, nix-config, and nix-secrets
+- Multiple YubiKey device handling and agent forwarding
+- Basic NixOs and Home-Manager build automation recipes
 
-The roadmap of additional features is laid across funtionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
+The roadmap of additional features is laid across functionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
 
 Completed features will be added here as each stage is complete.
 
@@ -73,26 +76,31 @@ For a large screenshot of the concept diagram, a current-state visual, as well a
 <a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v1.png" /></a>
 </div>
 
-- `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for boostrapping (`nix develop` or `nix-shell`).
+- `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for  manual bootstrapping tasks (`nix develop` or `nix-shell`).
 - `hosts` - NixOS configurations accessible via `sudo nixos-rebuild switch --flake .#<host>`.
   - `common` - Shared configurations consumed by the machine specific ones.
     - `core` - Configurations present across all hosts. This is a hard rule! If something isn't core, it is optional.
+    - `disks` - Declarative disk partition and format specifications via disko.
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
   - `genoa` - stage 3
   - `ghost` - stage 4
-  - `grief` - Lab - VM
+  - `grief` - Lab - Qemu VM
   - `gooey` - stage 5
-  - `gusto` - Theatre - Ausus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
-- `home/<user>` - Home-manager configurations accessbile via `home-manager switch --flake .#<user>@<host>`.
-  - `common` - Shared home-manager configurations consumed the user's machine specific ones.
-    - `core` - Home-manager configuartions present for user across all machines. This is a hard rule! If something isn't core, it is optional.
+  - `guppy` - Remote Install Lab - Qemu VM
+  - `gusto` - Theatre - Asus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
+- `home/<user>` - Home-manager configurations, built automatically during host rebuilds.
+  - `common` - shared home-manager configurations consumed the user's machine specific ones.
+    - `core` - Home-manager configurations present for user across all machines. This is a hard rule! If something isn't core, it is optional.
     - `optional` - Optional home-manager configurations that can be added for specific machines. These can be added by category (e.g. options/media) or individually (e.g. options/media/vlc.nix) as needed.
       The home-manager core and options are defined in host-specific .nix files housed in `home/<user>`.
+- `lib` - Custom library used throughout the nix-config to make import paths more readable.
 - `modules` - Custom modules to enable special functionality for nixos or home-manager oriented configurations.
+- `nixos-installer` - A stripped down version of the main nix-config flake used exclusively for generating ISOs and during installation of NixOS and nix-config on hosts.
 - `overlays` - Custom modifications to upstream packages.
 - `pkgs` - Custom packages meant to be shared or upstreamed.
-- `scripts` - Custom scripts for automation.
+- `vars` - Custom variables used throughout the nix-config. Most of the variables are focused on the primary user across all hosts.
+- `scripts` - Custom scripts for automation, including remote installation and bootstrapping of NixOS and nix-config.
 
 ## Secrets Management
 
@@ -107,7 +115,8 @@ Those who have heavily influenced this strange journey into the unknown.
 - [FidgetingBits](https://github.com/fidgetingbits) - You told me there was a strange door that could be opened. I'm truly grateful.
 - [Misterio77](https://github.com/Misterio77) - Structure and reference.
 - [Ryan Yin](https://github.com/ryan4yin/nix-config) - A treasure trove of useful documentation and ideas.
-- [VimJoyer](https://github.com/vimjoyer) - Excellent videos on the highlevel concepts required to navigate NixOS.
+- [Mic92](https://github.com/Mic92) and [Lassulus](https://github.com/Lassulus) - My nix-config leverages many of the fantastic tools that these two people maintain, such as sops-nix, disko, and nixos-anywhere.
+- [VimJoyer](https://github.com/vimjoyer) - Excellent videos on the high-level concepts required to navigate NixOS.
 
 ## Guidance and Resources
 

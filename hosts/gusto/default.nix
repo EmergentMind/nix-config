@@ -9,7 +9,7 @@
   imports = [
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-intel
-    inputs.hardware.nixosModules.common-gpu-intel
+    #inputs.hardware.nixosModules.common-gpu-intel  #This is apparenlty already declared in `/nix/store/HASH-source/common/gpu/intel
 
     #################### Required Configs ####################
   #TODO move gusto to disko

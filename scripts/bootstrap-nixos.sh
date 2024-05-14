@@ -211,7 +211,6 @@ function generate_age_keys() {
 	nix flake lock --update-input nix-secrets
 }
 
-
 # Validate required options
 if [ -z "${target_hostname}" ] || [ -z "${target_destination}" ] || [ -z "${ssh_key}" ]; then
 	red "ERROR: -n, -d, and -k are all required"
@@ -251,6 +250,7 @@ if yes_or_no "Do you want to copy your full nix-config and private keys to $targ
 
 	if yes_or_no "Do you want to rebuild immediately?"; then
 		green "Rebuilding nix-config on $target_hostname"
+		#FIXME there are still a gitlab or github fingerprint requests happening after this point
 		$ssh_cmd "cd nix-config && sudo nixos-rebuild --show-trace switch --flake .#$target_hostname"
 	fi
 else

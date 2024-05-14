@@ -7,44 +7,23 @@
 - Stage 3.1
 
   - ~~research and design~~
-    - ~~read nixos-anywhere and disko docs~~
-    - ~~reference ryan4yin installer flake for ideas~~
-    - ~~Map out order of operations for install~~
-      1. ~~boot to installer on target machine~~
-      2. ~~identify and verify drives to be targetted by disko~~
-      3. ~~update the related disk-config.nix in the nix-config repo accordingly~~
-      4. ~~install nixos using a lightweight install flake via nixos-anywhere~~
-      - ~~see https://github.com/nix-community/nixos-anywhere-examples/blob/main/flake.nix and https://github.com/nix-community/nixos-anywhere/blob/main/docs/quickstart.md for basic template example~~
-      5. ~~deploy the full config for host~~
-    - ~~build out basic ./nixos-installer~~
-      - ~~flake.nix~~
-      - ~~disk-config.nix~~
-      - ~~README.md~~
-      - ~~potentially a configuration.nix~~
   - ~~lab testing~~
   - ~~add msmtp email and host to secrets~~
-  - refinement and confirmation testing
-    - ~~modify install config to better represent something useful~~
-    - ~~test on guppy as part of full config~~ This won't work because the process doesn't install the config-src on target and hence, home-manager can't be built after installation. An intermediary, lightweight flake will be required for install, followed by cloning src to target and building full config from there.
-    - ~~automation scripts~~
-    - final testing
-  - implement across hosts
-  - docs
+  - ~~refinement and confirmation testing~~
+  - ~~implement across hosts~~
+  - documentation
+
     - link installer docs to main readme
 
-- ~~go back to keys stored under host/common/<user>~~
-- ~~Revise nixos-installer configuration.nix to match figitingbits more heavily~~
-
-- Next video
+- Video series
 
   - ~~planning~~
-  - ~~storyboard~~
-  - ~~assets~~
-  - ~~recording~~
-  - ~~production~~
+  - storyboard
+  - assets
+  - recording
+  - production
 
 - New tools to integrate
-  - ~~zoxide~~
   - copyq
   - du-dust
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
@@ -100,13 +79,14 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 - ~~nixos-anywhere~~
 - ~~declarative partitioning and formatting via disko~~
-- ~~light-weight bootstrap flake for basic install, pre-secrets install~~
+- ~~light-weight bootstrap flake for basic, pre-secrets install~~
 - ~~custom iso generation~~
+- ~~automated bootstrap script~~
 
 ##### 3.2 impermanence
 
 - declare what needs to persist
-- enable impermance
+- enable impermanence
 
   Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
@@ -118,7 +98,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
 - Re-implement modules to make use of options for enablement
 
-##### 3.4
+##### 3.4 scripting cleanup
 
 - Migrate bash scripts (see refs below)
 - Overhaul just file
@@ -130,7 +110,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.x Extras
 
-- move to alejandra / deadnix isntead of nix-fmt ... may want to wait for whatever the official one ends up being but I dont' like the look of many nix-fmt rules
+- move to alejandra / deadnix instead of nix-fmt ... may want to wait for whatever the official one ends up being but I don't like the look of many nix-fmt rules
 - ~~update sops to make use of per host age keys for home-manager level secrets~~
 - automatic scheduled sops rotate
 - don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~

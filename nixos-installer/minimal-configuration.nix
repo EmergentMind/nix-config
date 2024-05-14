@@ -4,8 +4,6 @@
     (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
   ];
 
-  #virtualisation.virtualbox.guest.enable = true;
-
   fileSystems."/boot".options = ["umask=0077"]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot = {
@@ -46,16 +44,12 @@
     };
   };
 
-  # ssh-agent is used to pull my private secrets repo from gitlab when deploying nix-config.
- # programs.ssh.startAgent = true;
-
   environment.systemPackages = builtins.attrValues {
     inherit(pkgs)
     wget
     curl
     rsync;
   };
-
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "23.11";
