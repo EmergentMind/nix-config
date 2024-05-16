@@ -150,11 +150,9 @@ function nixos_anywhere() {
 	$ssh_root_cmd "/bin/sh -c 'echo passphrase > /tmp/disko-password'"
 
 	# copy our repo there via rsync for speed
-	green "Syncing nix-config to $target_hostname"
-	sync root $PWD
+	green "Generating hardware-config.nix for $target_hostname and adding it to the nix-config."
 	$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
 	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix ../hosts/"$target_hostname"/hardware-configuration.nix
-	sync root $PWD
 
 	# --extra-files here picks up the ssh host key we generated earlier and puts it onto the target machine
 	# FIXME: Double check that it will delete them?
