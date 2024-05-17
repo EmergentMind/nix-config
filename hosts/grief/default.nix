@@ -7,33 +7,37 @@
 
 { inputs, configLib, ... }: {
   imports = [
-    #################### Disko Spec ####################
-    inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/std-disk-config.nix")
+    #################### Every Host Needs This ####################
+    ./hardware-configuration.nix
 
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     inputs.hardware.nixosModules.common-pc-ssd
 
+    #################### Disko Module ####################
+    inputs.disko.nixosModules.disko
+  ]
+  ++ (map configLib.relativeToRoot [
+
     #################### Required Configs ####################
-    ./hardware-configuration.nix
-    (configLib.relativeToRoot "hosts/common/core")
+    "hosts/common/core"
+    "hosts/common/disks/std-disk-config.nix"
 
     #################### Host-specific Optional Configs ####################
-    (configLib.relativeToRoot "hosts/common/optional/yubikey")
-    (configLib.relativeToRoot "hosts/common/optional/services/clamav.nix") # depends on optional/msmtp.nix
-    (configLib.relativeToRoot "hosts/common/optional/msmtp.nix") # required for emailing clamav alerts
-    (configLib.relativeToRoot "hosts/common/optional/services/openssh.nix")
+    "hosts/common/optional/yubikey"
+    "hosts/common/optional/services/clamav.nix" # depends on optional/msmtp.nix
+    "hosts/common/optional/msmtp.nix" # required for emailing clamav alerts
+    "hosts/common/optional/services/openssh.nix"
 
     # Desktop
-    (configLib.relativeToRoot "hosts/common/optional/services/greetd.nix") # display manager
-    (configLib.relativeToRoot "hosts/common/optional/hyprland.nix") # window manager
+    "hosts/common/optional/services/greetd.nix" # display manager
+    "hosts/common/optional/hyprland.nix" # window manager
 
     #################### Users to Create ####################
-   (configLib.relativeToRoot "hosts/common/users/ta")
+    "hosts/common/users/ta"
 
-  ];
+  ]);
   # set custom autologin options. see greetd.nix for details
   # TODO is there a better spot for this?
   autoLogin.enable = true;
@@ -57,7 +61,7 @@
     };
   };
 
-  # Fix to enable VSCode to successfully remote SSH on a client to a NixOS host
+  # This is a fix to enable VSCode to successfully remote SSH on a client to a NixOS host
   # https://nixos.wiki/wiki/Visual_Studio_Code # Remote_SSH
   programs.nix-ld.enable = true;
 

@@ -7,29 +7,30 @@
 
 { inputs, configLib, ... }: {
   imports = [
-    #################### Disko Spec ####################
-    inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/std-disk-config.nix")
+    #################### Every Host Needs This ####################
+    ./hardware-configuration.nix
 
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     inputs.hardware.nixosModules.common-pc-ssd
 
-    #################### Required Configs ####################
-    ./hardware-configuration.nix
-    (configLib.relativeToRoot "hosts/common/core")
+    #################### Disko Module ####################
+    inputs.disko.nixosModules.disko
+  ]
+  ++ (map configLib.relativeToRoot [
 
-    #################### Optional Configs ####################
-    (configLib.relativeToRoot "hosts/common/optional/services/openssh.nix")
+    #################### Required Configs ####################
+    "hosts/common/core"
+    "hosts/common/disks/std-disk-config.nix"
+
+    #################### Host-specific Optional Configs ####################
+    "hosts/common/optional/services/openssh.nix"
 
     #################### Users to Create ####################
-    (configLib.relativeToRoot "hosts/common/users/ta")
+    "hosts/common/users/ta"
 
-  ];
-
-  #autoLogin.enable = true;
-  #autoLogin.username = "ta";
+  ]);
 
   services.gnome.gnome-keyring.enable = true;
 

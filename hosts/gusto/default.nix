@@ -7,26 +7,31 @@
 
 { inputs, configLib, ... }: {
   imports = [
+    #################### Every Host Needs This ####################
+    ./hardware-configuration.nix
+
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-intel
-    #inputs.hardware.nixosModules.common-gpu-intel  #This is apparenlty already declared in `/nix/store/HASH-source/common/gpu/intel
+    #inputs.hardware.nixosModules.common-gpu-intel #This is apparenlty already declared in `/nix/store/HASH-source/common/gpu/intel
+  
+    #TODO move gusto to disko
+  ]
+  ++ (map configLib.relativeToRoot [
 
     #################### Required Configs ####################
-  #TODO move gusto to disko
-    ./hardware-configuration.nix
-    (configLib.relativeToRoot "hosts/common/core")
+    "hosts/common/core"
 
     #################### Host-specific Optional Configs ####################
-    (configLib.relativeToRoot "hosts/common/optional/services/openssh.nix") # allow remote SSH access
-    (configLib.relativeToRoot "hosts/common/optional/xfce.nix") # window manager
-    (configLib.relativeToRoot "hosts/common/optional/pipewire.nix") # audio
-    (configLib.relativeToRoot "hosts/common/optional/smbclient.nix") # mount the ghost mediashare
-    (configLib.relativeToRoot "hosts/common/optional/vlc.nix") # media player
+    "hosts/common/optional/services/openssh.nix" # allow remote SSH access
+    "hosts/common/optional/xfce.nix" # window manager until I get hyprland configured
+    "hosts/common/optional/pipewire.nix" # audio
+    "hosts/common/optional/smbclient.nix" # mount the ghost mediashare
+    "hosts/common/optional/vlc.nix" # media player
 
     #################### Users to Create ####################
-    (configLib.relativeToRoot "hosts/common/users/ta")
-    (configLib.relativeToRoot "hosts/common/users/media")
-  ];
+    "hosts/common/users/ta"
+    "hosts/common/users/media"
+  ]);
 
   # Enable some basic X server options
   services.xserver.enable = true;
