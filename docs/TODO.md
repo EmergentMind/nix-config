@@ -100,17 +100,22 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.4 scripting cleanup
 
-- Migrate bash scripts (see refs below)
+- Consider migrating bash scripts (see refs below)
 - Overhaul just file
+  - clean up
+  - add {{just.executable()}} to just entries
+  - look for better syntax options to shorten recipes
+  - explore direnv
 
 ##### 3.5 automate config deployment
 
 - Per host branch scheme
 - Automated machine update on branch release
+- Handle general auto updates as well
 
 ##### 3.x Extras
 
-- move to alejandra / deadnix instead of nix-fmt ... may want to wait for whatever the official one ends up being but I don't like the look of many nix-fmt rules
+- update nix-fmt to nixfmt-rfc-style (including pre-commit) since it will be the standard for nix packages moving forward
 - ~~update sops to make use of per host age keys for home-manager level secrets~~
 - automatic scheduled sops rotate
 - don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~
@@ -157,12 +162,13 @@ Also start adding more to the GUI experience for machines that are meant for mor
   - better linting and fixing in vscode and vim
   - look at https://github.com/dandavison/delta
 - gui dev
-  - host specific colours via nix-colors
+  - host specific colours via stylix or nix-colors
 - dualboot for trades?
 
 ##### Stage 4 References
 
-- [nix-colors](https://github.com/Misterio77/nix-colors) - consider using this for easy color scheming across hosts
+- [stylix](https://github.com/danth/stylix)
+- [nix-colors](https://github.com/Misterio77/nix-colors)
 
 #### 5. Ghost
 

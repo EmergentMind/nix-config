@@ -70,10 +70,10 @@ Completed features will be added here as each stage is complete.
 
 For details about design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
 
-For a large screenshot of the concept diagram, a current-state visual, as well as previous iterations see [Anatomy](docs/anatomy.md).
+For a large screenshot of the concept diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
 
 <div align="center">
-<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v1.png" /></a>
+<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v3.png" /></a>
 </div>
 
 - `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for  manual bootstrapping tasks (`nix develop` or `nix-shell`).
