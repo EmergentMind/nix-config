@@ -10,7 +10,7 @@
 
   users.users.media = {
     isNormalUser = true;
-    hashedPasswordFile = config.sops.secrets.media-password.path;
+    hashedPasswordFile = config.sops.secrets."media/password".path;
     shell = pkgs.zsh; #default shell
     extraGroups = [
       "audio"
