@@ -129,9 +129,8 @@ function nixos_anywhere() {
 	# Create the directory where sshd expects to find the host keys
 	install -d -m755 "$temp/$persist_dir/etc/ssh"
 
-	# Generate host keys without a passphrase
+	# Generate host ssh key pair without a passphrase
 	ssh-keygen -t ed25519 -f "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key" -C root@"$target_hostname" -N ""
-	#	ssh-keygen -t ed25519 -f "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key" -C "$target_user"@"$target_hostname" -N ""
 
 	# Set the correct permissions so sshd will accept the key
 	chmod 600 "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key"
@@ -155,7 +154,6 @@ function nixos_anywhere() {
 	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/"$target_hostname"/hardware-configuration.nix
 
 	# --extra-files here picks up the ssh host key we generated earlier and puts it onto the target machine
-	echo "FIXME: Check $temp/$persist_dir/etc/ssh/ for the ssh after install"
 	SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --ssh-port "$ssh_port" --extra-files "$temp" --flake .#"$target_hostname" root@"$target_destination"
 
 	echo "Updating ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
@@ -169,7 +167,7 @@ function nixos_anywhere() {
 }
 
 function generate_age_keys() {
-	green "Generating an age key based on the new ssh_host_ed25519_key."
+	green "Generating an age key based on $target_hostname's ssh_host_ed25519_key."
 
 	target_key=$(ssh-keyscan -p "$ssh_port" -t ssh-ed25519 "$target_destination" 2>&1 | grep ssh-ed25519 | cut -f2- -d" ")
 	age_key=$(nix shell nixpkgs#ssh-to-age.out -c sh -c "echo $target_key | ssh-to-age")
