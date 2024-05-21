@@ -8,4 +8,5 @@
   gitEmail = "7410928+emergentmind@users.noreply.github.com";
   workEmail = inputs.nix-secrets.work-email;
   networking = import ./networking.nix { inherit lib; };
+  persistFolder = "/persist";
 }

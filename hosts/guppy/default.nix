@@ -15,21 +15,24 @@
     inputs.hardware.nixosModules.common-gpu-amd
     inputs.hardware.nixosModules.common-pc-ssd
 
-    #################### Disko Module ####################
-    inputs.disko.nixosModules.disko
+    #################### Disk Layout ####################
+    (configLib.relativeToRoot "hosts/common/disks/std-disk-config.nix")
+    {
+      _module.args = {
+        disk = "/dev/vda";
+        withSwap = false;
+      };
+    }
   ]
   ++ (map configLib.relativeToRoot [
-
     #################### Required Configs ####################
     "hosts/common/core"
-    "hosts/common/disks/std-disk-config.nix"
 
     #################### Host-specific Optional Configs ####################
     "hosts/common/optional/services/openssh.nix"
 
     #################### Users to Create ####################
     "hosts/common/users/ta"
-
   ]);
 
   services.gnome.gnome-keyring.enable = true;

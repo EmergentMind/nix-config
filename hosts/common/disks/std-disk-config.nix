@@ -1,11 +1,19 @@
+# NOTE: ... is needed because dikso passes diskoFile
+{
+  lib,
+  disk ? "/dev/vda",
+  withSwap ? true,
+  swapSize,
+  configVars,
+  ...
+}:
 {
   disko.devices = {
     disk = {
-      #FIXME change to proper device or make dynamic like figdetingbits
+      #TODO change this to a better name?
       vda = {
         type = "disk";
-        # FIXME change to proper device or make dynamic like figdetingbits
-        device = "/dev/vda";
+        device = disk;
         content = {
           type = "gpt";
           partitions = {
@@ -19,6 +27,7 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = [ "defaults" ];
               };
             };
             root = {
@@ -29,24 +38,30 @@
                 # Subvolumes must set a mountpoint in order to be mounted,
                 # unless their parent is mounted
                 subvolumes = {
-                  "/root" = {
+                  "@root" = {
                     mountpoint = "/";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
                   };
-
-                  "/persist" = {
-                    mountOptions = [ "compress=zstd" ];
-                    mountpoint = "/persist";
+                  "@persist" = {
+                    mountpoint = "${configVars.persistFolder}";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
                   };
-
-                  "/nix" = {
-                    mountOptions = [ "compress=zstd" "noatime" ];
+                  "@nix" = {
                     mountpoint = "/nix";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
                   };
-
-                  "/swap" = {
-                    mountOptions = [ "noatime" ];
+                  "@swap" = lib.mkIf withSwap {
                     mountpoint = "/.swapvol";
-                    swap.swapfile.size = "8192M";
+                    swap.swapfile.size = "${swapSize}G";
                   };
                 };
               };

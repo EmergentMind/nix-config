@@ -56,7 +56,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... } @ inputs:
+  outputs = { self, disko, nixpkgs, home-manager, ... } @ inputs:
   let
     inherit (self) outputs;
     forAllSystems = nixpkgs.lib.genAttrs [
@@ -106,6 +106,7 @@
       grief = lib.nixosSystem {
         inherit specialArgs;
         modules = [
+          disko.nixosModules.disko
           home-manager.nixosModules.home-manager{
             home-manager.extraSpecialArgs = specialArgs;
           }
@@ -116,6 +117,7 @@
       guppy = lib.nixosSystem {
         inherit specialArgs;
         modules = [
+          disko.nixosModules.disko
           home-manager.nixosModules.home-manager{
             home-manager.extraSpecialArgs = specialArgs;
           }
@@ -126,6 +128,7 @@
       gusto = lib.nixosSystem {
         inherit specialArgs;
         modules = [
+          disko.nixosModules.disko
           home-manager.nixosModules.home-manager{
             home-manager.extraSpecialArgs = specialArgs;
           }

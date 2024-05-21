@@ -9,20 +9,24 @@
   imports = [
     #################### Every Host Needs This ####################
     ./hardware-configuration.nix
-
+    
     #################### Hardware Modules ####################
     inputs.hardware.nixosModules.common-cpu-amd
     inputs.hardware.nixosModules.common-gpu-amd
     inputs.hardware.nixosModules.common-pc-ssd
 
-    #################### Disko Module ####################
-    inputs.disko.nixosModules.disko
+    #################### Disk Layout ####################
+    (configLib.relativeToRoot "hosts/common/disks/std-disk-config.nix")
+    {
+      _module.args = {
+        disk = "/dev/vda";
+        withSwap = true;
+      };
+    }
   ]
   ++ (map configLib.relativeToRoot [
-
     #################### Required Configs ####################
     "hosts/common/core"
-    "hosts/common/disks/std-disk-config.nix"
 
     #################### Host-specific Optional Configs ####################
     "hosts/common/optional/yubikey"
@@ -36,7 +40,6 @@
 
     #################### Users to Create ####################
     "hosts/common/users/ta"
-
   ]);
   # set custom autologin options. see greetd.nix for details
   # TODO is there a better spot for this?
