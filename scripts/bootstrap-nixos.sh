@@ -2,7 +2,6 @@
 set -eo pipefail
 
 # User variables
-config_location="git://git@gitlab.com/emergentmind/nix-config.git"
 target_hostname=""
 target_destination=""
 target_user="ta"
@@ -17,7 +16,6 @@ function cleanup() {
 	rm -rf "$temp"
 }
 trap cleanup exit
-
 
 function red() {
 	echo -e "\x1B[31m[!] $1 \x1B[0m"
@@ -39,8 +37,9 @@ function yellow() {
 }
 
 function yes_or_no() {
+	echo -en "\x1B[32m[+] $* [y/n] (default: y): \x1B[0m"
 	while true; do
-		read -rp "$* [y/n] (default: y): " yn
+		read -rp "" yn
 		yn=${yn:-y}
 		case $yn in
 		[Yy]*) return 0 ;;
@@ -118,6 +117,8 @@ ssh_cmd="ssh -oport=${ssh_port} -o StrictHostKeyChecking=no -o UserKnownHostsFil
 ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
 scp_cmd="scp -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
 
+git_root=$(git rev-parse --show-toplevel)
+
 function nixos_anywhere() {
 	green "Installing NixOS on remote host $target_hostname at $target_destination"
 
@@ -136,8 +137,7 @@ function nixos_anywhere() {
 	chmod 600 "$temp/$persist_dir/etc/ssh/ssh_host_ed25519_key"
 
 	echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
-	# This will fail if we already know the host, but that's fine
-	ssh-keyscan -p $ssh_port "$target_destination" >>~/.ssh/known_hosts || true
+	ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
 
 	###
 	# nixos-anywhere installation
@@ -152,19 +152,15 @@ function nixos_anywhere() {
 	# copy our repo there via rsync for speed
 	green "Generating hardware-config.nix for $target_hostname and adding it to the nix-config."
 	$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
-	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix ../hosts/"$target_hostname"/hardware-configuration.nix
+	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/"$target_hostname"/hardware-configuration.nix
 
 	# --extra-files here picks up the ssh host key we generated earlier and puts it onto the target machine
-	# FIXME: Double check that it will delete them?
+	echo "FIXME: Check $temp/$persist_dir/etc/ssh/ for the ssh after install"
 	SHELL=/bin/sh nix run github:nix-community/nixos-anywhere -- --ssh-port "$ssh_port" --extra-files "$temp" --flake .#"$target_hostname" root@"$target_destination"
 
 	echo "Updating ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
-	# This will fail if we already know the host, but that's fine
-	ssh-keyscan -p $ssh_port "$target_destination" >>~/.ssh/known_hosts || true
+	ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
 
-	# FIXME: Do we need this? I get errors:
-	# /etc/tmpfiles.d/journal-nocow.conf:26: Failed to resolve specifier: uninitialized /etc/ detected, skipping.
-	# And there is no /etc/machine-id after first rebuild...
 	if [ -n "$persist_dir" ]; then
 		$ssh_root_cmd "cp /etc/machine-id $persist_dir/etc/machine-id || true"
 		$ssh_root_cmd "cp -R /etc/ssh/ $persist_dir/etc/ssh/ || true"
@@ -175,7 +171,7 @@ function nixos_anywhere() {
 function generate_age_keys() {
 	green "Generating an age key based on the new ssh_host_ed25519_key."
 
-	target_key=$(ssh-keyscan -p $ssh_port -t ssh-ed25519 "$target_destination" 2>&1 | grep ssh-ed25519 | cut -f2- -d" ")
+	target_key=$(ssh-keyscan -p "$ssh_port" -t ssh-ed25519 "$target_destination" 2>&1 | grep ssh-ed25519 | cut -f2- -d" ")
 	age_key=$(nix shell nixpkgs#ssh-to-age.out -c sh -c "echo $target_key | ssh-to-age")
 
 	if grep -qv '^age1' <<<"$age_key"; then
@@ -188,7 +184,7 @@ function generate_age_keys() {
 	fi
 
 	green "Updating nix-secrets/.sops.yaml"
-	cd ../nix-secrets
+	cd "${git_root}"/../nix-secrets
 
 	SOPS_FILE=".sops.yaml"
 	sed -i "{
@@ -227,28 +223,27 @@ if yes_or_no "Do you want to run age key generation?"; then
 	generate_age_keys
 fi
 
-if yes_or_no "Do you want to add ssh host fingerprints for gitlab and github? If this is the first time running this script on $target_hostname, this will be required for the following steps?"; then
+if yes_or_no "Do you want to add ssh host fingerprints for git{lab,hub}? If this is the first time running this script on $target_hostname, this will be required for the following steps?"; then
 	if [ "$target_user" == "root" ]; then
 		home_path="/root"
 	else
 		home_path="/home/$target_user"
 	fi
-	green "Adding ssh host fingerprints for gitlab and github"
+	green "Adding ssh host fingerprints for git{lab,hub}"
 	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com >>$home_path/.ssh/known_hosts"
 fi
 
 if yes_or_no "Do you want to copy your full nix-config and private keys to $target_hostname?"; then
 	echo "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
-	# This will fail if we already know the host, but that's fine
-	ssh-keyscan -p $ssh_port "$target_destination" >>~/.ssh/known_hosts || true
+	ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
 	green "Copying full nix-config to $target_hostname"
-	sync "$target_user" $PWD
+	sync "$target_user" "${git_root}"/../nix-config
 	green "Copying full nix-secrets to $target_hostname"
-	sync "$target_user" ../nix-secrets
+	sync "$target_user" "${git_root}"/../nix-secrets
 
 	if yes_or_no "Do you want to rebuild immediately?"; then
 		green "Rebuilding nix-config on $target_hostname"
-		#FIXME there are still a gitlab or github fingerprint requests happening after this point
+		#FIXME there are still a gitlab fingerprint request happening during the rebuild
 		$ssh_cmd "cd nix-config && sudo nixos-rebuild --show-trace switch --flake .#$target_hostname"
 	fi
 else
