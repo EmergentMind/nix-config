@@ -16,6 +16,7 @@
     inputs.hardware.nixosModules.common-pc-ssd
 
     #################### Disk Layout ####################
+    inputs.disko.nixosModules.disko
     (configLib.relativeToRoot "hosts/common/disks/std-disk-config.nix")
     {
       _module.args = {
