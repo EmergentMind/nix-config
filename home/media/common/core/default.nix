@@ -1,14 +1,7 @@
 { config, lib, pkgs, outputs, ... }:
-let
-
-in
 {
-  imports = [
-    # Packages with custom configs go here
-    ./brave.nix
-    ./gtk.nix
-
-  ] ++ (builtins.attrValues outputs.homeManagerModules);
+  imports = (configLib.scanPaths ./.)
+    ++ (builtins.attrValues outputs.homeManagerModules);
 
   home = {
     username = lib.mkDefault "media";
