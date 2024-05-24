@@ -14,7 +14,6 @@
     inherit (nixpkgs) lib;
     configVars = import ../vars { inherit inputs lib; };
     configLib = import ../lib { inherit lib; };
-    specialArgs = { inherit inputs configVars configLib; };
     minimalConfigVars = lib.recursiveUpdate configVars {
       isMinimal = true;
     };
@@ -26,13 +25,13 @@
     # FIXME: Specify arch eventually probably
     # This mkHost is way better: https://github.com/linyinfeng/dotfiles/blob/8785bdb188504cfda3daae9c3f70a6935e35c4df/flake/hosts.nix#L358
     newConfig =
-      name: disk: swapSize: withSwap:
+      name: disk: withSwap: swapSize:
       (nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = minimalSpecialArgs;
         modules = [
           inputs.disko.nixosModules.disko
-          ../hosts/common/disks/std-disk-config.nix
+          (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
           {
             _module.args = {
               inherit disk withSwap swapSize;
@@ -42,17 +41,17 @@
           {
             networking.hostName = name;
           }
-          ../hosts/${name}/hardware-configuration.nix
+          (configLib.relativeToRoot "hosts/${name}/hardware-configuration.nix")
         ];
       });
   in
   {
     nixosConfigurations = {
-      # host = newConfig "name" disk" "swapSize" "withSwap"
+      # host = newConfig "name" disk" "withSwap" "swapSize" 
       # Swap size is in GiB
-      grief = newConfig "grief" "/dev/vda" "0" false;
-      guppy = newConfig "guppy" "/dev/vda" "0" false;
-      gusto = newConfig "gusto" "/dev/sda" "8" false;
+      grief = newConfig "grief" "/dev/vda" false "0";
+      guppy = newConfig "guppy" "/dev/vda" false "0";
+      gusto = newConfig "gusto" "/dev/sda" true "8";
 
       # Custom ISO
       #

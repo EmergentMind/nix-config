@@ -9,8 +9,7 @@
   boot.loader.systemd-boot = {
     enable = true;
     # we use Git for version control, so we don't need to keep too many generations.
-    # FIXME  lower this even more after testing complete
-    configurationLimit = lib.mkDefault 10;
+    configurationLimit = lib.mkDefault 3;
     # pick the highest resolution for systemd-boot's console.
     consoleMode = lib.mkDefault "max";
   };
@@ -51,6 +50,9 @@
     rsync;
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      warn-dirty = false;
+  };
   system.stateVersion = "23.11";
 }

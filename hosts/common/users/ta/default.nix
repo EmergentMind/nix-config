@@ -20,9 +20,6 @@ let
     };
 in
 {
-  # isMinimal is set /nixos-installer/flake.nix) and for
-  # iso where we want to limit the depth of user configuration
-  # FIXME  this should just pass an isIso style thing that we can check instead
   config = lib.recursiveUpdate fullUserConfig 
     #this is the second argument to recursiveUpdate
     {

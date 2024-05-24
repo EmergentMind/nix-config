@@ -10,8 +10,7 @@
 {
   disko.devices = {
     disk = {
-      #TODO change this to a better name?
-      vda = {
+      disk0 = {
         type = "disk";
         device = disk;
         content = {
