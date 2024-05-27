@@ -4,7 +4,7 @@
 
 My objective with this stage of my nix-config roadmap was to achieve automated, remote installation of NixOS on a target host followed by the building my full nix-config which incorporates my private nix-secrets repo. Part-way through the development of the solution, my brother @fidgetingbits started collaborating with me to speed things up, which I mention early as it was joint effort.
 
-My ideal outcome was an entirely unattended process, from initial script execution to completion. However, I knew even before I started  would not be possible because I use passphrases for very nearly all of my ssh keys. As you'll see there are, many times where ssh authentication is required. We decided to also include several yes/no prompts at important places in the script. The additional attendance these require is trivial considering the ssh prompt attendance and importantly they allowed us to skip over specific sections of the script during testing. As you might imagine, debugging this script involved countless reboots into ISO, re-installations of NixOS, rebuilds of the config, etcetera, to work out all of the kinks and niggles that we encountered along the way.
+My ideal outcome was an entirely unattended process, from initial script execution to completion. However, I knew even before I started  would not be possible because I use passphrases for very nearly all of my ssh keys. As you'll see there are, many times where ssh authentication is required. We decided to also include several yes/no prompts at important places in the script. The additional attendance these require is trivial considering the ssh prompt attendance and importantly they allowed us to skip over specific sections of the script during testing. As you might imagine, debugging this script involved countless reboots into the ISO, re-installations of NixOS, rebuilds of the config, etcetera, to work out all of the kinks and niggles that we encountered along the way.
 
 On the topic of attending to prompts during the bootstrap process it's worth pointing out that, depending on your SecOps requirements, a significant number of the prompts could be eliminated by simply using ssh keys that do _not_ have passphrases. Given this isn't the case for me, I haven't tested it but I believe that the entire process could quite easily be cut down to a single prompt if one removed all of the yes/no prompts _and_ used ssh keys without passphrases. It is possible the process could be made entirely unattended.
 
@@ -14,7 +14,7 @@ First we can think about the typical, basic steps required get a new host booted
 
 ### Typical manual installation steps _without_ secrets
 
-1. Download a NixOS Installer ISO image and load it on a USB drive
+1. Download a NixOS ISO image and load it on a USB drive
 2. Boot the new host into the ISO
 3. Partition and format disks
 4. Install NixOS
@@ -26,7 +26,7 @@ This would actually be quite trivial to automate with some readily available too
 
 ### Typical manual installation steps _with_ secrets
 
-1. Download a NixOS Installer ISO image and load it on a USB drive
+1. Download a NixOS ISO image and load it on a USB drive
 2. Boot the new host into the ISO
 3. Partition and format disks
 4. Install NixOS
@@ -39,7 +39,7 @@ This would actually be quite trivial to automate with some readily available too
 
 Adding secrets complicates things significantly; we can't simply build the nix-config because it uses our private nix-secrets as an input. A valid private key needs to be present on the host so it can download nix-secrets from the private repository during build. Not only that, even if nix-secrets has been successfully downloaded, the new host will require a valid age key for sops to decrypt our secrets during build.
 
-To deal with this hurdle we are left with some choices about what steps should occur on the new host versus on an existing source host, the latter of which would already be able to access and update nix-secrets. There are likely several ways to go about this but they would all require various manual steps to get the new host in state that it will successfully access secrets when building nix-config. The solution I chose prior to automation was to build a stripped-down, minimal flake that aids in the process (an idea that came from [ryan4yin's config](https://github.com/ryan4yin/nix-config/tree/main/nixos-installer)). Ultimately, the minimal installer flake approach was also used for the automated process described next.
+To deal with this hurdle we are left with some choices about what steps should occur on the new host versus on an existing source host, the latter of which would already be able to access and update nix-secrets. There are likely several ways to go about this but they would all require various manual steps to get the new host into a state that it will successfully access secrets when building nix-config. The solution I chose prior to automation was to build a stripped-down, minimal flake that aids in the process (an idea that came from [Ryan Yin's config](https://github.com/ryan4yin/nix-config/tree/main/nixos-installer)). Ultimately, the minimal installer flake approach was also used for the automated process described next.
 
 ### Automating remote installation with secrets
 
@@ -48,7 +48,7 @@ To deal with this hurdle we are left with some choices about what steps should o
 3. Execute a script from the source host that will:
 
     1. Generate target host hardware-configuration and add to nix-config
-    2. Remotely install NixOS using the minimal, installer flake
+    2. Remotely install NixOS using the minimal flake
     3. Generate an age key for the host to access nix-secrets during full rebuild below
     4. Re-encrypt nix-secrets with the new key
     5. Push the nix-secrets changes to our private repository
@@ -58,18 +58,18 @@ To deal with this hurdle we are left with some choices about what steps should o
 
 Along we'll also need to handle all of the ssh related fingerprinting and authentication, do some validation checks, and have the script modify files cleanly so that if the script needs to be run multiple times on the same target (during testing or if we need to reinstall a host) any existing ssh or secrets related entries are replaced rather than added to.
 
-> NOTE: While writing the documentation for all of this I realized that the steps above could be rearranged slightly and the installer flake could be eliminated. Roughly, this would involve revising steps 3.3 to 3.5 to occur prior to 3.2 and then installing the NixOS using the full nix-config instead of the minimal flake. This would effectively eliminate steps 3.6 and 3.7.
+> NOTE: While writing the documentation for all of this I realized that the steps above could be rearranged slightly and the minimal flake could be eliminated, if one didn't want to go that route. Roughly, this would involve revising steps 3.3 to 3.5 to occur prior to 3.2 and then installing the NixOS using the full nix-config instead of the minimal flake. This would effectively eliminate steps 3.6 and 3.7.
 >
-> I seriously debated revising the script but ultimately decided that there is still significant value in continuing to use the minimal, installer flake as an intermediary step. That value is in testing with significantly less overhead. With future additions to the config such as as full disk encryption, impermanence, and who knows what else, I will appreciate having the ability to quickly install a lightweight version to test and validate assumptions.
+> However, I think there significant value in having and using the minimal flake as an intermediary step. With future additions to the config such as full disk encryption, impermanence, and who knows what else, I will appreciate having the ability to quickly install a lightweight version of the config to test and validate assumptions without as much overhead (fewer packages to download, faster build time, and a smaller footprint to debug when something inevitably goes sideways). It's worth noting that Ryan Yin states this as why he uses the minimal flake as well.
 >
-> In a future iteration of the script, I will add some options for skipping the intermediary steps but for now it's working well enough.
+> In a future iteration of the script, I may add some options for skipping the intermediary steps but for now it's working well enough.
 
 In the remainder of this article we'll go over each of the tools used, changes we made to the nix-config to solve various challenges, the individual steps of the script, and then tie it all together as an automated process (or at least, as automated as possible).
 
 ## Tools used
 
 - [nixos-anywhere](#nixos-anywhere---remote-nixos-installation-via-ssh)
-- [custom NixOS Installer ISO image](#custom-nixos-installer-iso-image)
+- [custom NixOS ISO image](#custom-nixos-iso-image)
 - [disko](#disko---declarative-disk-partitioning)
 - [just](#just---a-simple-command-runner)
 
@@ -77,13 +77,13 @@ In the remainder of this article we'll go over each of the tools used, changes w
 
 __Official repo:__ [https://github.com/nix-community/nixos-anywhere](https://github.com/nix-community/nixos-anywhere)
 
-nixos-anywhere allows users to remotely install NixOS to a specified target host with a single command, unattended. There is support for installing to target that has a NixOS installer present or to a target that supports the Linux `kexec` tool, which is provided by most Linux distros these days. The latter scenario is typically only relevant when installing to a target that has a pre-existing, non-NixOS distribution installed on it. This could be the case when the target is provided by some sort of cloud infrastructure provider that ~~is in the dark ages~~ doesn't provide NixOS images yet. nixos-anywhere importantly also supports installations that use disko (covered below).
+nixos-anywhere allows users to remotely install NixOS to a specified target host with a single command, unattended. There is support for installing to a target that has a NixOS installer present or to a target that supports the Linux `kexec` tool, which is provided by most Linux distros these days. The latter scenario is typically only relevant when installing to a target that has a pre-existing, non-NixOS distribution installed on it. This could be the case when the target is provided by some sort of cloud infrastructure provider that ~~is in the dark ages~~ doesn't provide NixOS images yet. nixos-anywhere importantly also supports installations that use disko (covered below).
 
-We'll be focusing on hosts booted into a NixOS installer image, so the pre-requisites we need to meet are:
+We'll be focusing on hosts booted into a NixOS ISO image, so the pre-requisites we need to meet are:
 
     - the source host has nix or NixOS installed 
     - the target host is:
-        - booted into a NixOS installer environment
+        - booted into an ISO image
         - network accessible
         - has at least 1.5GB RAM
 
@@ -93,13 +93,13 @@ nixos-anywhere is also flake based, which means we won't need to clone the code 
     nix run github:nix-community/nixos-anywhere -- --flake .#foo root@192.168.100.10
     ```
 
-When I first encountered nixos-anywhere I was hopeful that it would solve the entire problem set for my objective. While it does conveniently handle a substantial part of the process it does not get us into the installer iso (no biggie), doesn't really handle secrets the way we need to, and it stops after NixOS has successfully been installed and the target host rebooted. That's pretty good though, all things considered and I learned a lot just by looking at the source code.
+When I first encountered nixos-anywhere I was hopeful that it would solve the entire problem set for my objective. While it does conveniently handle a substantial part of the process it does not get us into the ISO (no biggie), doesn't really handle secrets the way we need to, and it stops after NixOS has successfully been installed and the target host rebooted. That's pretty good though, all things considered and I learned a lot just by looking at the source code.
 
-### Custom NixOS Installer ISO image
+### Custom NixOS ISO image
 
 I initially started using the official [NixOS Minimal ISO image](https://nixos.org/download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it.
 
-One of the proposed solutions in that issue was [PR295](https://github.com/nix-community/nixos-anywhere/pull/295) to change the `rsync` command to and an `scp` command but there was also a suggested work around to simply use a custom ISO image that includes `rsync`. I briefly tested and tinkered with the proposed `scp` command but couldn't get it working. I seriously considered delving into a fix and filing a PR but ultimately decided that there were higher priorities to deal with so went ahead with custom ISO instead. In particular, I expected to encounter other reasons that a custom ISO would be required.
+One of the proposed solutions in that issue was [PR295](https://github.com/nix-community/nixos-anywhere/pull/295) to change the `rsync` command to an `scp` command but there was also a suggested work around to simply use a custom ISO that includes `rsync`. I briefly tested and tinkered with the proposed `scp` command but couldn't get it working. I seriously considered delving into a fix and filing a PR but ultimately decided that there were higher priorities to deal with so went ahead with custom ISO instead. In particular, I expected to encounter other reasons that a custom ISO would be required.
 
 Apparently (having a look while I write this), there is now an open [PR316](https://github.com/nix-community/nixos-anywhere/pull/316) that uses `ssh` and `tar` instead of `rsync`. Also, one of the nixos-anywhere maintainers happens to be a maintainer of the [nix-community/nixos-images repository](https://github.com/nix-community/nixos-images?tab=readme-ov-file#iso-installer-images), which has been updated to include `rsync` in the image.
 
@@ -135,11 +135,11 @@ If you're new to my nix-config, you can find details about the original design c
 
 ### lib and vars
 
-being nix-config/vars](<https://github.com/EmergentMind/nix-config/tree/dev/vars>)).
+We've added a custom config library to `nix-config/lib` and a set of custom variables to `nix-config/vars`. Adding these isn't entirely necessary to accomplish remote bootstrapping but they were implemented during the project and show up in some of the examples throughout this article so it's worth going over what they do.
 
 TODO zoom in on diagram
 
-They are made available in our main flake.nix outputs via:
+The contents of `lib` and `vars` made available in our main `flake.nix` outputs via:
 
 ```nix
 nix-config/flake.nix
@@ -159,15 +159,18 @@ nix-config/vars/default.nix
 
 { lib }:
 {
-    username = "ta";
-    handle = "emergentmind";
-    gitEmail = "7410928+emergentmind@users.noreply.github.com";
-    persistFolder = "/persist";
-    #networking = import ./networking.nix { inherit lib; };
+  username = "ta";
+  handle = "emergentmind";
+  gitEmail = "7410928+emergentmind@users.noreply.github.com";
+  networking = import ./networking.nix { inherit lib; };
+  persistFolder = "/persist";
+  isMinimal = false; # Used to indicate nixos-installer build
 }
 ```
 
-`configVars` gives us convenient access to a set of global-style configuration variables, or attributes more accurately, such as `configVars.username` for the primary user. There are several other attributes listed but I've only started using few of them at this point.
+`configVars` gives us convenient access to a set of global-style configuration variables, or attributes more accurately, such as `configVars.username` for the primary user and `configVars.isMinimal` which will be described in detail later on in this article.
+
+There are several other attributes listed but I've only started using few of them at this point.
 
 #### configLib
 
@@ -202,7 +205,7 @@ nix-config/lib/default.nix
 
 ```
 
-`configLib` gives us the `scanPaths` and `relativeToRoot` functions, both of which help clean up imports.
+`configLib` gives us the `scanPaths` and `relativeToRoot` functions, both of which help clean up imports. Credit for both of these functions goes to [Ryan Yin](https://github.com/ryan4yin).
 
 `scanPaths` will build a map of the paths to all .nix files in the current directory and it's children, excluding files called `default.nix`. It effectively lets us shrink some of our import blocks. For example:
 
@@ -231,7 +234,9 @@ As you can see, we no longer need to individually name each of the modules that 
     - home/ta/common/core/default.nix
     - home/media/common/core/default.nix
 
-`relativeToRoot` allows us to provided file paths based on the root of `nix-config/` instead of having to use `../` for static navigation. This typically occurs for imports and depending on the scenario, you may be traversing back several directories. The beauty of `relativeToRoot` is that once a file is using it, you can move the file to a different directory and the paths will still work. Consider the following examples for the two basic use cases.
+> NOTE: Using `scanPaths` to auto-import files does have drawbacks. The files being imported aren't being explicitly stated, so in the future we may run in to trouble debugging errors. This is largely a matter of personal preference so, if you choose to follow suit just be aware of the risks. Being explicit wherever possible will arguable be more forgiving in the future.
+
+`relativeToRoot` allows us to provided file paths based on the root of `nix-config/` instead of having to use `../` for static navigation. This typically occurs for imports and depending on the scenario, you may be traversing back several directories. The beauty of using `relativeToRoot` is that you can move files to different directories if need be and the pathing will still work. Consider the following examples for the two basic use cases.
 
 ##### Example 1 - single file import
 
@@ -315,22 +320,15 @@ The single file use case in this example is in the "Disk Layout" section. The mu
 
 ### A minimal nixos-installer flake
 
-Successfully building the full nix-config requires the host to access our private nix-secrets repository. This presents two primary issues:
+For our 'minimal' flake we'll create a new directory within our nix-config. This will let us cherry pick the minimum required configuration details to install NixOS according to our disko spec, generate age keys for the host, update the nix-secrets repo, and then, if all goes well, load and build the full nix-config. At any point along the way, we can interrupt the process to perform tests and experimentation.
 
-- _prior_ to building nix-config we need to generate an age key for the target host and update our nix-secrets so the target can decrypt them
-- accessing the nix-secrets repo while building nix-config requires a valid ssh key
-
-To solve this, we'll create a separate 'minimal' flake within the nix-config that can cherry pick the minimum required configuration details for us to install NixOS according to our disko spec, generate age keys for the host, update the nix-secrets repo, and then load and build the full nix-config.
-
-As mentioned in the introduction, the two issues above can be worked around successfully through automation, prior to installation, without use of an intermediary, we will continue to use it. Having a test bed, that doesn't required downloading and installing everything declared in the full nix-config will save us headaches down the road.
-
-Conveniently, we'll also need a place to house our ISO configs. Generating the ISO image files requires defining them as flake output, so rather than adding to our main flake.nix file, we can add the iso output exclusively to the nixos-installer flake file. In doing so we can segregate all of our 'install-only' items from the rest of the nix-config.
+This new directory also gives us a place house our ISO configs. Generating ISO files requires defining them as flake output, so rather than adding to our main flake.nix file, we can add our iso output exclusively to the nixos-installer flake file. In doing so we can segregate all of our 'install-only' items from the rest of the nix-config.
 
 ```bash
 nix-config/nixos-installer
 ├── flake.lock
 ├── flake.nix
-├── iso-
+├── iso
 │   └── default.nix
 └── minimal-configuration.nix
 ```
@@ -422,13 +420,13 @@ As you can see, we'll only need to input `nixpkgs` and `disko`, so we're already
 
 Moving on to the outputs section, we've got a large `let` statement with a few notable distinctions from the main flake.
 
-The first is that we're defining `minimalConfigVars` set using the `lib.recursiveUpdate`<sup>1</sup> function. This will merge the attributes of the `configVars` set with `isMinimal = true;` (effectively creating one set) and return the combined results. This is effectively how we differentiate the minimal flake from the full flake when importing modules that are used by both. We'll cover how the `isMinimal` attribute is used in the sections on [nix-config/nixos-installer/minimal-configuration.nix](#nix-confignixos-installerminimal-configurationnix) and [modifications to the primary user module](#modifications-to-the-primary-user-module).
+The first is that we're defining a `minimalConfigVars` set using the `lib.recursiveUpdate`<sup>1</sup> function, which takes in `configVars` but updates the value of `configVars.isMinimal` to `true`. This is effectively how we'll differentiate the minimal flake from the full flake when importing modules that are used by both. We'll cover how the `isMinimal` attribute is used by the relevant modules in the sections on [nix-config/nixos-installer/minimal-configuration.nix](#nix-confignixos-installerminimal-configurationnix) and [modifications to the primary user module](#modifications-to-the-primary-user-module).
 
-The second notable distinction is the `newConfig` set which establishes a pattern of attributes that are used to quickly define the specs for each host in `nixosConfigurations` at the top of the `in` statement that follows. By dynamically handling the `name`, `disk` location, `withSwap` boolean, and `swapSize`, some duplicate entry is reduced. This pattern is something we're currently experimenting with in the nixos-installer but there is another that we're considering as well. As such, I have yet to update the main flake to follow suit.
+The second notable distinction is the `newConfig` function which establishes a pattern of attributes that are used to quickly define the specs for each host in `nixosConfigurations` at the top of the `in` statement that follows. By dynamically handling the `name`, `disk` location, `withSwap` boolean, and `swapSize`, some duplicate entry is reduced. This pattern is something we're currently experimenting with in the nixos-installer but there is another that we're considering as well. As such, I have yet to update the main flake to follow suit.
 
-Another important distinction is that rather than each host using its own host specific configuration module (e.g. nix-config/hosts/grief/default.nix), as they do in the main flake, all of the hosts here use `nix-config/nixos-installer/minimal-configuration.nix`.
+Another important distinction is that rather than each host using its own configuration module (e.g. nix-config/hosts/grief/default.nix), as they do in the main flake, all of the hosts here use `nix-config/nixos-installer/minimal-configuration.nix`.
 
-Also note that `nixosConfigurations` provides the entry point to our iso, which is discussed under [nix-config/nixos-installer/iso/default.nix](#nix-confignixos-installerisodefaultnix) below.
+Also note that `nixosConfigurations` provides the entry point to our ISO, which is discussed under [nix-config/nixos-installer/iso/default.nix](#nix-confignixos-installerisodefaultnix) below.
 
 References:
 
@@ -499,21 +497,22 @@ nix-config/nixos-installer/flake.nix
 
 Most of this file declares the basic NixOS options that are used on all of our hosts, with some minor tweaks that are only really acceptable in a minimal environment that won't be around for long. The most notable tweaks are:
 
-- `fileSystems."/boot".options = ["umask=0777"];` to remove warnings about permissions and security that are acceptable in this state
+- `fileSystems."/boot".options = ["umask=0077"];` to remove warnings about permissions and security that are acceptable in this state
 - `services.openssh.settings.PermitRootLogin = "yes";` which is set to "no" under normal circumstances but will allow for convenient automation prior to building the full nix-config
 
 We also set up some `security.pam` options that make the the remote process more convenient by forwarding any ssh authentication requests from the target host to the source host.
 
 Some of these options do appear in various `hosts/core` or `hosts/optional` modules but because the vast majority of what's in those modules are things we don't want in the minimal environment, we repeat the declarations here. The one exception to this is when we set up a user for the minimal environment using our primary user module, which we import at the top of the file.
 
-There are enough options configured in our `hosts/common/users/${configVars.username}` module (which in my cases is user `ta<sup></sup>
+There are enough options configured in our `hosts/common/users/${configVars.username}` module (which in my cases is user `ta`<sup></sup>.
+
 #### nix-config/nixos-installer/iso/default.nix
 
 TODO figure out where to put these ISO sentences:
 
-As mentioned well need a custom ISO image. To accomplish this, we use a new hosts entry in nix-config called iso and added all of the requisite information. FIXME fill out what this info is
+As mentioned well need a custom ISO image. To accomplish this, we use a new hosts entry in nix-config called `iso` and added all of the requisite information. FIXME fill out what this info is
 
-With that complete, we generate the iso file which will be written to `result/iso/`
+With that complete, we generate the ISO file which will be written to `result/iso/`
 
 The ISO can then be flashed to a USB stick to insert in to a target host or if you're building a VM, you can point the optical drive to the file. There are many other ways that ISOs can be generated and you can even skip the ISO and generate a VM environment directly. FIXME add references
 
@@ -525,7 +524,7 @@ detail referencing the various full config pieces
 
 ### Modifications to the primary user module
 
-Our [nix-config/nixos-installer/flake.nix](#nix-confignixos-installerflakenix) provides an `isMinimal` attribute set to `true` and in the section about the [nix-config/nixos-installer/minimal-configuration.nix](#nix-confignixos-installerminimal-configurationnix) we explained that it would be used by `hosts/common/users/ta/default.nix`. Let's examine how this will work.
+In this section, we'll examine how `configVars.isMinimal` is used in our primary user module (in my case `ta`) to define different settings depending on whether we are build our full config or just what we need for a minimal configuration. 
 
 ```nix
 nix-config/hosts/common/users/ta/default.nix
@@ -539,9 +538,8 @@ let
 
   # these are values we don't want to set if the environment is minimal. E.g. ISO or nixos-installer
   # isMinimal is true in the nixos-installer/flake.nix
-  fullUserConfig = lib.optionalAttrs (!(lib.hasAttr "isMinimal" configVars))
+  fullUserConfig = lib.optionalAttrs (!configVars.isMinimal)
     {
-      users.mutableUsers = false; # Required for password to be set via sops during system activation!
       users.users.${configVars.username} = {
         hashedPasswordFile = sopsHashedPasswordFile;
         packages = [ pkgs.home-manager ];
@@ -554,7 +552,8 @@ in
 {
   config = lib.recursiveUpdate fullUserConfig 
     #this is the second argument to recursiveUpdate
-    {
+    { 
+    users.mutableUsers = false; # Only allow declarative credentials; Required for sops
     users.users.${configVars.username} = {
       isNormalUser = true;
       password = "nixos"; # Overridden if sops is working
@@ -596,19 +595,18 @@ in
 
 In the `let` statement we define `fullUserConfig` using `lib.optionalAttrs`<sup>2</sup> which takes in two inputs. If the first input is `true` then the function will return the second input, an attribute set.
 
-In our case, the conditional input is `(!(lib.hasAttr "isMinimal" configVars))`. `hasAttr`<sup>3</sup> returns true if the set `configVars` has an attribute named `isMinimal`. However, we've wrapped our `hasAttr` call with `!( )`, effectively saying _not_ the value returned by the contents in the brackets. The result of all this being that when `isMinimal` is `false`, `optionalAttrs` will return the provided set to `fullUserConfig`. However, if `isMinimal` is `true`, `optionalAttrs` will return an empty set, `{}`.
+In our case, the conditional input is `(!configVars.isMinimal)`. The result being that when `isMinimal` is `false`, `optionalAttrs` will return the provided set of attributes to `fullUserConfig`. However, if `isMinimal` is `true`, `optionalAttrs` will return an empty set, `{}`.
 
-All of the attributes we provide in the set should be options we only want when our full user configuration is required. These include:
+All of the attributes we provide in the `fullUserConfig` set should be options we only want when our full user configuration is required. These include:
 
-- `users.mutableUsers = false;` - this needs to be false for sops to work in our full config but conversely needs to be true for our minimal configuration so that we can manipulate the basic users correctly during the remote bootstrapping process
 - `users.users.${configVars.username}.sopsHashedPasswordFile;` - although `sopsHashedPasswordFile` is defined earlier in the file, it will only have a meaningful value if sops is working, which will only be the case when the full config is being built.
 - the two lines related to home-manager - we won't bother using home-manager for the minimal install, which will cut down immensely on the installation size because the majority of programs used in our full-config are declared through home-manager.
 
-With that out of the way, we come to the `in` statement where we define `config` using `lib.recursiveUpdate`<sup>4</sup>. As we know from using this function in `nixos-installer/flake.nix`, it will merge two attribute set inputs. In this case, we input our `fullUserConfig` from the `let` statement and for the second input we declare our set of attributes that we want regardless of what value `isMinimal` is set to.
+With that out of the way, we come to the `in` statement where we define `config` using `lib.recursiveUpdate`<sup>3</sup>. As we know from using this function in `nixos-installer/flake.nix`, it will merge two attribute set inputs. In this case, we input our `fullUserConfig` from the `let` statement and for the second input we declare our set of attributes that we want regardless of what value `isMinimal` is set to.
 
 There are a three things particularly noteworthy regarding this section of the config because they caused some hurdles and confusion.
 
-First, `recursiveUpdate` is a recursive variant of the attribute update operator `//`<sup>5</sup>. The recursion in `recursiveUpdate` will stop "when one of the attribute values is not an attribute set, in which case the right hand side value is takes precedence of the left hand side value." In an early iterative of this file we used `//` in error to merge `fullUserConfig` with the second set. What happened was that regardless of whether `isMinimal` was true or not, the `users.users.${configVars.username}` options from the second attribute set were always used. The reason for this is quite subtle; consider the following examples:
+First, `recursiveUpdate` is a recursive variant of the attribute update operator `//`<sup>4</sup>. The recursion in `recursiveUpdate` will stop "when one of the attribute values is not an attribute set, in which case the right hand side value is takes precedence of the left hand side value." In an early iterative of this file we used `//` in error to merge `fullUserConfig` with the second set. What happened was that regardless of whether `isMinimal` was true or not, the `users.users.${configVars.username}` options from the second attribute set were always used. The reason for this is quite subtle; consider the following examples:
 
 ```nix
 foo = {
@@ -639,28 +637,37 @@ users.users.ta = {
 };
 ```
 
-Both `foo` and `bar` have an attribute with the same name, `users.users.ta`. In example1, `recursiveUpdate` prefers the second argument when an a duplicate attribute name is encountered, but _only_ when recursion on an attribute value stops and this occurs when an attribute value is not a set. In other words, the function continues even though both arguments have `users.users.ta.shell`. As expected, `packages = [ pkgs.home-manager ];` from the first argument is merged with `shell = pkgs.zsh;` from the second argument, having taken precedence over `shell = pkgs.bash;` from the first.
+Both `foo` and `bar` have an attribute with the same name, `users.users.ta`. In example1, `recursiveUpdate` prefers the second argument when a duplicate attribute name is encountered, but _only_ when recursion on an attribute value stops and this occurs when an attribute value is not a set. In other words, the function continues even though both arguments have `users.users.ta.shell`. As expected, `packages = [ pkgs.home-manager ];` from the first argument is merged with `shell = pkgs.zsh;` from the second argument, having taken precedence over `shell = pkgs.bash;` from the first.
 
-On the contrary, when `//` encounters the same attribute name in both sets it takes the value of the second set. In other words, it sees that both arguments have an attribute name `users.users.ta` and 
+On the contrary, when `//` encounters the same attribute name in both sets it takes the value of the second set. In other words, it sees that both arguments have an attribute name `users.users.ta` and
 takes only the value of the second argument.
 
-This took a little bit of digging to figure out given the scenario so I hope calling it out will help someone else in the future.
+This took a little bit of digging to figure out given the scenario so I hope calling it out will help someone else in the future. To be clear, the documentation on this is clear but we'd forgotten the details and neglected to confirm our assumptions, which serves as a good reminder that regularly revisiting basic features that you may not use frequently can be worthwhile.
 
-The second thing of note in this section added significant confusion when trying to solve the first because the official documentation states that `password` overrides `hashedPasswordFile`<sup>6,7,8</sup>. This not only doesn't make sense but it is not how the underlying code in nixpkgs actually works. @fidgetingbits looked into this extensively and filed [PR #310484](https://github.com/NixOS/nixpkgs/pull/310484) to both correct the issue. As of this writing, the PR is still open.
+The second thing of note in this section added significant confusion when trying to solve the first because the official documentation states that `password` overrides `hashedPasswordFile`<sup>5,6,7</sup>. This not only doesn't make sense but it is not how the underlying code in nixpkgs actually works. @fidgetingbits looked into this extensively and filed [PR #310484](https://github.com/NixOS/nixpkgs/pull/310484) to correct the issue. As of this writing, the PR is still open.
 
 The third thing of note, now that we understand the actual password options precedence is that we set a plaintext password as a generic password. This isn't a security concern when the full config is built because `hashedPasswordFile` being set in `fullUserConfig` will take precedence over `password` when `isMinimal` is false.
+
+The final thing I'll mention about using plaintext `password` is this. It's possible due to testing and experimentation needs that you'll want to have a host on your network running in the ISO or minimal flake, without immediately building the full config. If that's the case you likely don't want to use the plaintext password option. Instead, you can simply replace `password` with `hashedPassword` and provide it the value of a hashed password that is still something convenient to use/remember given the environment but is different than your actual user or root password.
+
+To generate a hash for your password, you can do so in the cli using `mkpassword -s` and following the prompts. For example:
+
+```bash
+$ mkpasswd -s
+Password:***********
+<hashed password data>
+```
 
 That's enough of that; moving on!
 
 References:
 
 2. optionalAttrs - [https://noogle.dev/f/lib/optionalAttrs](https://noogle.dev/f/lib/optionalAttrs)
-3. hasAttr - [https://noogle.dev/f/lib/hasAttr](https://noogle.dev/f/lib/hasAttr)
-4. recursiveUpdate - [https://noogle.dev/f/lib/recursiveUpdate](https://noogle.dev/f/lib/recursiveUpdate)
-5. attribute update operator `//` - [https://nix.dev/manual/nix/2.18/language/operators#update](https://nix.dev/manual/nix/2.18/language/operators#update)
-6. users.users.\<name>.password - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password)
-7. users.users.\<name>.hashedPassword - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword)
-8. users.users.\<name>.hashedPasswordFile - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile)
+3. recursiveUpdate - [https://noogle.dev/f/lib/recursiveUpdate](https://noogle.dev/f/lib/recursiveUpdate)
+4. attribute update operator `//` - [https://nix.dev/manual/nix/2.18/language/operators#update](https://nix.dev/manual/nix/2.18/language/operators#update)
+5. users.users.\<name>.password - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password)
+6. users.users.\<name>.hashedPassword - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword)
+7. users.users.\<name>.hashedPasswordFile - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile)
 
 ### A new hosts/common/disks directory
 
@@ -672,19 +679,19 @@ First, disko locates the device to partition and format through the `disko.devic
 
 Each host-specific config module (`hosts/foo/default.nix`) will import disko from our flake inputs along with the `standard-disk-config.nix` disko spec. Below that we'll also define our arguments for the host.
 
-    ```nix
-        # ...
+```nix
+# ...
 
-        inputs.disko.nixosModules.disko
-        (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
-        {
-        _module.args = {
-            disk = "/dev/vda";
-            swapSize = "8";
-            withSwap = true;
-        };
-        # ...
-    ```
+inputs.disko.nixosModules.disko
+(configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
+{
+_module.args = {
+    disk = "/dev/vda";
+    swapSize = "8";
+    withSwap = true;
+};
+# ...
+```
 
 FIXME overview of disko file. Overview of how I'm partitioning. overview of where the disko and the configfile needs to be referenced and why (nixos-installer config, and hosts/[host]/default.nix)
 
@@ -705,7 +712,7 @@ details
 
 ### Remote installation of NixOS
 
-For this portion of the install we'll be using the root user provided by the ISO boot environment.
+For this portion of the install we'll be using the root user provided by the ISO environment.
 
 using nixos-anywhere
 
@@ -744,7 +751,7 @@ Persistance stuff (perhaps wait on this?)
 
 ### Copying the nix-config
 
-At this point of the process we'll switch from using the root user that was provided by the ISO boot environment to our primary user, that was created and configured during installation according to our minimal flake.
+At this point of the process we'll switch from using the root user that was provided by the ISO to our primary user, that was created and configured during installation according to our minimal flake.
 Also, when we copied the nix-config to the ISO image for use during installation, it was not retained when we rebooted and entered the installation. So first we'll need to copy the nix-config over to our primary user's home on the target and we'll also copy nix-secrets
     remind that sync rather than clone is faster
 
