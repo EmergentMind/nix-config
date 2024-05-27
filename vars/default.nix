@@ -9,4 +9,5 @@
   #workEmail = inputs.nix-secrets.work-email;
   networking = import ./networking.nix { inherit lib; };
   persistFolder = "/persist";
+  isMinimal = false; # Used to indicate nixos-installer build
 }
