@@ -422,7 +422,7 @@ Moving on to the outputs section, we've got a large `let` statement with a few n
 
 The first is that we're defining a `minimalConfigVars` set using the `lib.recursiveUpdate`<sup>1</sup> function, which takes in `configVars` but updates the value of `configVars.isMinimal` to `true`. This is effectively how we'll differentiate the minimal flake from the full flake when importing modules that are used by both. We'll cover how the `isMinimal` attribute is used by the relevant modules in the sections on [nix-config/nixos-installer/minimal-configuration.nix](#nix-confignixos-installerminimal-configurationnix) and [modifications to the primary user module](#modifications-to-the-primary-user-module).
 
-The second notable distinction is the `newConfig` function which establishes a pattern of attributes that are used to quickly define the specs for each host in `nixosConfigurations` at the top of the `in` statement that follows. By dynamically handling the `name`, `disk` location, `withSwap` boolean, and `swapSize`, some duplicate entry is reduced. This pattern is something we're currently experimenting with in the nixos-installer but there is another that we're considering as well. As such, I have yet to update the main flake to follow suit.
+The second notable distinction is the `newConfig` function which establishes a pattern of attributes that are used to quickly define the specs for each host in `nixosConfigurations` at the top of the `in` statement that follows. By dynamically handling the `name`, `disk` location, `withSwap` boolean, and `swapSize`, some duplicate entry is reduced. This pattern is something we're currently experimenting with in the nixos-installer but there is another that we're considering as well. As such, I have yet to update the main flake to follow suit. We'll look at how these attributes are used in the section on [a new hosts/common/disk` directory](#a-new-hostscommondisks-directory).
 
 Another important distinction is that rather than each host using its own configuration module (e.g. nix-config/hosts/grief/default.nix), as they do in the main flake, all of the hosts here use `nix-config/nixos-installer/minimal-configuration.nix`.
 
@@ -671,36 +671,172 @@ References:
 
 ### A new hosts/common/disks directory
 
-I wrote the disko specification to `hosts/common/disks` to keep it organized and separated from unrelated modules. For the time being I've got a single file, `standard-disk-config.nix`, that all of my hosts will use.
+Our disko specifications are stored in `hosts/common/disks` to keep them organized and separate from unrelated modules. For the time being there is a single file, `standard-disk-config.nix`, that all of the hosts will use.
 
-Each host will have an obligatory ESP partition for `/boot`  and a [btrfs](https://btrfs.readthedocs.io/en/latest/Introduction.html) partition consisting of subvolumes for root, persist (thinking ahead to impermanence), nix, and swap (optionally). The spec is quite simple but we'll want to make it handle some use cases dynamically.
+Each host is assumed to have a single disk that will consist of an obligatory ESP partition for `/boot`  and a [btrfs](https://btrfs.readthedocs.io/en/latest/Introduction.html) partition split into sub-volumes for root, persist (thinking ahead to impermanence), nix, and swap (optionally). The spec is quite simple but we'll want to make it handle some use cases dynamically.
 
-First, disko locates the device to partition and format through the `disko.devices.disk.*.device` attribute, which is the path to the device. For example, this could be "/dev/sda" for your primary hard disk or "/dev/vda" for your primary Virtual Machine disk. You can also provide paths to devices using their other identification paths, such as "/dev/disk/by-id/nvme-[device id]". Since some of my hosts, are virtual and others are not, we'll need a way to set this
+Disko locates devices to partition and format through the `disko.devices.disk.*.device` attribute, which is the path to the device. For example, this could be "/dev/sda" for your primary hard disk or "/dev/vda" for your primary Virtual Machine disk. You can also provide paths to devices using their other identification paths, such as "/dev/disk/by-id/nvme-[device id]", if you prefer. Since some of my hosts are virtual and others are not, we'll need a way to set this depending on the host.
 
-Each host-specific config module (`hosts/foo/default.nix`) will import disko from our flake inputs along with the `standard-disk-config.nix` disko spec. Below that we'll also define our arguments for the host.
+To start with, each host configuration module (`hosts/foo/default.nix`) will import disko from the flake inputs along with the `standard-disk-config.nix` disko spec and below that we'll also define some arguments for the host.
+
+This is an example of the relevant code from the module for my host "grief":
 
 ```nix
-# ...
+nix-config/hosts/grief/default.nix
+--------------------
 
-inputs.disko.nixosModules.disko
-(configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
-{
-_module.args = {
-    disk = "/dev/vda";
-    swapSize = "8";
-    withSwap = true;
-};
+{ inputs, configLib, ... }: {
+  imports = [
+    
+    # ...
+    
+    #################### Disk Layout ####################
+    inputs.disko.nixosModules.disko
+    (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
+    {
+      _module.args = {
+        disk = "/dev/vda";
+        swapSize = "8";
+        withSwap = true;
+      };
+    }
+  ]
+
+  # ...
+```
+
+Note that, we're providing the `disk` path, `swapSize`, and `withSwap` state specifically for this host.
+
+Now let's briefly review how the same arguments were set in our nixos-installer flake, since it doesn't use these host's configuration module. This is a snippet of the relevant code:
+
+```nix
+nix-config/nixos-installer/flake.nix
+--------------------
+
+# ...
+    newConfig =
+      name: disk: withSwap: swapSize:
+      (nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = minimalSpecialArgs;
+        modules = [
+          inputs.disko.nixosModules.disko
+          ../hosts/common/disks/standard-disk-config.nix
+          {
+            _module.args = {
+              inherit disk withSwap swapSize;
+            };
+          }
+          ./minimal-configuration.nix
+          {
+            networking.hostName = name;
+          }
+          ../hosts/${name}/hardware-configuration.nix
+        ];
+      });
+  in
+  {
+    nixosConfigurations = {
+      # host = newConfig "name" disk" "swapSize" "withSwap"
+      # Swap size is in GiB
+      grief = newConfig "grief" "/dev/vda" "0" false;
+      guppy = newConfig "guppy" "/dev/vda" "0" false;
+      gusto = newConfig "gusto" "/dev/sda" "8" false;
 # ...
 ```
 
-FIXME overview of disko file. Overview of how I'm partitioning. overview of where the disko and the configfile needs to be referenced and why (nixos-installer config, and hosts/[host]/default.nix)
+As you can see, the same information is passed through to disko.
 
-For disko, I'll be using the same disk partitioning and format specification for most of my hosts, so I've added disks to the hosts/common directory. Each host module will reference the appropriate disko spec along with it's hardware-configuration module
-TODO: show example of the imports for this
-`hosts/common/disks`
+> Eventually, the same pattern will be used across the locations that set the arguments, once I decide which pattern to use, and at that point I'll likely define the values for each host using configVars.
 
-Details about setting up disko spec and referencing it in both the main config and minimal
-Show setting up guppy
+Now that we know where the arguments are set, let's look at `standard-disk-config.nix` to see how they are used.
+
+```nix
+nix-config/hosts/common/disks/standard-disk-config.nix
+--------------------
+
+{
+  lib,
+  disk ? "/dev/vda",
+  withSwap ? true,
+  swapSize,
+  configVars,
+  ...
+}:
+{
+  disko.devices = {
+    disk = {
+      disk0 = {
+        type = "disk";
+        device = disk;
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              priority = 1;
+              name = "ESP";
+              start = "1M";
+              end = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [ "defaults" ];
+              };
+            };
+            root = {
+              size = "100%";
+              content = {
+                type = "btrfs";
+                extraArgs = [ "-f" ]; # Override existing partition
+                # Subvolumes must set a mountpoint in order to be mounted,
+                # unless their parent is mounted
+                subvolumes = {
+                  "@root" = {
+                    mountpoint = "/";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                  };
+                  "@persist" = {
+                    mountpoint = "${configVars.persistFolder}";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                  };
+                  "@nix" = {
+                    mountpoint = "/nix";
+                    mountOptions = [
+                      "compress=zstd"
+                      "noatime"
+                    ];
+                  };
+                  "@swap" = lib.mkIf withSwap {
+                    mountpoint = "/.swapvol";
+                    swap.swapfile.size = "${swapSize}G";
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+    };
+  };
+}
+
+```
+
+At the top of this file, we take in the arguments (`disk`, `withSwap`, and `swapSize`) defined in the host config, while also defining some default values for two of them in case they weren't defined for the host.
+
+In the expression that follows we can see where each argument is used. `disko.devices.disk.disk0.device = disk` sets the path of the device. Moving further down to the last subvolume in the file, we can see that `"@swap"` will only have values if `withSwap` is true, in which case `swapSize` will be used.
+
+By reading through the rest of the file we can see how it's relatively easy to define that the disk will consist of the two partitions (512M for /boot and the remainder for root) and the second partition will consist of three to four subvolumes: @root, @persist, @nix, and optionally @swap.
+
+A final piece of information on the topic of disks is that each host _will_ still require a `hardware-configuration.nix` file as is normal for NixOS. When using disko however, the `fileSystems` and `swapDevices` attributes, which are normal declared in the hardware config file, will be absent. This may not be of interest to most people because the hardware file is typically generated automatically.
 
 ## Order of operations
 

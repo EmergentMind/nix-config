@@ -12,14 +12,16 @@
   - ~~refinement and confirmation testing~~
   - ~~implement across hosts~~
   - documentation
-    - taking sooo long
+    - ~~part 1~~
+    - ~~part 2~~
+    - part 3
 
     - link installer docs to main readme
 
 - Video series
 
   - ~~planning~~
-  - storyboard
+  - ~~storyboard~~
   - assets
   - recording
   - production
@@ -98,7 +100,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 - Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
 - Re-implement modules to make use of options for enablement
-- add configLib.scanPaths to 
+- Make use of configLib.scanPaths
 
 ##### 3.4 scripting cleanup
 
