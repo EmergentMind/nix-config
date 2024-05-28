@@ -2,7 +2,7 @@
 {
   lib,
   disk ? "/dev/vda",
-  withSwap ? true,
+  withSwap ? false,
   swapSize,
   configVars,
   ...
