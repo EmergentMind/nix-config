@@ -47,7 +47,7 @@ To deal with this hurdle we are left with some choices about what steps should o
 2. Boot the new host into the custom ISO
 3. Execute a script from the source host that will:
 
-    1. Generate target host hardware-configuration and add to nix-config
+    1. Generate target host hardware-configuration
     2. Remotely install NixOS using the minimal flake
     3. Generate an age key for the host to access nix-secrets during full rebuild below
     4. Re-encrypt nix-secrets with the new key
@@ -90,14 +90,7 @@ We'll be focusing on hosts booted into a NixOS ISO image, so the pre-requisites 
 nixos-anywhere is also flake based, which means we won't need to clone the code to our source host; we can simply use a `nix run` command pointing to the github repo, along with several arguments such as where our config flake is located and what the target is. A simplified example:
 
     ```bash
-    nix run github:nix-community/nixos-anywhere -- --flake .#foo root@192.168.100.10
-    ```
-
-When I first encountered nixos-anywhere I was hopeful that it would solve the entire problem set for my objective. While it does conveniently handle a substantial part of the process it does not get us into the ISO (no biggie), doesn't really handle secrets the way we need to, and it stops after NixOS has successfully been installed and the target host rebooted. That's pretty good though, all things considered and I learned a lot just by looking at the source code.
-
-### Custom NixOS ISO image
-
-I initially started using the official [NixOS Minimal ISO image](https://nixos.org/download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it.
+download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it.
 
 One of the proposed solutions in that issue was [PR295](https://github.com/nix-community/nixos-anywhere/pull/295) to change the `rsync` command to an `scp` command but there was also a suggested work around to simply use a custom ISO that includes `rsync`. I briefly tested and tinkered with the proposed `scp` command but couldn't get it working. I seriously considered delving into a fix and filing a PR but ultimately decided that there were higher priorities to deal with so went ahead with custom ISO instead. In particular, I expected to encounter other reasons that a custom ISO would be required.
 
@@ -121,7 +114,7 @@ We'll go over the details of the disko spec and updates needed in the nix-config
 
 __Official repo:__ [https://github.com/casey/just](https://github.com/casey/just)
 
-`just` is quite simply, just a command runner that uses `make` syntax but is more elegant. We use it to provide quickly accessible cli recipes, via `just foo`, which will run whatever commands we've defined in a `justfile` for the specified recipe. This is also similar to running a bash script but running specific functions/recipes from the cli is simpler in `just`.
+`just` is quite simply, just a command runner that uses `make`-like syntax but is more elegant. We use it to provide quickly accessible cli recipes, via `just foo`, which will run whatever commands we've defined in a `justfile` for the specified recipe. This is also similar to running a bash script but running specific functions/recipes from the cli is simpler in `just`.
 
 `just` was actually added to the nix-config prior to working on this project to streamline some of the dev workflow. I recently posted [a brief video](https://youtu.be/wQCV0QgIbuk) about it to my [YouTube channel](www.youtube.com/@Emergent_Mind) if you're interested.
 
@@ -578,7 +571,7 @@ The results will be written to `nix-config/result/iso/`.
 
 > NOTE: If you are booted into the image file using libvirtd for a virtual machine, build a new version of the image file, and then reboot your VM, the original image will be used instead of the new one. To get around this, you must first delete the file from `nix-config/result/iso/` and then build the new image.
 
-To simplify the command, and also deal with the noted libvirtd issue, we can run the `just iso` recipe from our `nix-config/justfile`, which will delete the `nix-config/result/` directory and build the ISO using one quick command. With the ISO image created, it can be flashed to a USB stick to insert in to a target host or, if you're building a VM, you can point the machine's optical drive diretly to the file.
+To simplify the command, and also deal with the noted libvirtd issue, we can run the `just iso` recipe from our `nix-config/justfile`, which will delete the `nix-config/result/` directory and build the ISO using one quick command. With the ISO image created, it can be flashed to a USB stick to insert in to a target host or, if you're building a VM, you can point the machine's optical drive directly to the file.
 
 When we do need the ISO flashed to a USB device, we can run the `just iso-install [DRIVE]` command, where [DRIVE] is the path to your USB device. This recipe will first run `just iso` and then perform the following `dd`<sup>3</sup> command to write the image to our specified the specified device.
 
@@ -597,7 +590,7 @@ __References:__
 
 ### Modifications to the primary user module
 
-In this section, we'll examine how `configVars.isMinimal` is used in our primary user module (in my case `ta`) to define different settings depending on whether we are build our full config or just what we need for a minimal configuration. 
+In this section, we'll examine how `configVars.isMinimal` is used in our primary user module (in my case `ta`) to define different settings depending on whether we are build our full config or just what we need for a minimal configuration.
 
 ```nix
 nix-config/hosts/common/users/ta/default.nix

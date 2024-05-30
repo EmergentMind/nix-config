@@ -22,7 +22,7 @@
 
   - ~~planning~~
   - ~~storyboard~~
-  - assets
+  - ~~assets~~
   - recording
   - production
 
@@ -30,6 +30,9 @@
   - copyq
   - du-dust
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
+- New tools to try
+  - wezterm
+  - tmux or zellij
 
 ## Long Term
 
