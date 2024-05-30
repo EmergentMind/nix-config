@@ -156,10 +156,10 @@
     "nix-secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1717014239,
-        "narHash": "sha256-6gTs4lixm5330hns9WV6WgW2IBB8khjURh5NClQHQrY=",
+        "lastModified": 1717032460,
+        "narHash": "sha256-t8Pwan0IBtHmwpJVghHdLlTd/blxwtQx0zW6/ansOHs=",
         "ref": "main",
-        "rev": "7c1928c1b04234eed2d3c4b9bb6df387bef79183",
+        "rev": "121cab20cd81f9624b01317fc985d176f8308f7e",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"

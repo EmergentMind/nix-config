@@ -36,7 +36,9 @@ in
       # the user doesn't have read permission for the ssh service private key. However, we can bootstrap the age key from
       # the secrets decrypted by the host key, which allows home-manager secrets to work without manually copying over
       # the age key.
-      "age_keys/${config.networking.hostName}" = {
+      # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived 
+      # from an ssh key).
+      "age_keys/${configVars.username}-${config.networking.hostName}" = {
         owner = config.users.users.${configVars.username}.name;
         inherit (config.users.users.${configVars.username}) group;
         # We need to ensure the entire directory structure is that of the user...
