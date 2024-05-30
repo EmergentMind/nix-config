@@ -137,7 +137,7 @@ If you're new to my nix-config, you can find details about the original design c
 
 We've added a custom config library to `nix-config/lib` and a set of custom variables to `nix-config/vars`. Adding these isn't entirely necessary to accomplish remote bootstrapping but they were implemented during the project and show up in some of the examples throughout this article so it's worth going over what they do.
 
-TODO zoom in on diagram
+![lib and vars](diagrams/zoomin-vars-lib.png)
 
 The contents of `lib` and `vars` made available in our main `flake.nix` outputs via:
 
@@ -333,7 +333,7 @@ nix-config/nixos-installer
 └── minimal-configuration.nix
 ```
 
-TODO diagram zoom in
+![nixos-installer](diagrams/nixos-installer.png)
 
 #### nix-config/nixos-installer/flake.nix
 
@@ -428,7 +428,7 @@ Another important distinction is that rather than each host using its own config
 
 Also note that `nixosConfigurations` provides the entry point to our ISO, which is discussed under [nix-config/nixos-installer/iso/default.nix](#nix-confignixos-installerisodefaultnix) below.
 
-References:
+__References:__
 
 1. recursiveUpdate - [https://noogle.dev/f/lib/recursiveUpdate](https://noogle.dev/f/lib/recursiveUpdate)
 
@@ -504,23 +504,96 @@ We also set up some `security.pam` options that make the the remote process more
 
 Some of these options do appear in various `hosts/core` or `hosts/optional` modules but because the vast majority of what's in those modules are things we don't want in the minimal environment, we repeat the declarations here. The one exception to this is when we set up a user for the minimal environment using our primary user module, which we import at the top of the file.
 
-There are enough options configured in our `hosts/common/users/${configVars.username}` module (which in my cases is user `ta`<sup></sup>.
+There are enough options configured in our `hosts/common/users/${configVars.username}` module (which in my cases is user `ta`, that we want to import it whole. However, some of what gets used will be limited by the `isMinimal` attribute being `true`. The details of which options are and are not used because of this are covered in the section on [modifications to the primary user module](#modifications-to-the-primary-user-module).
 
 #### nix-config/nixos-installer/iso/default.nix
 
-TODO figure out where to put these ISO sentences:
+The `iso` section of our minimal flake's `nixosConfigurations` set references three modules.
 
-As mentioned well need a custom ISO image. To accomplish this, we use a new hosts entry in nix-config called `iso` and added all of the requisite information. FIXME fill out what this info is
+1. `${nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix` - which defines a small, non-graphical NixOS installation<sup>1</sup>
+2. `${nixpkgs}/nixos/modules/installer/cd-dvd/channel.nix` - which provides an initial copy of the NixOS channel so we don't need to run `nix-channel --update`<sup>2</sup>
+3. `./iso/default.nix` - which is where we declare the custom attributes we want.
 
-With that complete, we generate the ISO file which will be written to `result/iso/`
+```nix
+nix-config/nixos-installer/iso/default.nix
+--------------------
 
-The ISO can then be flashed to a USB stick to insert in to a target host or if you're building a VM, you can point the optical drive to the file. There are many other ways that ISOs can be generated and you can even skip the ISO and generate a VM environment directly. FIXME add references
+{ pkgs, lib, config, configLib, configVars, ... }:
+{
+  imports = [
+    (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
+  ];
 
-describe doing this with just iso and just iso drive
+  # The default compression-level is (6) and takes too long on some machines (>30m). 3 takes <2m
+  isoImage.squashfsCompression = "zstd -Xcompression-level 3";
 
-With the custom iso generated, we can set it aside for now and work on the rest of the steps.
+  nixpkgs = {
+    hostPlatform = lib.mkDefault "x86_64-linux";
+    config.allowUnfree = true;
+  };
 
-detail referencing the various full config pieces
+  # FIXME: Reference generic nix file
+  nix = {
+    settings.experimental-features = [ "nix-command" "flakes" ];
+    extraOptions = "experimental-features = nix-command flakes";
+  };
+
+  services = {
+    qemuGuest.enable = true;
+    openssh = {
+      ports = [22]; # FIXME: Make this use configVars.networking
+      settings.PermitRootLogin = lib.mkForce "yes";
+    };
+  };
+
+  boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
+    supportedFilesystems = lib.mkForce [ "btrfs" "vfat" ];
+  };
+
+  networking = {
+    hostName = "iso";
+  };
+
+  systemd = {
+    services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
+    # gnome power settings to not turn off screen
+    targets = {
+      sleep.enable = false;
+      suspend.enable = false;
+      hibernate.enable = false;
+      hybrid-sleep.enable = false;
+    };
+  };
+}
+```
+
+As you can see, the ISO customization is relatively simple. It sets us up with flakes, QEMU guest support, and some ssh basics among other things. We're also importing our primary user module so that we get our preferred shell and some required tooling. As with elsewhere in the minimal flake, use of the primary user module will be limited by `isMinimal` being set to `true`. Details about this are covered in the section on [modifications to the primary user module](#modifications-to-the-primary-user-module).
+
+To generate our custom ISO image we can run the following command from the root of our `nix-config`:
+
+`nix build ./nixos-installer#nixosConfigurations.iso.config.system.build.isoImage`
+
+The results will be written to `nix-config/result/iso/`.
+
+> NOTE: If you are booted into the image file using libvirtd for a virtual machine, build a new version of the image file, and then reboot your VM, the original image will be used instead of the new one. To get around this, you must first delete the file from `nix-config/result/iso/` and then build the new image.
+
+To simplify the command, and also deal with the noted libvirtd issue, we can run the `just iso` recipe from our `nix-config/justfile`, which will delete the `nix-config/result/` directory and build the ISO using one quick command. With the ISO image created, it can be flashed to a USB stick to insert in to a target host or, if you're building a VM, you can point the machine's optical drive diretly to the file.
+
+When we do need the ISO flashed to a USB device, we can run the `just iso-install [DRIVE]` command, where [DRIVE] is the path to your USB device. This recipe will first run `just iso` and then perform the following `dd`<sup>3</sup> command to write the image to our specified the specified device.
+
+`sudo dd if=$(eza --sort changed result/iso/*.iso | tail -n1) of={{DRIVE}} bs=4M status=progress oflag=sync`
+
+With the custom ISO generated, we can set it aside for now and work on the rest of the steps.
+
+> NOTE: It's possible to create images in many different formats other than ISO using a nix-community tool called nixos-generators<sup>4</sup>. You can, for example, generate a `qcow` image, which is the QEMU virtual storage file format and that image can be run directly as a virtual machine with an appropriate vm manager. I chose to focus on ISO only for the time being because it serves all of my needs.
+
+__References:__
+
+1. installation-cd-minimal.nix - [https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/installer/cd-dvd/installation-cd-minimal.nix)
+2. channel.nix - [https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/installer/cd-dvd/channel.nix](https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/installer/cd-dvd/channel.nix)
+3. dd command - [https://man7.org/linux/man-pages/man1/dd.1.html](https://man7.org/linux/man-pages/man1/dd.1.html)
+4. nixos-generators - [https://github.com/nix-community/nixos-generators](https://github.com/nix-community/nixos-generators)
 
 ### Modifications to the primary user module
 
@@ -593,7 +666,7 @@ in
 }
 ```
 
-In the `let` statement we define `fullUserConfig` using `lib.optionalAttrs`<sup>2</sup> which takes in two inputs. If the first input is `true` then the function will return the second input, an attribute set.
+In the `let` statement we define `fullUserConfig` using `lib.optionalAttrs`<sup>1</sup> which takes in two inputs. If the first input is `true` then the function will return the second input, an attribute set.
 
 In our case, the conditional input is `(!configVars.isMinimal)`. The result being that when `isMinimal` is `false`, `optionalAttrs` will return the provided set of attributes to `fullUserConfig`. However, if `isMinimal` is `true`, `optionalAttrs` will return an empty set, `{}`.
 
@@ -602,11 +675,11 @@ All of the attributes we provide in the `fullUserConfig` set should be options w
 - `users.users.${configVars.username}.sopsHashedPasswordFile;` - although `sopsHashedPasswordFile` is defined earlier in the file, it will only have a meaningful value if sops is working, which will only be the case when the full config is being built.
 - the two lines related to home-manager - we won't bother using home-manager for the minimal install, which will cut down immensely on the installation size because the majority of programs used in our full-config are declared through home-manager.
 
-With that out of the way, we come to the `in` statement where we define `config` using `lib.recursiveUpdate`<sup>3</sup>. As we know from using this function in `nixos-installer/flake.nix`, it will merge two attribute set inputs. In this case, we input our `fullUserConfig` from the `let` statement and for the second input we declare our set of attributes that we want regardless of what value `isMinimal` is set to.
+With that out of the way, we come to the `in` statement where we define `config` using `lib.recursiveUpdate`<sup>2</sup>. As we know from using this function in `nixos-installer/flake.nix`, it will merge two attribute set inputs. In this case, we input our `fullUserConfig` from the `let` statement and for the second input we declare our set of attributes that we want regardless of what value `isMinimal` is set to.
 
 There are a three things particularly noteworthy regarding this section of the config because they caused some hurdles and confusion.
 
-First, `recursiveUpdate` is a recursive variant of the attribute update operator `//`<sup>4</sup>. The recursion in `recursiveUpdate` will stop "when one of the attribute values is not an attribute set, in which case the right hand side value is takes precedence of the left hand side value." In an early iterative of this file we used `//` in error to merge `fullUserConfig` with the second set. What happened was that regardless of whether `isMinimal` was true or not, the `users.users.${configVars.username}` options from the second attribute set were always used. The reason for this is quite subtle; consider the following examples:
+First, `recursiveUpdate` is a recursive variant of the attribute update operator `//`<sup>3</sup>. The recursion in `recursiveUpdate` will stop "when one of the attribute values is not an attribute set, in which case the right hand side value is takes precedence of the left hand side value." In an early iterative of this file we used `//` in error to merge `fullUserConfig` with the second set. What happened was that regardless of whether `isMinimal` was true or not, the `users.users.${configVars.username}` options from the second attribute set were always used. The reason for this is quite subtle; consider the following examples:
 
 ```nix
 foo = {
@@ -627,24 +700,16 @@ example2 = foo // bar;
 
 # The result of example1 will be:
 users.users.ta = {
-  packages = [ pkgs.home-manager ];
-  shell = pkgs.zsh;
-};
-
-# The result of example2 will be:
-users.users.ta = {
-  shell = pkgs.zsh;
-};
-```
-
-Both `foo` and `bar` have an attribute with the same name, `users.users.ta`. In example1, `recursiveUpdate` prefers the second argument when a duplicate attribute name is encountered, but _only_ when recursion on an attribute value stops and this occurs when an attribute value is not a set. In other words, the function continues even though both arguments have `users.users.ta.shell`. As expected, `packages = [ pkgs.home-manager ];` from the first argument is merged with `shell = pkgs.zsh;` from the second argument, having taken precedence over `shell = pkgs.bash;` from the first.
+  packages = [ pkgs.
+In this example I also include a single file import use case because I want to keep some segregation of imports for the time being.
+iveUpdate` prefers the second argument when a duplicate attribute name is encountered, but _only_ when recursion on an attribute value stops and this occurs when an attribute value is not a set. In other words, the function continues even though both arguments have `users.users.ta.shell`. As expected, `packages = [ pkgs.home-manager ];` from the first argument is merged with `shell = pkgs.zsh;` from the second argument, having taken precedence over `shell = pkgs.bash;` from the first.
 
 On the contrary, when `//` encounters the same attribute name in both sets it takes the value of the second set. In other words, it sees that both arguments have an attribute name `users.users.ta` and
 takes only the value of the second argument.
 
 This took a little bit of digging to figure out given the scenario so I hope calling it out will help someone else in the future. To be clear, the documentation on this is clear but we'd forgotten the details and neglected to confirm our assumptions, which serves as a good reminder that regularly revisiting basic features that you may not use frequently can be worthwhile.
 
-The second thing of note in this section added significant confusion when trying to solve the first because the official documentation states that `password` overrides `hashedPasswordFile`<sup>5,6,7</sup>. This not only doesn't make sense but it is not how the underlying code in nixpkgs actually works. @fidgetingbits looked into this extensively and filed [PR #310484](https://github.com/NixOS/nixpkgs/pull/310484) to correct the issue. As of this writing, the PR is still open.
+The second thing of note in this section added significant confusion when trying to solve the first because the official documentation states that `password` overrides `hashedPasswordFile`<sup>4,5,6</sup>. This not only doesn't make sense but it is not how the underlying code in nixpkgs actually works. @fidgetingbits looked into this extensively and filed [PR #310484](https://github.com/NixOS/nixpkgs/pull/310484) to correct the issue. As of this writing, the PR is still open.
 
 The third thing of note, now that we understand the actual password options precedence is that we set a plaintext password as a generic password. This isn't a security concern when the full config is built because `hashedPasswordFile` being set in `fullUserConfig` will take precedence over `password` when `isMinimal` is false.
 
@@ -662,12 +727,12 @@ That's enough of that; moving on!
 
 References:
 
-2. optionalAttrs - [https://noogle.dev/f/lib/optionalAttrs](https://noogle.dev/f/lib/optionalAttrs)
-3. recursiveUpdate - [https://noogle.dev/f/lib/recursiveUpdate](https://noogle.dev/f/lib/recursiveUpdate)
-4. attribute update operator `//` - [https://nix.dev/manual/nix/2.18/language/operators#update](https://nix.dev/manual/nix/2.18/language/operators#update)
-5. users.users.\<name>.password - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password)
-6. users.users.\<name>.hashedPassword - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword)
-7. users.users.\<name>.hashedPasswordFile - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile)
+1. optionalAttrs - [https://noogle.dev/f/lib/optionalAttrs](https://noogle.dev/f/lib/optionalAttrs)
+2. recursiveUpdate - [https://noogle.dev/f/lib/recursiveUpdate](https://noogle.dev/f/lib/recursiveUpdate)
+3. attribute update operator `//` - [https://nix.dev/manual/nix/2.18/language/operators#update](https://nix.dev/manual/nix/2.18/language/operators#update)
+4. users.users.\<name>.password - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.password&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.password)
+5. users.users.\<name>.hashedPassword - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPassword&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedpassword)
+6. users.users.\<name>.hashedPasswordFile - [https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile](https://search.nixos.org/options?channel=23.11&show=users.users.%3Cname%3E.hashedPasswordFile&from=0&size=50&sort=relevance&type=packages&query=users.users.%3Cname%3E.hashedPasswordFile)
 
 ### A new hosts/common/disks directory
 
@@ -899,8 +964,3 @@ note about this being optional in the script and that we print the manual instru
 
 ## Putting it all together
 
-TODO: the items below the line should just be separate video material.. not necessary for remote install
-
-lib and configLib
-vars and configVars
-...
