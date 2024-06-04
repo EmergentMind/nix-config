@@ -3,7 +3,7 @@
 
   inputs = {
     #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs.url = "github:NixOS/nixpkgs/release-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.05";
     # Declarative partitioning and formatting
     disko.url = "github:nix-community/disko";
   };

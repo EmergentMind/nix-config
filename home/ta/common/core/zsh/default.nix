@@ -7,7 +7,7 @@
     enableCompletion = true;
     syntaxHighlighting.enable = true;
     autocd = true;
-    enableAutosuggestions = true;
+    autosuggestion.enable = true;
     history.size = 10000;
     history.share = true;
 

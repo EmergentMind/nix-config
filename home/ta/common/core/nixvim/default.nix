@@ -9,16 +9,17 @@
 
     clipboard.register = "unnamedplus"; # use system clipboard instead of internal registers
 
-    # TODO: nixvim: gruvbox-material
     colorschemes = {
       gruvbox = {
         enable = true;
-        contrastDark = "medium";
-        # transparentBg = "true";
+        settings = {
+          contrastDark = true;
+          transparentBg = true;
+        };
       };
     };
 
-    options = {
+    opts = {
       # # Lua reference:
       # vim.o behaves like :set
       # vim.go behaves like :setglobal
@@ -176,11 +177,11 @@
         }
       ];
     };
-    # TODO: nixvim switch to lightline and lightline-bufferline
+    # TODO: nixvim: switch to lightline and lightline-bufferline
     plugins.airline = {
       enable = true;
-      powerline = true;
-      extensions = {
+      settings = {
+        powerline_fonts = true;
         # TODO: nixvim: Figure out tabline extension stuff in nixvim
         # TODO: nixvim: Possibly use bufferline or lightline-bufferline instead
         # """" Tabline settings
@@ -216,7 +217,6 @@
     };
     plugins.fidget = {
       enable = true;
-      text.spinner = "triangle";
     };
 
     # ========= Undo history ========
