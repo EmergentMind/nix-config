@@ -93,14 +93,12 @@ nixos-anywhere is also flake based, which means we won't need to clone the code 
         nix run github:nix-community/nixos-anywhere -- --flake .#foo root@192.168.100.10
     ```
 When I first encountered nixos-anywhere I was hopeful that it would solve the entire problem set for my objective. While it does conveniently handle a substantial part of the process it does not get us into the ISO (no biggie), doesn't really handle secrets the way we need to, and it stops after NixOS has successfully been installed and the target host rebooted. That's pretty good though, all things considered and I learned a lot just by looking at the source code.
+
 ### Custom NixOS ISO image
-I initially started using the official [NixOS Minimal ISO image](https://nixos.org/download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it.
 
-One of the proposed solutions in that issue was [PR295](https://github.com/nix-community/nixos-anywhere/pull/295) to change the `rsync` command to an `scp` command but there was also a suggested work around to simply use a custom ISO that includes `rsync`. I briefly tested and tinkered with the proposed `scp` command but couldn't get it working. I seriously considered delving into a fix and filing a PR but ultimately decided that there were higher priorities to deal with so went ahead with custom ISO instead. In particular, I expected to encounter other reasons that a custom ISO would be required.
+I initially started using the official [NixOS Minimal ISO image](https://nixos.org/download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it. As I'm updating this text, there is apparently now a merged fix, [PR316](https://github.com/nix-community/nixos-anywhere/pull/316) that uses `ssh` and `tar` instead of `rsync`.
 
-Apparently (having a look while I write this), there is now an open [PR316](https://github.com/nix-community/nixos-anywhere/pull/316) that uses `ssh` and `tar` instead of `rsync`. Also, one of the nixos-anywhere maintainers happens to be a maintainer of the [nix-community/nixos-images repository](https://github.com/nix-community/nixos-images?tab=readme-ov-file#iso-installer-images), which has been updated to include `rsync` in the image.
-
-Regardless of what happens with fixing the open issue, we're going to stick with generating our own custom ISO. As a side benefit we'll have a convenient means of generating custom ISOs in the future, for testing or whatever other scenarios may arise. The details of how we do this will be explained later in this article.
+Regardless we're going to stick with generating our own custom ISO. As a side benefit we'll have a convenient means of generating custom ISOs in the future, for testing or whatever other scenarios may arise. The details of how we do this will be explained later in this article.
 
 ### disko - Declarative disk partitioning
 
