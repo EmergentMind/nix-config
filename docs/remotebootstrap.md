@@ -41,7 +41,7 @@ Adding secrets complicates things significantly; we can't simply build the nix-c
 
 To deal with this hurdle we are left with some choices about what steps should occur on the new host versus on an existing source host, the latter of which would already be able to access and update nix-secrets. There are likely several ways to go about this but they would all require various manual steps to get the new host into a state that it will successfully access secrets when building nix-config. The solution I chose prior to automation was to build a stripped-down, minimal flake that aids in the process (an idea that came from [Ryan Yin's config](https://github.com/ryan4yin/nix-config/tree/main/nixos-installer)). Ultimately, the minimal installer flake approach was also used for the automated process described next.
 
-### Automating remote installation with secrets
+### Automated remote installation with secrets
 
 1. Generate a custom ISO image - to ensure we have all the tools we require
 2. Boot the new host into the custom ISO
@@ -50,7 +50,7 @@ To deal with this hurdle we are left with some choices about what steps should o
     1. Generate target host hardware-configuration
     2. Remotely install NixOS using the minimal flake
     3. Generate an age key for the host to access nix-secrets during full rebuild below
-    4. Re-encrypt nix-secrets with the new key
+    4. Update nix-secrets with the new key
     5. Push the nix-secrets changes to our private repository
     6. Copy both the nix-config and nix-secrets repos to target host
     7. Run the full rebuild
@@ -90,7 +90,11 @@ We'll be focusing on hosts booted into a NixOS ISO image, so the pre-requisites 
 nixos-anywhere is also flake based, which means we won't need to clone the code to our source host; we can simply use a `nix run` command pointing to the github repo, along with several arguments such as where our config flake is located and what the target is. A simplified example:
 
     ```bash
-download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it.
+        nix run github:nix-community/nixos-anywhere -- --flake .#foo root@192.168.100.10
+    ```
+When I first encountered nixos-anywhere I was hopeful that it would solve the entire problem set for my objective. While it does conveniently handle a substantial part of the process it does not get us into the ISO (no biggie), doesn't really handle secrets the way we need to, and it stops after NixOS has successfully been installed and the target host rebooted. That's pretty good though, all things considered and I learned a lot just by looking at the source code.
+### Custom NixOS ISO image
+I initially started using the official [NixOS Minimal ISO image](https://nixos.org/download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it.
 
 One of the proposed solutions in that issue was [PR295](https://github.com/nix-community/nixos-anywhere/pull/295) to change the `rsync` command to an `scp` command but there was also a suggested work around to simply use a custom ISO that includes `rsync`. I briefly tested and tinkered with the proposed `scp` command but couldn't get it working. I seriously considered delving into a fix and filing a PR but ultimately decided that there were higher priorities to deal with so went ahead with custom ISO instead. In particular, I expected to encounter other reasons that a custom ISO would be required.
 
@@ -956,4 +960,3 @@ note about this being optional in the script and that we print the manual instru
 ### Pushing the target's hardware-configuration
 
 ## Putting it all together
-
