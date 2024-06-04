@@ -4,36 +4,28 @@ SOPS_FILE := "../nix-secrets/secrets.yaml"
 default:
   @just --list
 
-rebuild-pre:
-  just update-nix-secrets
+rebuild-pre: update-nix-secrets
   git add *.nix
 
 rebuild-post:
   just check-sops
 
 # Add --option eval-cache false if you end up caching a failure you can't get around
-rebuild:
-  just rebuild-pre
+rebuild: rebuild-pre
   scripts/system-flake-rebuild.sh
 
-# Requires sops to be running and you must have reboot after inital rebuild
-rebuild-full:
-  just rebuild-pre
+# Requires sops to be running and you must have reboot after initial rebuild
+rebuild-full: rebuild-pre && rebuild-post
   scripts/system-flake-rebuild.sh
-  just rebuild-post
 
-# Requires sops to be running and you must have reboot after inital rebuild
-rebuild-trace:
-  just rebuild-pre
+# Requires sops to be running and you must have reboot after initial rebuild
+rebuild-trace: rebuild-pre && rebuild-post
   scripts/system-flake-rebuild-trace.sh
-  just rebuild-post
 
 update:
   nix flake update
 
-rebuild-update:
-  just update
-  just rebuild
+rebuild-update: update && rebuild
 
 diff:
   git diff ':!flake.lock'
@@ -63,8 +55,7 @@ iso:
   rm -rf result
   nix build ./nixos-installer#nixosConfigurations.iso.config.system.build.isoImage
 
-iso-install DRIVE:
-  just iso
+iso-install DRIVE: iso
   sudo dd if=$(eza --sort changed result/iso/*.iso | tail -n1) of={{DRIVE}} bs=4M status=progress oflag=sync
 
 disko DRIVE PASSWORD:
