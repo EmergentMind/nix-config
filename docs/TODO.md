@@ -103,7 +103,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 - Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
 - Re-implement modules to make use of options for enablement
-- Make use of configLib.scanPaths
+- ~~Make use of configLib.scanPaths~~
 
 ##### 3.4 scripting cleanup
 
@@ -111,7 +111,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - Overhaul just file
   - clean up
   - add {{just.executable()}} to just entries
-  - look for better syntax options to shorten recipes
+  - ~~look for better syntax options to shorten recipes~~
   - explore direnv
 
 ##### 3.5 automate config deployment

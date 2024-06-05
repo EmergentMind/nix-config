@@ -108,15 +108,13 @@ Secrets for this config are stored in a private repository called nix-secrets th
 
 For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/technology/2024/03/22/secrets-management.html) available on my website.
 
-## Acknowledgements
+## Support
 
-Those who have heavily influenced this strange journey into the unknown.
+If you find what I do helpful, please consider supporting my work on Ko-fi.
 
-- [FidgetingBits](https://github.com/fidgetingbits) - You told me there was a strange door that could be opened. I'm truly grateful.
-- [Misterio77](https://github.com/Misterio77) - Structure and reference.
-- [Ryan Yin](https://github.com/ryan4yin/nix-config) - A treasure trove of useful documentation and ideas.
-- [Mic92](https://github.com/Mic92) and [Lassulus](https://github.com/Lassulus) - My nix-config leverages many of the fantastic tools that these two people maintain, such as sops-nix, disko, and nixos-anywhere.
-- [VimJoyer](https://github.com/vimjoyer) - Excellent videos on the high-level concepts required to navigate NixOS.
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P6VO0HV)
+
+I intentionally keep all of my content ad-free.
 
 ## Guidance and Resources
 
@@ -127,6 +125,16 @@ Those who have heavily influenced this strange journey into the unknown.
 - Yubikey
   - <https://nixos.wiki/wiki/Yubikey>
   - [DrDuh YubiKey-Guide](https://github.com/drduh/YubiKey-Guide)
+
+## Acknowledgements
+
+Those who have heavily influenced this strange journey into the unknown.
+
+- [FidgetingBits](https://github.com/fidgetingbits) - You told me there was a strange door that could be opened. I'm truly grateful.
+- [Misterio77](https://github.com/Misterio77) - Structure and reference.
+- [Ryan Yin](https://github.com/ryan4yin/nix-config) - A treasure trove of useful documentation and ideas.
+- [Mic92](https://github.com/Mic92) and [Lassulus](https://github.com/Lassulus) - My nix-config leverages many of the fantastic tools that these two people maintain, such as sops-nix, disko, and nixos-anywhere.
+- [VimJoyer](https://github.com/vimjoyer) - Excellent videos on the high-level concepts required to navigate NixOS.
 
 ---
 
