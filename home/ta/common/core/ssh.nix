@@ -21,13 +21,10 @@
       };
     };
     # FIXME: This should probably be for git systems only?
-    #controlMaster = "auto";
-    #controlPath = "~/.ssh/sockets/S.%r@%h:%p";
-    #controlPersist = "60m";
-
-    #extraConfig = ''
-    #Include config.d/*
-    #'';
+    # Should create PR for this to be part of MatchBlocks
+    controlMaster = "auto";
+    controlPath = "~/.ssh/sockets/S.%r@%h:%p";
+    controlPersist = "10m";
   };
-  #  home.file.".ssh/sockets/.keep".text = "# Managed by Home Manager";
+  home.file.".ssh/sockets/.keep".text = "# Managed by Home Manager";
 }
