@@ -1,124 +1,6 @@
 # Remotely Bootstrapping NixOS and nix-config
 
-## Introduction
-
-My objective with this stage of my nix-config roadmap was to achieve automated, remote installation of NixOS on a target host followed by the building my full nix-config which incorporates my private nix-secrets repo. Part-way through the development of the solution, my brother @fidgetingbits started collaborating with me to speed things up, which I mention early as it was joint effort.
-
-My ideal outcome was an entirely unattended process, from initial script execution to completion. However, I knew even before I started  would not be possible because I use passphrases for very nearly all of my ssh keys. As you'll see there are, many times where ssh authentication is required. We decided to also include several yes/no prompts at important places in the script. The additional attendance these require is trivial considering the ssh prompt attendance and importantly they allowed us to skip over specific sections of the script during testing. As you might imagine, debugging this script involved countless reboots into the ISO, re-installations of NixOS, rebuilds of the config, etcetera, to work out all of the kinks and niggles that we encountered along the way.
-
-On the topic of attending to prompts during the bootstrap process it's worth pointing out that, depending on your SecOps requirements, a significant number of the prompts could be eliminated by simply using ssh keys that do _not_ have passphrases. Given this isn't the case for me, I haven't tested it but I believe that the entire process could quite easily be cut down to a single prompt if one removed all of the yes/no prompts _and_ used ssh keys without passphrases. It is possible the process could be made entirely unattended.
-
-So with that bit of preamble out of the way. Let's take a look at the high level steps this project set out to solve.
-
-First we can think about the typical, basic steps required get a new host booted into an installation environment and fully built according to our nix-config.
-
-### Typical manual installation steps _without_ secrets
-
-1. Download a NixOS ISO image and load it on a USB drive
-2. Boot the new host into the ISO
-3. Partition and format disks
-4. Install NixOS
-5. Clone or copy nix-config to the new host
-6. Build nix-config
-7. Update nix-config with the new host's hardware-configuration.nix
-
-This would actually be quite trivial to automate with some readily available tools. Alas, having no secrets in the mix isn't practical.
-
-### Typical manual installation steps _with_ secrets
-
-1. Download a NixOS ISO image and load it on a USB drive
-2. Boot the new host into the ISO
-3. Partition and format disks
-4. Install NixOS
-5. Generate a new hosts age key for use with sops
-6. Update nix-secrets with the new key
-7. Push changes to the nix-secrets repo
-8. Clone or copy nix-config
-9. Build nix-config
-10. Update nix-config with the new host's hardware-configuration.nix
-
-Adding secrets complicates things significantly; we can't simply build the nix-config because it uses our private nix-secrets as an input. A valid private key needs to be present on the host so it can download nix-secrets from the private repository during build. Not only that, even if nix-secrets has been successfully downloaded, the new host will require a valid age key for sops to decrypt our secrets during build.
-
-To deal with this hurdle we are left with some choices about what steps should occur on the new host versus on an existing source host, the latter of which would already be able to access and update nix-secrets. There are likely several ways to go about this but they would all require various manual steps to get the new host into a state that it will successfully access secrets when building nix-config. The solution I chose prior to automation was to build a stripped-down, minimal flake that aids in the process (an idea that came from [Ryan Yin's config](https://github.com/ryan4yin/nix-config/tree/main/nixos-installer)). Ultimately, the minimal installer flake approach was also used for the automated process described next.
-
-### Automated remote installation with secrets
-
-1. Generate a custom ISO image - to ensure we have all the tools we require
-2. Boot the new host into the custom ISO
-3. Execute a script from the source host that will:
-
-    1. Generate target host hardware-configuration
-    2. Remotely install NixOS using the minimal flake
-    3. Generate an age key for the host to access nix-secrets during full rebuild below
-    4. Update nix-secrets with the new key
-    5. Push the nix-secrets changes to our private repository
-    6. Copy both the nix-config and nix-secrets repos to target host
-    7. Run the full rebuild
-    8. Push the target host's hardware-config to the nix-config repo
-
-Along we'll also need to handle all of the ssh related fingerprinting and authentication, do some validation checks, and have the script modify files cleanly so that if the script needs to be run multiple times on the same target (during testing or if we need to reinstall a host) any existing ssh or secrets related entries are replaced rather than added to.
-
-> NOTE: While writing the documentation for all of this I realized that the steps above could be rearranged slightly and the minimal flake could be eliminated, if one didn't want to go that route. Roughly, this would involve revising steps 3.3 to 3.5 to occur prior to 3.2 and then installing the NixOS using the full nix-config instead of the minimal flake. This would effectively eliminate steps 3.6 and 3.7.
->
-> However, I think there significant value in having and using the minimal flake as an intermediary step. With future additions to the config such as full disk encryption, impermanence, and who knows what else, I will appreciate having the ability to quickly install a lightweight version of the config to test and validate assumptions without as much overhead (fewer packages to download, faster build time, and a smaller footprint to debug when something inevitably goes sideways). It's worth noting that Ryan Yin states this as why he uses the minimal flake as well.
->
-> In a future iteration of the script, I may add some options for skipping the intermediary steps but for now it's working well enough.
-
-In the remainder of this article we'll go over each of the tools used, changes we made to the nix-config to solve various challenges, the individual steps of the script, and then tie it all together as an automated process (or at least, as automated as possible).
-
-## Tools used
-
-- [nixos-anywhere](#nixos-anywhere---remote-nixos-installation-via-ssh)
-- [custom NixOS ISO image](#custom-nixos-iso-image)
-- [disko](#disko---declarative-disk-partitioning)
-- [just](#just---a-simple-command-runner)
-
-### nixos-anywhere - Remote NixOS installation via ssh
-
-__Official repo:__ [https://github.com/nix-community/nixos-anywhere](https://github.com/nix-community/nixos-anywhere)
-
-nixos-anywhere allows users to remotely install NixOS to a specified target host with a single command, unattended. There is support for installing to a target that has a NixOS installer present or to a target that supports the Linux `kexec` tool, which is provided by most Linux distros these days. The latter scenario is typically only relevant when installing to a target that has a pre-existing, non-NixOS distribution installed on it. This could be the case when the target is provided by some sort of cloud infrastructure provider that ~~is in the dark ages~~ doesn't provide NixOS images yet. nixos-anywhere importantly also supports installations that use disko (covered below).
-
-We'll be focusing on hosts booted into a NixOS ISO image, so the pre-requisites we need to meet are:
-
-    - the source host has nix or NixOS installed 
-    - the target host is:
-        - booted into an ISO image
-        - network accessible
-        - has at least 1.5GB RAM
-
-nixos-anywhere is also flake based, which means we won't need to clone the code to our source host; we can simply use a `nix run` command pointing to the github repo, along with several arguments such as where our config flake is located and what the target is. A simplified example:
-
-    ```bash
-        nix run github:nix-community/nixos-anywhere -- --flake .#foo root@192.168.100.10
-    ```
-When I first encountered nixos-anywhere I was hopeful that it would solve the entire problem set for my objective. While it does conveniently handle a substantial part of the process it does not get us into the ISO (no biggie), doesn't really handle secrets the way we need to, and it stops after NixOS has successfully been installed and the target host rebooted. That's pretty good though, all things considered and I learned a lot just by looking at the source code.
-
-### Custom NixOS ISO image
-
-I initially started using the official [NixOS Minimal ISO image](https://nixos.org/download/) but, in the 23.11 version, `rsync` was not included with it for some reason. This is problematic because nixos-anywhere uses `rsync` to perform part of the install. At the time of developing my solution there was an [open issue(260) on their repo](https://github.com/nix-community/nixos-anywhere/issues/260) about it. As I'm updating this text, there is apparently now a merged fix, [PR316](https://github.com/nix-community/nixos-anywhere/pull/316) that uses `ssh` and `tar` instead of `rsync`.
-
-Regardless we're going to stick with generating our own custom ISO. As a side benefit we'll have a convenient means of generating custom ISOs in the future, for testing or whatever other scenarios may arise. The details of how we do this will be explained later in this article.
-
-### disko - Declarative disk partitioning
-
-__Official repo:__ [https://github.com/Mic92/disko](https://github.com/Mic92/disko)
-
-I, and I suspect most people, don't often perform disk partitioning and formatting tasks. Whenever the time comes to do it I have to pull up a dusty and cobweb ridden section of my personal wiki to find out what I did last time. Even worse, before I had the sense to discipline myself to use a personal wiki, I was left to searching online and very likely running into the same, long forgotten, problems that I'd encountered in the past. Of course this isn't the case for simple disk configurations but with raid arrays, LUKS encryption, and my pre-disposition for encountering poorly documented outlier scenarios, anything that will help me make the process as consistent and reproducible as possible will be a Godsend.
-
-Disko provides NixOS with a convenient and powerful means of declaratively handling disk partitioning and formatting requirements. It supports LUKS disk encryption, is handled by nixos-anywhere, and provides a quick reference of sorts to view our disk configuration specs from within the nix-config. Without this we are left with using the installation wizard or remembering which cli tools are for what - `fdisk`, `parted`, `fstab`, etc. Of course, the wizard works and the tools are great but I'll happily allow the rust to accumulate on them if I can simply declare what I want and go.
-
-For the scope of this project, I decided that I would likely follow a similar partitioning scheme across most, if not all, of my hosts. Furthermore, until I got the installation process stable, I would skip over LUKS disk encryption and modify the code later.
-
-We'll go over the details of the disko spec and updates needed in the nix-config later in the article.
-
-### just - A simple command runner
-
-__Official repo:__ [https://github.com/casey/just](https://github.com/casey/just)
-
-`just` is quite simply, just a command runner that uses `make`-like syntax but is more elegant. We use it to provide quickly accessible cli recipes, via `just foo`, which will run whatever commands we've defined in a `justfile` for the specified recipe. This is also similar to running a bash script but running specific functions/recipes from the cli is simpler in `just`.
-
-`just` was actually added to the nix-config prior to working on this project to streamline some of the dev workflow. I recently posted [a brief video](https://youtu.be/wQCV0QgIbuk) about it to my [YouTube channel](www.youtube.com/@Emergent_Mind) if you're interested.
+NOTE: Introductions and Tools used sections have been moved to unmovedcentre.com
 
 ## Nix-config Modifications
 
@@ -127,6 +9,10 @@ To automate the process, several modifications to the nix-config were made. At a
 ![Anatomy v3](diagrams/anatomy_v3.png)
 
 If you're new to my nix-config, you can find details about the original design concepts, constraints, and structural interactions in the article and/or Youtube video titled [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html).
+
+### SSH Control Paths
+
+FIXME write this section
 
 ### lib and vars
 
@@ -702,11 +588,7 @@ iveUpdate` prefers the second argument when a duplicate attribute name is encoun
 On the contrary, when `//` encounters the same attribute name in both sets it takes the value of the second set. In other words, it sees that both arguments have an attribute name `users.users.ta` and
 takes only the value of the second argument.
 
-This took a little bit of digging to figure out given the scenario so I hope calling it out will help someone else in the future. To be clear, the documentation on this is clear but we'd forgotten the details and neglected to confirm our assumptions, which serves as a good reminder that regularly revisiting basic features that you may not use frequently can be worthwhile.
-
-The second thing of note in this section added significant confusion when trying to solve the first because the official documentation states that `password` overrides `hashedPasswordFile`<sup>4,5,6</sup>. This not only doesn't make sense but it is not how the underlying code in nixpkgs actually works. @fidgetingbits looked into this extensively and filed [PR #310484](https://github.com/NixOS/nixpkgs/pull/310484) to correct the issue. As of this writing, the PR is still open.
-
-The third thing of note, now that we understand the actual password options precedence is that we set a plaintext password as a generic password. This isn't a security concern when the full config is built because `hashedPasswordFile` being set in `fullUserConfig` will take precedence over `password` when `isMinimal` is false.
+This took a little bit of diggingfeat: hardware-configuration.nix for guppyt we understand the actual password options precedence is that we set a plaintext password as a generic password. This isn't a security concern when the full config is built because `hashedPasswordFile` being set in `fullUserConfig` will take precedence over `password` when `isMinimal` is false.
 
 The final thing I'll mention about using plaintext `password` is this. It's possible due to testing and experimentation needs that you'll want to have a host on your network running in the ISO or minimal flake, without immediately building the full config. If that's the case you likely don't want to use the plaintext password option. Instead, you can simply replace `password` with `hashedPassword` and provide it the value of a hashed password that is still something convenient to use/remember given the environment but is different than your actual user or root password.
 
@@ -896,11 +778,11 @@ In the expression that follows we can see where each argument is used. `disko.de
 
 By reading through the rest of the file we can see how it's relatively easy to define that the disk will consist of the two partitions (512M for /boot and the remainder for root) and the second partition will consist of three to four subvolumes: @root, @persist, @nix, and optionally @swap.
 
-A final piece of information on the topic of disks is that each host _will_ still require a `hardware-configuration.nix` file as is normal for NixOS. When using disko however, the `fileSystems` and `swapDevices` attributes, which are normal declared in the hardware config file, will be absent. This may not be of interest to most people because the hardware file is typically generated automatically.
+A final piece of information on the topic of disks is that each host _will_ still require a `hardware-configuration.nix` file as is normal for NixOS. When using disko however, the `fileSystems` and `swapDevices` attributes, which are normally declared in the hardware config file, will be absent. This may not be of interest to most people because the hardware file is typically generated automatically.
 
 ## Order of operations
 
-With our config ready to go we can detail the order in which all of the steps of the process need to happen.and then load and build the full nix-config.
+With our config ready to go we can detail the order in which all of the steps of the process need to happen.
 
 ### Booting the target to a custom ISO
 
