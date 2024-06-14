@@ -1,6 +1,6 @@
 # Remotely Bootstrapping NixOS and nix-config
 
-NOTE: Introductions and Tools used sections have been moved to unmovedcentre.com
+NOTE: Introductions and Tools used sections have been moved to [unmovedcentre.com](https://unmovedentre.com)
 
 ## Nix-config Modifications
 
@@ -9,10 +9,6 @@ To automate the process, several modifications to the nix-config were made. At a
 ![Anatomy v3](diagrams/anatomy_v3.png)
 
 If you're new to my nix-config, you can find details about the original design concepts, constraints, and structural interactions in the article and/or Youtube video titled [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html).
-
-### SSH Control Paths
-
-FIXME write this section
 
 ### lib and vars
 
@@ -111,9 +107,9 @@ nix-config/lib/default.nix
 
 As you can see, we no longer need to individually name each of the modules that we want imported. Obviously this only works if _all_ of the .nix files in the current and child-directories are meant to be imported but since everything in our `core` directories is always used, `foo/core/default.nix` is the perfect candidate. I'm currently using this on the following modules:
 
-    - hosts/common/core/default.nix
-    - home/ta/common/core/default.nix
-    - home/media/common/core/default.nix
+- hosts/common/core/default.nix
+- home/ta/common/core/default.nix
+- home/media/common/core/default.nix
 
 > NOTE: Using `scanPaths` to auto-import files does have drawbacks. The files being imported aren't being explicitly stated, so in the future we may run in to trouble debugging errors. This is largely a matter of personal preference so, if you choose to follow suit just be aware of the risks. Being explicit wherever possible will arguable be more forgiving in the future.
 
@@ -569,26 +565,32 @@ foo = {
     shell = pkgs.bash
   };
 };
-
 bar = {
   users.users.ta = {
     shell = pkgs.zsh;
   };
 };
-
 example1 = lib.recursiveUpdate foo bar;
 example2 = foo // bar;
-
 # The result of example1 will be:
 users.users.ta = {
-  packages = [ pkgs.
-In this example I also include a single file import use case because I want to keep some segregation of imports for the time being.
-iveUpdate` prefers the second argument when a duplicate attribute name is encountered, but _only_ when recursion on an attribute value stops and this occurs when an attribute value is not a set. In other words, the function continues even though both arguments have `users.users.ta.shell`. As expected, `packages = [ pkgs.home-manager ];` from the first argument is merged with `shell = pkgs.zsh;` from the second argument, having taken precedence over `shell = pkgs.bash;` from the first.
+  packages = [ pkgs.home-manager ];
+  shell = pkgs.zsh;
+};
+# The result of example2 will be:
+users.users.ta = {
+  shell = pkgs.zsh;
+};
+```
+
+Both `foo` and `bar` have an attribute with the same name, `users.users.ta`. In example1, `recursiveUpdate` prefers the second argument when a duplicate attribute name is encountered, but _only_ when recursion on an attribute value stops and this occurs when an attribute value is not a set. In other words, the function continues even though both arguments have `users.users.ta.shell`. As expected, `packages = [ pkgs.home-manager ];` from the first argument is merged with `shell = pkgs.zsh;` from the second argument, having taken precedence over `shell = pkgs.bash;` from the first.
 
 On the contrary, when `//` encounters the same attribute name in both sets it takes the value of the second set. In other words, it sees that both arguments have an attribute name `users.users.ta` and
 takes only the value of the second argument.
 
-This took a little bit of diggingfeat: hardware-configuration.nix for guppyt we understand the actual password options precedence is that we set a plaintext password as a generic password. This isn't a security concern when the full config is built because `hashedPasswordFile` being set in `fullUserConfig` will take precedence over `password` when `isMinimal` is false.
+This took a little bit of digging to figure out given the scenario so I hope calling it out will help someone else in the future. To be clear, the documentation on this is clear but we'd forgotten the details and neglected to confirm our assumptions, which serves as a good reminder that regularly revisiting basic features that you may not use frequently can be worthwhile.
+
+The second thing of note in this section added significant confusion when trying to solve the first because the official documentation states that `password` overrides `hashedPasswordFile`<sup>4,5,6</sup>. This not only doesn't make sense but it is not how the underlying code in nixpkgs actually works. @fidgetingbits looked into this extensively and filed [PR #310484](https://github.com/NixOS/nixpkgs/pull/310484) to correct the issue. As of this writing, the PR is still open.
 
 The final thing I'll mention about using plaintext `password` is this. It's possible due to testing and experimentation needs that you'll want to have a host on your network running in the ISO or minimal flake, without immediately building the full config. If that's the case you likely don't want to use the plaintext password option. Instead, you can simply replace `password` with `hashedPassword` and provide it the value of a hashed password that is still something convenient to use/remember given the environment but is different than your actual user or root password.
 
@@ -779,6 +781,10 @@ In the expression that follows we can see where each argument is used. `disko.de
 By reading through the rest of the file we can see how it's relatively easy to define that the disk will consist of the two partitions (512M for /boot and the remainder for root) and the second partition will consist of three to four subvolumes: @root, @persist, @nix, and optionally @swap.
 
 A final piece of information on the topic of disks is that each host _will_ still require a `hardware-configuration.nix` file as is normal for NixOS. When using disko however, the `fileSystems` and `swapDevices` attributes, which are normally declared in the hardware config file, will be absent. This may not be of interest to most people because the hardware file is typically generated automatically.
+
+### SSH Control Paths
+
+FIXME Don't bother with this... mention it but don't go into detail
 
 ## Order of operations
 

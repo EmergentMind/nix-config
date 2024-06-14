@@ -14,7 +14,8 @@
   - documentation
     - ~~part 1~~
     - ~~part 2~~
-    - part 3
+    - ~~part 3~~
+    - part 4
 
     - link installer docs to main readme
 
@@ -89,7 +90,13 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - ~~custom iso generation~~
 - ~~automated bootstrap script~~
 
-##### 3.2 impermanence
+##### 3.2 secure boot and drive encryption
+
+- luks
+- https://github.com/ElvishJerricco/stage1-tpm-tailscale
+- https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
+
+##### 3.3 impermanence
 
 - declare what needs to persist
 - enable impermanence
@@ -99,29 +106,10 @@ Introduce declarative partitioning, custom iso generation, automated machine set
   !! Some of this needs heavy assessment and consideration given the assumed reliance on theoretical tooling like flake-parts, which is a tangential extension of flakes (which is in fact _still_ experimental)
   If there is a way to incorporate these ideas without adopting additional experimentation that's okay but otherwise, avoid.
 
-##### 3.3 reduce duplication and modularize
-
-- Refactor nix-config to use specialArgs and extraSpecial Args for common user and host settings
-- Re-implement modules to make use of options for enablement
-- ~~Make use of configLib.scanPaths~~
-
-##### 3.4 scripting cleanup
-
-- Consider migrating bash scripts (see refs below)
-- Overhaul just file
-  - clean up
-  - add {{just.executable()}} to just entries
-  - ~~look for better syntax options to shorten recipes~~
-  - explore direnv
-
-##### 3.5 automate config deployment
-
-- Per host branch scheme
-- Automated machine update on branch release
-- Handle general auto updates as well
-
 ##### 3.x Extras
 
+- ~~Make use of configLib.scanPaths~~
+- ~~look for better syntax options to shorten just recipes~~
 - update nix-fmt to nixfmt-rfc-style (including pre-commit) since it will be the standard for nix packages moving forward
 - ~~update sops to make use of per host age keys for home-manager level secrets~~
 - automatic scheduled sops rotate
@@ -133,7 +121,6 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - Confirm clamav scan notification
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
-- Potentially re-enable CI pipelines. These were disabled during stage 2 because I moved to inputing the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
 
 ##### Stage 3 References
 
@@ -193,9 +180,34 @@ Also start adding more to the GUI experience for machines that are meant for mor
 - check out ananicy - hold over todo from arch but there is a nixos pkg here https://search.nixos.org/packages?channel=23.11&from=0&size=50&sort=relevance&type=packages&query=ananicy
 - disk usage notifier
 
-#### 6. Raspberry Pi
+#### 6. Witty name
 
-#### 7. Using Nix package manager on \*
+##### 6.1 automate config deployment
+
+- Per host branch scheme
+- Automated machine update on branch release
+- Handle general auto updates as well
+
+##### 6.2 script cleaning
+
+- Consider migrating bash scripts (see refs below)
+- Overhaul just file
+  - clean up
+  - add {{just.executable()}} to just entries
+  - explore direnv
+
+##### 6.3 reduce duplication and modularize
+
+- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
+- Re-implement modules to make use of options for enablement
+
+##### 6.x Extras
+
+- Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputing the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
+
+#### 7. Raspberry Pi
+
+#### 8. Using Nix package manager on \*
 
 ---
 
