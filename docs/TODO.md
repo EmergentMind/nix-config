@@ -25,7 +25,11 @@
   - ~~storyboard~~
   - ~~assets~~
   - recording
+    - ~~part 3~~
+    - part 4
   - production
+    - part 3
+    - part 4
 
 - New tools to integrate
   - copyq
