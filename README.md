@@ -42,7 +42,7 @@ The way out, is through.
 
 ---
 
-Watch NixOS related videos on my (YouTube channel)[https://www.youtube.com/@Emergent_Mind].
+Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emergent_Mind).
 
 ## Feature Highlights
 
