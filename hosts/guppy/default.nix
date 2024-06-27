@@ -17,7 +17,7 @@
 
     #################### Disk Layout ####################
     inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/btrs-luks-config.nix")
+    (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-disk.nix")
     {
       _module.args = {
         disk = "/dev/vda";
@@ -44,12 +44,14 @@
     enableIPv6 = false;
   };
 
-  boot = {
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-      timeout = 3;
-    };
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+    timeout = 3;
+  };
+
+  boot.initrd = {
+    systemd.enable = true;
   };
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

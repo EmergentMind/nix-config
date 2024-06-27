@@ -49,10 +49,10 @@ Watch NixOS related videos on my (YouTube channel)[https://www.youtube.com/@Emer
 - Flake-based multi-host, multi-user NixOS and Home-Manager configurations
   - Core configs for hosts and users
   - Modular, optional configs for user and host-specific needs
-- Secrets management via sops-nix and a private nix-secrets repo which is included as a flake input
-- Automated remote-bootstrapping of NixOS, nix-config, and nix-secrets
+- Secrets management via sops-nix and a _private_ nix-secrets repo which is included as a flake input
+- Automated remote-bootstrapping of NixOS, nix-config, and _private_ nix-secrets
 - Multiple YubiKey device handling and agent forwarding
-- Basic NixOs and Home-Manager build automation recipes
+- Basic NixOS and Home-Manager build automation recipes
 
 The roadmap of additional features is laid across functionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
 
@@ -120,7 +120,9 @@ I intentionally keep all of my content ad-free.
 
 - [Official Nix Documentation](https://nix.dev)
   - [Best practices](https://nix.dev/guides/best-practices)
-- [NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world/) - Ryan Yin gets a second mention here. This book he's writing is fantastic.
+- [Noogle](https://noogle.dev/) - Nix API reference documentation.
+- [Official NixOS Wiki](https://wiki.nixos.org/)
+- [NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world/) - an excellent introductory book by Ryan Yin
 - [Impermanence](https://github.com/nix-community/impermanence)
 - Yubikey
   - <https://nixos.wiki/wiki/Yubikey>

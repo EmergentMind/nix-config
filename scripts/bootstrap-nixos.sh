@@ -284,8 +284,21 @@ if yes_or_no "Add ssh host fingerprints for git{lab,hub}? If this is the first t
 		home_path="/home/$target_user"
 	fi
 	green "Adding ssh host fingerprints for git{lab,hub}"
-	$ssh_cmd "mkdir -p $home_p non-temporaryh"
-	$ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
+	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com >>$home_path/.ssh/known_hosts"
+fi
+
+if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $target_hostname?"; then
+	green "Adding ssh host fingerprint at $target_destination to ~/.ssh/known_hosts"
+	ssh-keyscan -p "$ssh_port" "$target_destination" >>~/.ssh/known_hosts || true
+	green "Copying full nix-config to $target_hostname"
+	sync "$target_user" "${git_root}"/../nix-config
+	green "Copying full nix-secrets to $target_hostname"
+	sync "$target_user" "${git_root}"/../nix-secrets
+
+if yes_or_no "Do you want to rebuild immediately?"; then
+	green "Rebuilding nix-config on $target_hostname"
+	#FIXME there are still a gitlab fingerprint request happening during the rebuild
+	#$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname" switch"
 fi
 else
 	echo

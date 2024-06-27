@@ -20,10 +20,10 @@
     - link installer docs to main readme
 
 - Stage 3.2
-  - luks
-  - lanzaboot
+  - enable luks via disko
+  - update installation docs
 
-- Video series
+- Videos
 
   - ~~planning~~
   - ~~storyboard~~
@@ -36,9 +36,11 @@
     - part 4
 
 - New tools to integrate
+  - anuit - https://github.com/atuinsh/atuin
   - copyq
   - du-dust
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
+
 - New tools to try
   - wezterm
   - tmux or zellij
@@ -98,14 +100,9 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - ~~custom iso generation~~
 - ~~automated bootstrap script~~
 
-##### 3.2 secure boot and drive encryption
+##### 3.2 drive encryption
 
-- luks  https://wiki.nixos.org/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOSa
-- lanzaboote
-
-Stage 1 with systemd info
-- https://github.com/ElvishJerricco/stage1-tpm-tailscale
-- https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
+- luks
 
 ##### 3.3 impermanence
 
@@ -134,6 +131,21 @@ Stage 1 with systemd info
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
 
 ##### Stage 3 References non-temporary
+
+Impermanence - These two are the references to follow and integrate. The primer list below is good review before diving into this:
+
+- [blog- setting up my machines nix style](https://aldoborrero.com/posts/2023/01/15/setting-up-my-machines-nix-style/)
+- [template repo for the above](https://github.com/aldoborrero/templates/tree/main/templates/blog/nix/setting-up-machines-nix-style)
+
+Impermanence primer info
+
+- [impermanence repo - an implementation of the below concept](https://github.com/nix-community/impermanence)
+- [blog - erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
+- [blog - encrypted btrfs roor with opt-in state](https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html)
+- [blog - setting up my new laptop nix style](https://bmcgee.ie/posts/2022/12/setting-up-my-new-laptop-nix-style/)
+- [blog - tmpfs as root](https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/)
+- [blog - tmpfs as home](https://elis.nu/blog/2020/06/nixos-tmpfs-as-home/)
+
 #### 4. Laptops and better GUI experience
 
 Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
@@ -145,11 +157,10 @@ Also start adding more to the GUI experience for machines that are meant for mor
 - more desktop utils and customization
   - set up copyq clipboard mgr
   - dig into better kitty and zsh usage
-  - better linting and fixing in vscode and vim
+  - better linting and fixing in vscode and nvim
   - look at https://github.com/dandavison/delta
 - gui dev
   - host specific colours via stylix or nix-colors
-- dualboot for trades?
 
 ##### Stage 4 References
 
@@ -158,6 +169,8 @@ Also start adding more to the GUI experience for machines that are meant for mor
 
 #### 5. Ghost
 
+- migrate dotfiles to nix-config
+- set up drive mapping
 - ricing
   - plymouth
   - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
@@ -194,9 +207,24 @@ Also start adding more to the GUI experience for machines that are meant for mor
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
 - Re-implement modules to make use of options for enablement
 
+##### 6.4 secure boot
+
+- lanzaboote https://github.com/nix-community/lanzaboote
+
+Some stage 1 with systemd info for reference (not specific to lanzaboote)
+
+- https://github.com/ElvishJerricco/stage1-tpm-tailscale
+- https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
+
 ##### 6.x Extras
 
-- Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputing the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
+- Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputting the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
+- move Gusto to disko
+
+##### Stage 6 references
+
+- Migrating bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA and https://www.youtube.com/watch?v=qRE6kf30u4g
+  Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
 
 #### 7. Raspberry Pi
 
