@@ -9,7 +9,7 @@ The following diagram depicts the conceptual anatomy of my nix-config. It is not
 
 ## Details
 
-For details about the design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/technology/2024/02/24/anatomy-of-a-nixos-config.html) available on my website.
+For details about the design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/posts/anatomy-of-a-nixos-config/) available on my website.
 
 ## Previous Iterations of the Structural Concept
 
