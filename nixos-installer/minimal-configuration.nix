@@ -1,10 +1,10 @@
-{  lib, pkgs, configLib, configVars, ... }:
+{ lib, pkgs, configLib, configVars, ... }:
 {
   imports = [
     (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
   ];
 
-  fileSystems."/boot".options = ["umask=0077"]; # Removes permissions and security warnings.
+  fileSystems."/boot".options = [ "umask=0077" ]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot = {
     enable = true;
@@ -24,11 +24,11 @@
     qemuGuest.enable = true;
     openssh = {
       enable = true;
-      ports = [22]; # FIXME: Make this use configVars.networking
+      ports = [ 22 ]; # FIXME: Make this use configVars.networking
       settings.PermitRootLogin = "yes";
       # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
       # this mitigates the security issue caused by enabling u2fAuth in pam
-      authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
+      authorizedKeysFiles = lib.mkForce [ "/etc/ssh/authorized_keys.d/%u" ];
     };
   };
 
@@ -42,15 +42,15 @@
   };
 
   environment.systemPackages = builtins.attrValues {
-    inherit(pkgs)
-    wget
-    curl
-    rsync;
+    inherit (pkgs)
+      wget
+      curl
+      rsync;
   };
 
   nix.settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-      warn-dirty = false;
+    experimental-features = [ "nix-command" "flakes" ];
+    warn-dirty = false;
   };
   system.stateVersion = "23.11";
 }

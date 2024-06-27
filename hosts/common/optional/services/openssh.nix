@@ -29,7 +29,7 @@ in
       type = "ed25519";
     }];
     # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
-    authorizedKeysFiles = lib.mkForce ["/etc/ssh/authorized_keys.d/%u"];
+    authorizedKeysFiles = lib.mkForce [ "/etc/ssh/authorized_keys.d/%u" ];
   };
   # yubikey login / sudo
   # this potentially causes a security issue that we mitigated above

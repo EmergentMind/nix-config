@@ -58,81 +58,84 @@
   };
 
   outputs = { self, disko, nixpkgs, home-manager, ... } @ inputs:
-  let
-    inherit (self) outputs;
-    forAllSystems = nixpkgs.lib.genAttrs [
-      "x86_64-linux"
-      #"aarch64-darwin"
-    ];
-    inherit (nixpkgs) lib;
-    configVars = import ./vars { inherit inputs lib; };
-    configLib = import ./lib { inherit lib; };
-    specialArgs = { inherit inputs outputs configVars configLib nixpkgs; };
-  in
-  {
-    # Custom modules to enable special functionality for nixos or home-manager oriented configs.
-    nixosModules = import ./modules/nixos;
-    homeManagerModules = import ./modules/home-manager;
+    let
+      inherit (self) outputs;
+      forAllSystems = nixpkgs.lib.genAttrs [
+        "x86_64-linux"
+        #"aarch64-darwin"
+      ];
+      inherit (nixpkgs) lib;
+      configVars = import ./vars { inherit inputs lib; };
+      configLib = import ./lib { inherit lib; };
+      specialArgs = { inherit inputs outputs configVars configLib nixpkgs; };
+    in
+    {
+      # Custom modules to enable special functionality for nixos or home-manager oriented configs.
+      nixosModules = import ./modules/nixos;
+      homeManagerModules = import ./modules/home-manager;
 
-    # Custom modifications/overrides to upstream packages.
-    overlays = import ./overlays { inherit inputs outputs; };
+      # Custom modifications/overrides to upstream packages.
+      overlays = import ./overlays { inherit inputs outputs; };
 
-    # Custom packages to be shared or upstreamed.
-    packages = forAllSystems
-      (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in import ./pkgs { inherit pkgs; }
-      );
+      # Custom packages to be shared or upstreamed.
+      packages = forAllSystems
+        (system:
+          let pkgs = nixpkgs.legacyPackages.${system};
+          in import ./pkgs { inherit pkgs; }
+        );
 
-    # TODO change this to something that has better looking output rules
-    # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
-    formatter = forAllSystems
-      (system:
-        nixpkgs.legacyPackages.${system}.nixpkgs-fmt
-      );
+      # TODO change this to something that has better looking output rules
+      # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
+      formatter = forAllSystems
+        (system:
+          nixpkgs.legacyPackages.${system}.nixpkgs-fmt
+        );
 
-    # Shell configured with packages that are typically only needed when working on or with nix-config.
-    devShells = forAllSystems
-      (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in import ./shell.nix { inherit pkgs; }
-      );
+      # Shell configured with packages that are typically only needed when working on or with nix-config.
+      devShells = forAllSystems
+        (system:
+          let pkgs = nixpkgs.legacyPackages.${system};
+          in import ./shell.nix { inherit pkgs; }
+        );
 
-    #################### NixOS Configurations ####################
-    #
-    # Building configurations available through `just rebuild` or `nixos-rebuild --flake .#hostname`
+      #################### NixOS Configurations ####################
+      #
+      # Building configurations available through `just rebuild` or `nixos-rebuild --flake .#hostname`
 
-    nixosConfigurations = {
-      # Qemu VM dev lab
-      grief = lib.nixosSystem {
-        inherit specialArgs;
-        modules = [
-          home-manager.nixosModules.home-manager{
-            home-manager.extraSpecialArgs = specialArgs;
-          }
-          ./hosts/grief
-        ];
-      };
-      # Qemu VM deployment test lab
-      guppy = lib.nixosSystem {
-        inherit specialArgs;
-        modules = [
-          home-manager.nixosModules.home-manager{
-            home-manager.extraSpecialArgs = specialArgs;
-          }
-          ./hosts/guppy
-        ];
-      };
-      # Theatre - ASUS VivoPC VM40B-S081M
-      gusto = lib.nixosSystem {
-        inherit specialArgs;
-        modules = [
-          home-manager.nixosModules.home-manager{
-            home-manager.extraSpecialArgs = specialArgs;
-          }
-          ./hosts/gusto
-        ];
+      nixosConfigurations = {
+        # Qemu VM dev lab
+        grief = lib.nixosSystem {
+          inherit specialArgs;
+          modules = [
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = specialArgs;
+            }
+            ./hosts/grief
+          ];
+        };
+        # Qemu VM deployment test lab
+        guppy = lib.nixosSystem {
+          inherit specialArgs;
+          modules = [
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = specialArgs;
+            }
+            ./hosts/guppy
+          ];
+        };
+        # Theatre - ASUS VivoPC VM40B-S081M
+        gusto = lib.nixosSystem {
+          inherit specialArgs;
+          modules = [
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.extraSpecialArgs = specialArgs;
+            }
+            ./hosts/gusto
+          ];
+        };
       };
     };
-  };
 }

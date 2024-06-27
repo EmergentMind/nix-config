@@ -16,18 +16,20 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: destroyed-symlinks
       - id: detect-private-key
-      - id: end-of-file-fixer
       - id: fix-byte-order-marker
       - id: forbid-submodules
       - id: mixed-line-ending
       - id: trailing-whitespace
-# disabled because it keeps causing barfing on my zsh module
-# for no good reason that I can tell
-#  - repo: https://github.com/nix-community/nixpkgs-fmt
-#    rev: f3fac47d6509e6b23c6103bb833353db348c634f
-#    hooks:
-#      - id: nixpkgs-fmt
+  - repo: https://github.com/nix-community/nixpkgs-fmt
+    rev: v1.3.0
+    hooks:
+      - id: nixpkgs-fmt
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.7.0-1
     hooks:
       - id: shfmt
+ # Purposefully at the end to avoid circuluar edits
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: end-of-file-fixer

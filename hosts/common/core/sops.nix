@@ -4,7 +4,7 @@
 let
   secretsDirectory = builtins.toString inputs.nix-secrets;
   secretsFile = "${secretsDirectory}/secrets.yaml";
-   
+
   # FIXME: Switch to a configLib function
   # this is some stuff for distinguishing linux from darwin. Likely just remove it.
   homeDirectory =
@@ -62,12 +62,14 @@ in
   # The containing folders are created as root and if this is the first ~/.config/ entry,
   # the ownership is busted and home-manager can't target because it can't write into .config...
   # FIXME: We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
-  system.activationScripts.sopsSetAgeKeyOwnwership = let
-    ageFolder = "${homeDirectory}/.config/sops/age";
-    user = config.users.users.${configVars.username}.name;
-    group = config.users.users.${configVars.username}.group;
-  in ''
-    mkdir -p ${ageFolder} || true
-    chown -R ${user}:${group} ${homeDirectory}/.config
-  '';
+  system.activationScripts.sopsSetAgeKeyOwnwership =
+    let
+      ageFolder = "${homeDirectory}/.config/sops/age";
+      user = config.users.users.${configVars.username}.name;
+      group = config.users.users.${configVars.username}.group;
+    in
+    ''
+      mkdir -p ${ageFolder} || true
+      chown -R ${user}:${group} ${homeDirectory}/.config
+    '';
 }
