@@ -19,6 +19,10 @@
 
     - link installer docs to main readme
 
+- Stage 3.2
+  - luks
+  - lanzaboot
+
 - Video series
 
   - ~~planning~~
@@ -28,7 +32,7 @@
     - ~~part 3~~
     - part 4
   - production
-    - part 3
+    - ~~part 3~~
     - part 4
 
 - New tools to integrate
@@ -96,7 +100,10 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.2 secure boot and drive encryption
 
-- luks
+- luks  https://wiki.nixos.org/wiki/Yubikey_based_Full_Disk_Encryption_(FDE)_on_NixOSa
+- lanzaboote
+
+Stage 1 with systemd info
 - https://github.com/ElvishJerricco/stage1-tpm-tailscale
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
 
@@ -114,7 +121,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 - ~~Make use of configLib.scanPaths~~
 - ~~look for better syntax options to shorten just recipes~~
-- update nix-fmt to nixfmt-rfc-style (including pre-commit) since it will be the standard for nix packages moving forward
+- Decided to just re-eanble nix-fmt ~~update nix-fmt to nixfmt-rfc-style (including pre-commit) since it will be the standard for nix packages moving forward~~
 - ~~update sops to make use of per host age keys for home-manager level secrets~~
 - automatic scheduled sops rotate
 - don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~
@@ -126,26 +133,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
 
-##### Stage 3 References
-
-- Migrating bash scripts to nix: https://www.youtube.com/watch?v=diIh0P12arA
-  Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
-
-**Impermanence**
-These two are the references to follow and integrate. The primer list below is good review before diving into this:
-
-- [blog- setting up my machines nix style](https://aldoborrero.com/posts/2023/01/15/setting-up-my-machines-nix-style/)
-- [template repo for the above](https://github.com/aldoborrero/templates/tree/main/templates/blog/nix/setting-up-machines-nix-style)
-
-**Impermanence Primer**
-
-- [impermanence repo - an implementation of the below concept](https://github.com/nix-community/impermanence)
-- [blog - erase your darlings](https://grahamc.com/blog/erase-your-darlings/)
-- [blog - encrypted btrfs roor with opt-in state](https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html)
-- [blog - setting up my new laptop nix style](https://bmcgee.ie/posts/2022/12/setting-up-my-new-laptop-nix-style/)
-- [blog - tmpfs as root](https://elis.nu/blog/2020/05/nixos-tmpfs-as-root/)
-- [blog - tmpfs as home](https://elis.nu/blog/2020/06/nixos-tmpfs-as-home/)
-
+##### Stage 3 References non-temporary
 #### 4. Laptops and better GUI experience
 
 Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
@@ -171,6 +159,7 @@ Also start adding more to the GUI experience for machines that are meant for mor
 #### 5. Ghost
 
 - ricing
+  - plymouth
   - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
     - maybe rEFInd
   - greetd
@@ -194,7 +183,7 @@ Also start adding more to the GUI experience for machines that are meant for mor
 
 ##### 6.2 script cleaning
 
-- Consider migrating bash scripts (see refs below)
+- Consider nixifying bash scripts (see refs below)
 - Overhaul just file
   - clean up
   - add {{just.executable()}} to just entries

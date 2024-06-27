@@ -17,7 +17,7 @@
 
     #################### Disk Layout ####################
     inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
+    (configLib.relativeToRoot "hosts/common/disks/btrs-luks-config.nix")
     {
       _module.args = {
         disk = "/dev/vda";
