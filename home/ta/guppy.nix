@@ -1,6 +1,8 @@
 { configVars, ... }:
 {
   imports = [
+    inputs.impermanence.nixosModules.home-manager.impermanence
+
     #################### Required Configs ####################
     common/core #required
 

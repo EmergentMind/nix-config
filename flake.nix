@@ -22,6 +22,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Squeaky clean
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      #inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Secrets management. See ./docs/secretsmgmt.md
     sops-nix = {
       url = "github:mic92/sops-nix";

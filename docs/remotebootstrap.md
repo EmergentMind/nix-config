@@ -556,7 +556,7 @@ In order for the systemd service to actually run at the right time you have to b
 run after. The main one is you have to be sure that the luks device is actually available prior to running the roll back
 otherwise it will fail. This requires you to know the disk label, so you can specify a `<disk>.device` entry.
 
-In my case I use they luks device at `/dev/mapper/encrypted-nixos`. At first I kept noticing that it was trying todo the
+In my case I use they luks device at `/dev/mapper/encrypted-nixos`. At first I kept noticing that it was trying to do the
 rollback prior to the decryption, and it ended up being because the disk label I used was wrong. This is because I have
 `-` in the name, so you need to use special encoding:
 
@@ -603,7 +603,7 @@ integrate the time limit option from the nix config, which is what I plan todo e
 
 ### Stuck waiting 10 seconds for luks device
 
-Originally well setting all of this up on a vm, in using disko, Even though it wasn't specifically a the impermanent
+Originally while setting all of this up on a vm, in using disko, Even though it wasn't specifically a the impermanent
 problem I still ran into an issue where I was stuck waiting for the luks device to come up:
 
 https://discourse.nixos.org/t/stuck-waiting-10-seconds-for-luks-device/33423

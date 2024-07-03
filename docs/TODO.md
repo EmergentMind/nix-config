@@ -20,8 +20,12 @@
     - link installer docs to main readme
 
 - Stage 3.2
-  - enable luks via disko
+  - ~~enable luks via disko~~
   - update installation docs
+
+- Stage 3.3
+  - declare what needs to persist
+  - enable impermanence
 
 - Videos
 
@@ -36,7 +40,7 @@
     - part 4
 
 - New tools to integrate
-  - anuit - https://github.com/atuinsh/atuin
+  - atuin - https://github.com/atuinsh/atuin
   - copyq
   - du-dust
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
@@ -87,22 +91,10 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 - DEFERRED - Potentially yubiauth and u2f for passwordless sudo
 - ~~Review and complete applicable TODO sops, TODO yubi, and TODO stage 2~~
 - ~~Deploy gusto~~
+3.3 impermanence
 
-#### 3. Squeaky Clean - Current
-
-Introduce declarative partitioning, custom iso generation, automated machine setup, and impermanence among other improvements that aim to create a cleaner environment.
-
-##### 3.1 automate nixos installation
-
-- ~~nixos-anywhere~~
-- ~~declarative partitioning and formatting via disko~~
-- ~~light-weight bootstrap flake for basic, pre-secrets install~~
-- ~~custom iso generation~~
-- ~~automated bootstrap script~~
-
-##### 3.2 drive encryption
-
-- luks
+- declare what needs to persist
+- enable impermanence
 
 ##### 3.3 impermanence
 

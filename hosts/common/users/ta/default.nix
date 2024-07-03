@@ -42,6 +42,20 @@ in
         shell = pkgs.zsh; # default shell
       };
 
+      # Persist entire /home (FIXME: Don't want to do it this way long term, want to use actual home-manager module)
+      environment = lib.optionalAttrs config.system.impermanence.enable {
+        persistence = {
+          "${configVars.persistFolder}".directories = [
+            {
+              directory = "/home/${configVars.username}";
+              user = configVars.username;
+              group = config.users.users.${configVars.username}.group;
+              mode = "u=rwx,g=,o=";
+            }
+          ];
+        };
+      };
+
       # Proper root use required for borg and some other specific operations
       users.users.root = {
         hashedPasswordFile = config.users.users.${configVars.username}.hashedPasswordFile;

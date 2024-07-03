@@ -6,6 +6,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.05";
     # Declarative partitioning and formatting
     disko.url = "github:nix-community/disko";
+    impermanence.url = "github:nix-community/impermanence";
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -22,7 +23,7 @@
         configVars = minimalConfigVars;
       };
 
-      # FIXME: Specify arch eventually probably
+      # FIXME: Specify architecture eventually probably
       # This mkHost is way better: https://github.com/linyinfeng/dotfiles/blob/8785bdb188504cfda3daae9c3f70a6935e35c4df/flake/hosts.nix#L358
       newConfig =
         name: disk: withSwap: swapSize:
@@ -31,15 +32,17 @@
           specialArgs = minimalSpecialArgs;
           modules = [
             inputs.disko.nixosModules.disko
-            (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-disk.nix")
+            (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-impermanence-disk.nix")
             {
               _module.args = {
                 inherit disk withSwap swapSize;
               };
             }
             ./minimal-configuration.nix
+            (configLib.relativeToRoot "modules/nixos/impermanence")
             {
               networking.hostName = name;
+              system.impermanence.enable = true;
             }
             (configLib.relativeToRoot "hosts/${name}/hardware-configuration.nix")
           ];

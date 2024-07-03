@@ -17,7 +17,7 @@
 
     #################### Disk Layout ####################
     inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-disk.nix")
+    (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-impermanence-disk.nix")
     {
       _module.args = {
         disk = "/dev/vda";
@@ -30,6 +30,7 @@
     "hosts/common/core"
 
     #################### Host-specific Optional Configs ####################
+    "hosts/common/optional/impermanence.nix"
     "hosts/common/optional/yubikey"
     "hosts/common/optional/services/clamav.nix" # depends on optional/msmtp.nix
     "hosts/common/optional/msmtp.nix" # required for emailing clamav alerts
@@ -42,6 +43,9 @@
     #################### Users to Create ####################
     "hosts/common/users/ta"
   ]);
+
+  system.impermanence.enable = true;
+
   # set custom autologin options. see greetd.nix for details
   # TODO is there a better spot for this?
   autoLogin.enable = true;

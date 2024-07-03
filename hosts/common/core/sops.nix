@@ -2,6 +2,7 @@
 
 { pkgs, inputs, config, configVars, ... }:
 let
+  persistFolder = lib.optionalString config.system.impermanence.enable configVars.persistFolder;
   secretsDirectory = builtins.toString inputs.nix-secrets;
   secretsFile = "${secretsDirectory}/secrets.yaml";
 
@@ -24,7 +25,7 @@ in
 
     age = {
       # automatically import host SSH keys as age keys
-      sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+      sshKeyPaths = [ "${persistFolder}/etc/ssh/ssh_host_ed25519_key" ];
     };
 
     # secrets will be output to /run/secrets
