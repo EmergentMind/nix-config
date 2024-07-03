@@ -125,7 +125,7 @@ I intentionally keep all of my content ad-free.
 - [NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world/) - an excellent introductory book by Ryan Yin
 - [Impermanence](https://github.com/nix-community/impermanence)
 - Yubikey
-  - <https://nixos.wiki/wiki/Yubikey>
+  - <https://wiki.nixos.org/wiki/Yubikey>
   - [DrDuh YubiKey-Guide](https://github.com/drduh/YubiKey-Guide)
 
 ## Acknowledgements
