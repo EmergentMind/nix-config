@@ -82,9 +82,9 @@
 };
 
 # This is a fix to enable VSCode to successfully remote SSH on a client to a NixOS host
-# https://nixos.wiki/wiki/Visual_Studio_Code # Remote_SSH
+# https://wiki.nixos.org/wiki/Visual_Studio_Code # Remote_SSH
 programs.nix-ld.enable = true;
 
-# https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
+# https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion
 system.stateVersion = "23.11";
 }
