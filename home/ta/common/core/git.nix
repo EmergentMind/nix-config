@@ -1,7 +1,7 @@
 { pkgs, lib, config, configVars, ... }:
 let
   handle = configVars.handle;
-  publicGitEmail = configVars.gitLabEmail;
+  publicGitEmail = configVars.gitHubEmail;
   publicKey = "${config.home.homeDirectory}].ssh/id_yubikey.pub";
 in
 {
