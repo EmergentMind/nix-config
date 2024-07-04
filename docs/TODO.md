@@ -5,16 +5,22 @@
 ## Short Term
 
 - Stage 3
+  LUKS stuff.... so close
+  - enable luks unlock over ssh
+    - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
+    - add initrd-ssh module that will spawn an ssh service for use during boot
+
   - part 4 documentation
   - luks documentation
   - Outstanding Stage 3 extras
-    - Enable git signing in home/ta/common/core/git.nix using nix-secrets
+    - ~~Enable git signing in home/ta/common/core/git.nix~~
     - Investigate outstanding yubikey FIXMEs
     - Potentially yubiauth and u2f for passwordless sudo
       FidgetingBits still encounter significant issues with this when remoting
     - Confirm clamav scan notification
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+  - revise docs in nix-secrets
 
   - close out Stage 3
     - Update README
@@ -81,7 +87,11 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 
 #### 3. Installation Automation  and drive encryption - Current
 
-Introduce declarative partitioning, custom iso generation, automated machine setup, and impermanence among other improvements that aim to create a cleaner environment.
+Introduce declarative partitioning, custom iso generation, install automation, and full drive encryptiong.
+This stage was also initially intended to add impermanence and several other improvements aimed at keeping a
+cleaner environment. However, automation took substantially longer than anticipated and I need to start using
+NixOS as a daily driver sooner than later. Being spread across to distros and separate configs while putting 99% of the
+effort into the new distro/config is becoming unsustainable. As such, several features have been deferred until later stages.
 
 ##### 3.1 automate nixos installation
 
@@ -93,7 +103,8 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 ##### 3.2 drive encryption
 
-- luks
+- ~~LUKS full drive encryption~~
+- LUKS decrypt over ssh for headless hosts
 
 ##### 3.x Extras
 
@@ -102,7 +113,7 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 - Decided to just re-enable nix-fmt ~~update nix-fmt to nixfmt-rfc-style (including pre-commit) since it will be the standard for nix packages moving forward~~
 - ~~update sops to make use of per host age keys for home-manager level secrets~~
 - don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~
-- Enable git signing in home/ta/common/core/git.nix using nix-secrets
+- ~~Enable git ssh signing in home/ta/common/core/git.nix~~
 - Investigate outstanding yubikey FIXMEs
 - Potentially yubiauth and u2f for passwordless sudo
   FidgetingBits still encounter significant issues with this when remoting
@@ -112,11 +123,40 @@ Introduce declarative partitioning, custom iso generation, automated machine set
 
 #### 4. Ghost
 
-- borg
+#### 4.1 Prep
+
+- setup borg module
+- hyprland prep
+  - map i3 binds to hyperland binds
+  - config hyprland essentials
+  - test on Grief
 - migrate dotfiles to nix-config
-- set up drive mapping
-- hyprland binds
-- hyprland essentials
+  - stick to raw dump into nix extras for now
+  - connect to grief first to test each one individually
+- ghost modules
+  - host
+    - config mounting extra drives
+  - home
+  - nixos-installer
+- change over and recovery plan
+  - audit main drive on ghost for missed items
+  - final grief tests
+  - push
+
+#### 4.2 Change over
+
+- install nixos on Ghost
+- verify drives
+- verify critical apps and services functionality
+- verify backups
+
+#### 4.3 Get comfortable
+
+- setup and enable hyprland
+- reestablish workflow
+
+#### 4.3.x Extras
+
 - basic themeing via stylix or nix-colors
 - dig into fzf and telescope
 - hotkey for sleeping monitors (all or game mode)

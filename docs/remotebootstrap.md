@@ -650,6 +650,28 @@ discussions here: https://askubuntu.com/questions/987104/why-the-in-btrfs-subvol
 It should be noted that even though I like this style I might not be using it the exact same way is some other set ups
 because I think some people use @ as an actual root?
 
+## Changing the temporary LUKS2 passphrase and enrolling yubikeys
+
+```bash
+# test the old passphrase
+sudo cryptsetup --verbose open --test-passphrase /path/to/dev/
+
+# change the passphrase
+sudo cryptsetup luksChangeKey /path/to/dev/
+
+# test the new passphrase
+
+```
+
+Enable yubikey support:
+NOTE: This requires LUKS2 (use cryptsetup luksDump /path/to/dev/ to check)
+
+```bash
+sudo systemd-cryptenroll --fido2-device=auto /path/to/dev/
+```
+
+You will need to do it for each yubikey you want to use.
+
 ## Putting it all together
 
 ### 1. Boot the target to a custom ISO
