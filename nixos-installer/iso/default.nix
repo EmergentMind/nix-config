@@ -1,4 +1,7 @@
 { pkgs, lib, config, configLib, configVars, ... }:
+let
+  sshPort = configVars.networking.sshPort;
+in
 {
   imports = [
     (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
@@ -21,7 +24,7 @@
   services = {
     qemuGuest.enable = true;
     openssh = {
-      ports = [ 22 ]; # FIXME: Make this use configVars.networking
+      ports = [ sshPort ];
       settings.PermitRootLogin = lib.mkForce "yes";
     };
   };

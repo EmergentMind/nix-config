@@ -1,4 +1,7 @@
 { lib, pkgs, configLib, configVars, ... }:
+let
+  sshPort = configVars.networking.sshPort;
+in
 {
   imports = [
     (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
@@ -24,7 +27,7 @@
     qemuGuest.enable = true;
     openssh = {
       enable = true;
-      ports = [ 22 ]; # FIXME: Make this use configVars.networking
+      ports = [ sshPort ];
       settings.PermitRootLogin = "yes";
       # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
       # this mitigates the security issue caused by enabling u2fAuth in pam
@@ -32,12 +35,13 @@
     };
   };
 
-  # yubikey login / sudo
+  # allow sudo over ssh with yubikey
   # this potentially causes a security issue that we mitigated above
   security.pam = {
     sshAgentAuth.enable = true;
-    services = {
-      sudo.u2fAuth = true;
+    services.sudo = {
+      u2fAuth = true;
+      sshAgentAuth = true;
     };
   };
 
