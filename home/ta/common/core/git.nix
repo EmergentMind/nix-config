@@ -1,10 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, configVars, ... }:
+let
+  handle = configVars.handle;
+  publicGitEmail = configVars.gitLabEmail;
+  publicKey = "${config.home.homeDirectory}].ssh/id_yubikey.pub";
+in
 {
   programs.git = {
     enable = true;
     package = pkgs.gitAndTools.gitFull;
-    userName = "emergentmind";
-    userEmail = "2889621-emergentmind@users.noreply.gitlab.com";
+    userName = handle;
+    userEmail = publicGitEmail;
     aliases = { };
     extraConfig = {
       init.defaultBranch = "main";
@@ -17,13 +22,24 @@
         };
       };
 
-      user.signing.key = "41B7B2ECE0FAEF890343124CE8AA1A8F75B56D39";
-      #TODO sops - Re-enable once sops setup complete
-      commit.gpgSign = false;
-      gpg.program = "${config.programs.gpg.package}/bin/gpg2";
+      #FIXME stage 3 - Re-enable signing. needs additional setup
+      commit.gpgsign = false;
+      gpg.format = "ssh";
+      user.signing.key = "${publicKey}";
+      # Taken from https://github.com/clemak27/homecfg/blob/16b86b04bac539a7c9eaf83e9fef4c813c7dce63/modules/git/ssh_signing.nix#L14
+      gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
     };
-    # enable git Large File Storage: https://git-lfs.com/
-    # lfs.enable = true;
+    signing = {
+      signByDefault = true;
+      key = publicKey;
+    };
     ignores = [ ".direnv" "result" ];
   };
+  # NOTE: To verify github.com update commit signatures, you need to manually import
+  # https://github.com/web-flow.gpg... would be nice to do that here
+  home.file.".ssh/allowed_signers".text = ''
+    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "keys/yubikeys/id_maya.pub")}
+    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "keys/yubikeys/id_mara.pub")}
+    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "keys/yubikeys/id_manu.pub")}
+  '';
 }
