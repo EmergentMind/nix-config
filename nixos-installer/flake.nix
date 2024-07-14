@@ -31,7 +31,7 @@
           specialArgs = minimalSpecialArgs;
           modules = [
             inputs.disko.nixosModules.disko
-            (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-disk.nix")
+            (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
             {
               _module.args = {
                 inherit disk withSwap swapSize;

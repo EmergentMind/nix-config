@@ -17,7 +17,7 @@
 
     #################### Disk Layout ####################
     inputs.disko.nixosModules.disko
-    (configLib.relativeToRoot "hosts/common/disks/btrfs-luks-disk.nix")
+    (configLib.relativeToRoot "hosts/common/disks/standard-disk-config.nix")
     {
       _module.args = {
         disk = "/dev/vda";
@@ -30,6 +30,7 @@
     "hosts/common/core"
 
     #################### Host-specific Optional Configs ####################
+    "hosts/common/optional/initrd-ssh.nix"
     "hosts/common/optional/services/openssh.nix"
 
     #################### Users to Create ####################
