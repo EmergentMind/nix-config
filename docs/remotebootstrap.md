@@ -2,6 +2,23 @@
 
 NOTE: Introductions, Tools  and nix-config modifications sections have been moved to [unmovedcentre.com](https://unmovedentre.com)
 
+## LUKS (maybe move this as separate article after but putting this here for now)
+
+fidgetingbits:
+Although I use a nix-secrets repo that has sops, in order to do LUKS unlock over ssh I need host keys that aren't
+able to be stored in sops. See here. The solution
+is to use git-agecrypt. However, afaict this can't be exposed through nix-secrets repo, which means that evaluation-time
+secrets must be stored in the local repo.
+his is how I setup:
+
+```bash
+git-agecrypt init
+ssh-keygen -t ed25519 -N "" -f hosts/ooze/initrd_ed25519_key
+git-agecrypt config add -r "$(cat ~/.ssh/id_yubikey.pub)" -p hosts/ooze/initrd_ed25519_key
+```
+
+NOTE going to have to do this once I've got NixOS on bare metal because I can't seem to redirect yubikey devices to the VM 
+
 ## Automation script order of operations
 
 With our config ready to go we can detail the order in which all of the steps of the installation process need to happen and how we automate them in our `/scripts/bootstrap-nixos.sh` script.

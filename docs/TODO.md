@@ -5,21 +5,15 @@
 ## Short Term
 
 - Stage 3
-  LUKS stuff.... so close
-  - enable luks unlock over ssh
-    - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
-    - add initrd-ssh module that will spawn an ssh service for use during boot
-
   - part 4 documentation
-  - luks documentation
+  - basic luks documentation - Defer remote install right now because it's too janky until bare-metal
+    - keep this as simple as it needs to be right now. yubikey isn't in play yet and neither is remote 
   - Outstanding Stage 3 extras
     - ~~Enable git signing in home/ta/common/core/git.nix~~
-    - Investigate outstanding yubikey FIXMEs
-    - Potentially yubiauth and u2f for passwordless sudo
-      FidgetingBits still encounter significant issues with this when remoting
-    - Confirm clamav scan notification
-  - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
-  - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+  - Confirm clamav scan notification
+    - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
+    - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+
   - revise docs in nix-secrets
 
   - close out Stage 3
@@ -29,7 +23,6 @@
 
 - Videos
   - part 4
-  - luks
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
@@ -103,8 +96,9 @@ effort into the new distro/config is becoming unsustainable. As such, several fe
 
 ##### 3.2 drive encryption
 
+Local decryption only for now. Enabling remote decryption while working entirely from VMs is beyond my current abilities.
+
 - ~~LUKS full drive encryption~~
-- LUKS decrypt over ssh for headless hosts
 
 ##### 3.x Extras
 
@@ -114,6 +108,9 @@ effort into the new distro/config is becoming unsustainable. As such, several fe
 - ~~update sops to make use of per host age keys for home-manager level secrets~~
 - don't bother ~~maybe rename pkgs -> custom_pkgs and modules -> custom_modules~~
 - ~~Enable git ssh signing in home/ta/common/core/git.nix~~
+
+DEFERRED:
+
 - Investigate outstanding yubikey FIXMEs
 - Potentially yubiauth and u2f for passwordless sudo
   FidgetingBits still encounter significant issues with this when remoting
@@ -157,6 +154,12 @@ effort into the new distro/config is becoming unsustainable. As such, several fe
 
 #### 4.3.x Extras
 
+These two were postponed until baremetal because yubikey with vm is a mess.
+
+- Investigate outstanding yubikey FIXMEs
+- yubiauth and u2f for passwordless sudo
+  - FidgetingBits still encounter significant issues with this when remoting
+
 - basic themeing via stylix or nix-colors
 - dig into fzf and telescope
 - hotkey for sleeping monitors (all or game mode)
@@ -181,20 +184,28 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 
 #### 6. Squeaky clean
 
-##### 6.0 impermanence
+##### 6.x impermanence
 
 - declare what needs to persist
 - enable impermanence
 
   Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
-##### 6.1 automate config deployment
+##### 6.x remote luks decryption
+
+The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
+
+- Remote LUKS decrypt over ssh for headless hosts
+  - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
+  - add initrd-ssh module that will spawn an ssh service for use during boot
+
+##### 6.x automate config deployment
 
 - Per host branch scheme
 - Automated machine update on branch release
 - Handle general auto updates as well
 
-##### 6.2 script cleaning
+##### 6.x script cleaning
 
 - Consider nixifying bash scripts (see refs below)
 - Overhaul just file
@@ -202,12 +213,12 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
   - add {{just.executable()}} to just entries
   - explore direnv
 
-##### 6.3 reduce duplication and modularize
+##### 6.x reduce duplication and modularize
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
 - Re-implement modules to make use of options for enablement
 
-##### 6.4 secure boot
+##### 6.x secure boot
 
 - lanzaboote https://github.com/nix-community/lanzaboote
 
@@ -221,6 +232,7 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 - automatic scheduled sops rotate
 - Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputting the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
 - move Gusto to disko
+- revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
 
 ##### Stage 6 references
 
