@@ -1,8 +1,9 @@
-{ pkgs, lib, config, configVars, ... }:
+{ pkgs, lib, config, configLib, configVars, ... }:
 let
   handle = configVars.handle;
   publicGitEmail = configVars.gitHubEmail;
   publicKey = "${config.home.homeDirectory}].ssh/id_yubikey.pub";
+  username = configVars.username;
 in
 {
   programs.git = {
@@ -38,8 +39,8 @@ in
   # NOTE: To verify github.com update commit signatures, you need to manually import
   # https://github.com/web-flow.gpg... would be nice to do that here
   home.file.".ssh/allowed_signers".text = ''
-    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "keys/yubikeys/id_maya.pub")}
-    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "keys/yubikeys/id_mara.pub")}
-    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "keys/yubikeys/id_manu.pub")}
+    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "hosts/common/users/${username}/keys/id_maya.pub")}
+    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "hosts/common/users/${username}/keys/id_mara.pub")}
+    ${publicGitEmail} ${lib.fileContents (configLib.relativeToRoot "hosts/common/users/${username}/keys/id_manu.pub")}
   '';
 }

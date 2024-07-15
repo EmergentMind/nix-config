@@ -299,6 +299,7 @@ if yes_or_no "Do you want to rebuild immediately?"; then
 	green "Rebuilding nix-config on $target_hostname"
 	#FIXME there are still a gitlab fingerprint request happening during the rebuild
 	#$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname" switch"
+	$ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
 fi
 else
 	echo

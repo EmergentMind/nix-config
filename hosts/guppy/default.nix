@@ -30,7 +30,7 @@
     "hosts/common/core"
 
     #################### Host-specific Optional Configs ####################
-    "hosts/common/optional/initrd-ssh.nix"
+    #"hosts/common/optional/initrd-ssh.nix"
     "hosts/common/optional/services/openssh.nix"
 
     #################### Users to Create ####################
