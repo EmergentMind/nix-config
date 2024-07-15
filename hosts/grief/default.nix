@@ -30,7 +30,7 @@
     "hosts/common/core"
 
     #################### Host-specific Optional Configs ####################
-    "hosts/common/optional/initrd-ssh.nix"
+#    "hosts/common/optional/initrd-ssh.nix"
     "hosts/common/optional/yubikey"
     "hosts/common/optional/services/clamav.nix" # depends on optional/msmtp.nix
     "hosts/common/optional/msmtp.nix" # required for emailing clamav alerts
@@ -73,14 +73,13 @@
       "ohci_pci"
       "ehci_pci"
       "virtio_pci"
-      "virtio_scsci"
+      #"virtio_scsci"
       "ahci"
       "usbhid"
       "sr_mod"
       "virtio_blk"
     ];
   };
-};
 
 # This is a fix to enable VSCode to successfully remote SSH on a client to a NixOS host
 # https://wiki.nixos.org/wiki/Visual_Studio_Code # Remote_SSH
