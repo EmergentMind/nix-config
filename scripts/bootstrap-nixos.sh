@@ -303,7 +303,7 @@ if yes_or_no "Do you want to rebuild immediately?"; then
 fi
 else
 	echo
-	green "NixOS was succcefully installed!"
+	green "NixOS was successfully installed!"
 	echo "Post-install config build instructions:"
 	echo "To copy nix-config from this machine to the $target_hostname, run the following command from ~/nix-config"
 	echo "just sync $target_user $target_destination"
