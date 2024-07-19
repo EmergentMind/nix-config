@@ -5,15 +5,6 @@
 ## Short Term
 
 - Stage 3
-  - part 4 documentation
-  - basic luks documentation - Defer remote install right now because it's too janky until bare-metal
-    - keep this as simple as it needs to be right now. yubikey isn't in play yet and neither is remote 
-  - Outstanding Stage 3 extras
-    - ~~Enable git signing in home/ta/common/core/git.nix~~
-  - Confirm clamav scan notification
-    - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
-    - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
-
   - revise docs in nix-secrets
 
   - close out Stage 3
@@ -21,8 +12,8 @@
     - Update Long Term Roadmap
     - Add/verify links to site
 
-- Videos
-  - part 4
+  - Videos
+   - part 4
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
@@ -80,11 +71,8 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 
 #### 3. Installation Automation  and drive encryption - Current
 
-Introduce declarative partitioning, custom iso generation, install automation, and full drive encryptiong.
-This stage was also initially intended to add impermanence and several other improvements aimed at keeping a
-cleaner environment. However, automation took substantially longer than anticipated and I need to start using
-NixOS as a daily driver sooner than later. Being spread across to distros and separate configs while putting 99% of the
-effort into the new distro/config is becoming unsustainable. As such, several features have been deferred until later stages.
+Introduce declarative partitioning, custom iso generation, install automation, and full drive encryption. This stage was also initially intended to add impermanence and several other improvements aimed at keeping a
+cleaner environment. However, automation took substantially longer than anticipated and I need to start using NixOS as a daily driver sooner than later. Being spread across two distros and different config paradigms while putting 99% of the effort into the new distro/config is becoming unsustainable. As such, several features have been deferred until later stages.
 
 ##### 3.1 automate nixos installation
 
@@ -120,7 +108,7 @@ DEFERRED:
 
 #### 4. Ghost
 
-#### 4.1 Prep
+##### 4.1 Prep
 
 - setup borg module
 - hyprland prep
@@ -128,7 +116,7 @@ DEFERRED:
   - config hyprland essentials
   - test on Grief
 - migrate dotfiles to nix-config
-  - stick to raw dump into nix extras for now
+  - start with raw dump into nix extras for now
   - connect to grief first to test each one individually
 - ghost modules
   - host
@@ -140,26 +128,26 @@ DEFERRED:
   - final grief tests
   - push
 
-#### 4.2 Change over
+##### 4.2 Change over
 
 - install nixos on Ghost
 - verify drives
 - verify critical apps and services functionality
 - verify backups
 
-#### 4.3 Get comfortable
+##### 4.3 Get comfortable
 
 - setup and enable hyprland
 - reestablish workflow
 
-#### 4.3.x Extras
-
-These two were postponed until baremetal because yubikey with vm is a mess.
+##### 4.3.x Extras
 
 - Investigate outstanding yubikey FIXMEs
 - yubiauth and u2f for passwordless sudo
   - FidgetingBits still encounter significant issues with this when remoting
-
+- Confirm clamav scan notification
+  - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
+  - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
 - basic themeing via stylix or nix-colors
 - dig into fzf and telescope
 - hotkey for sleeping monitors (all or game mode)
