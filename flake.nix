@@ -15,6 +15,9 @@
 
     #################### Utilities ####################
 
+    # Access flake-based devShells with nix-shell seamlessly
+    flake-compat.url = "github:edolstra/flake-compat";
+
     # Declarative partitioning and formatting
     disko = {
       url = "github:nix-community/disko";
@@ -32,6 +35,11 @@
       #url = "github:nix-community/nixvim/nixos-23.11";
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    pre-commit-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Windows management
@@ -100,18 +108,38 @@
         import ./pkgs { inherit pkgs; }
       );
 
+      checks = forAllSystems (system:
+        let pkgs = nixpkgs.legacyPackages.${system};
+        in import ./checks { inherit inputs system pkgs; });
+
       # TODO change this to something that has better looking output rules
       # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
 
-      # Shell configured with packages that are typically only needed when working on or with nix-config.
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
-        import ./shell.nix { inherit pkgs; }
-      );
+      # ################### DevShell ####################
+      #
+      # Custom shell for bootstrapping on new hosts, modifying nix-config, and secrets management
+
+      devShells = forAllSystems (system:
+        let pkgs = nixpkgs.legacyPackages.${system};
+        in {
+          default = pkgs.mkShell {
+            NIX_CONFIG =
+              "extra-experimental-features = nix-command flakes repl-flake";
+
+            inherit (self.checks.${system}.pre-commit-check) shellHook;
+            buildInputs =
+              self.checks.${system}.pre-commit-check.enabledPackages;
+
+            nativeBuildInputs = builtins.attrValues {
+              inherit (pkgs)
+
+                nix home-manager git just
+
+                age ssh-to-age sops;
+            };
+          };
+        });
 
       #################### NixOS Configurations ####################
       #
