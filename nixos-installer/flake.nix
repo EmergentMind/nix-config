@@ -8,15 +8,14 @@
     disko.url = "github:nix-community/disko";
   };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs =
+    { self, nixpkgs, ... }@inputs:
     let
       inherit (self) outputs;
       inherit (nixpkgs) lib;
       configVars = import ../vars { inherit inputs lib; };
       configLib = import ../lib { inherit lib; };
-      minimalConfigVars = lib.recursiveUpdate configVars {
-        isMinimal = true;
-      };
+      minimalConfigVars = lib.recursiveUpdate configVars { isMinimal = true; };
       minimalSpecialArgs = {
         inherit inputs outputs configLib;
         configVars = minimalConfigVars;
@@ -38,9 +37,7 @@
               };
             }
             ./minimal-configuration.nix
-            {
-              networking.hostName = name;
-            }
+            { networking.hostName = name; }
             (configLib.relativeToRoot "hosts/${name}/hardware-configuration.nix")
           ];
         });

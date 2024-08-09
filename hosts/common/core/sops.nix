@@ -1,6 +1,12 @@
 # hosts level sops. see home/[user]/common/optional/sops.nix for home/user level
 
-{ pkgs, inputs, config, configVars, ... }:
+{
+  pkgs,
+  inputs,
+  config,
+  configVars,
+  ...
+}:
 let
   secretsDirectory = builtins.toString inputs.nix-secrets;
   secretsFile = "${secretsDirectory}/secrets.yaml";
@@ -8,15 +14,11 @@ let
   # FIXME: Switch to a configLib function
   # this is some stuff for distinguishing linux from darwin. Likely just remove it.
   homeDirectory =
-    if pkgs.stdenv.isLinux
-    then "/home/${configVars.username}"
-    else "/Users/${configVars.username}";
-  #homeDirectory = "/home/${configVars.username}";
+    if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in
+#homeDirectory = "/home/${configVars.username}";
 {
-  imports = [
-    inputs.sops-nix.nixosModules.sops
-  ];
+  imports = [ inputs.sops-nix.nixosModules.sops ];
 
   sops = {
     defaultSopsFile = "${secretsFile}";

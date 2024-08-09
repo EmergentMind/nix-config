@@ -1,7 +1,6 @@
-{ inputs, pkgs, ... }: {
-  imports = [
-    inputs.nixvim.homeManagerModules.nixvim
-  ];
+{ inputs, pkgs, ... }:
+{
+  imports = [ inputs.nixvim.homeManagerModules.nixvim ];
 
   programs.nixvim = {
     enable = true;
@@ -223,7 +222,6 @@
     # TODO: nixvim: set up    alos, map to <leader>u
     # plugins.undotree = {};
 
-
     #
     # ========= File Search =========
     #
@@ -253,19 +251,20 @@
         # by default ALE completion is disabled. need to determine if it's worth enabling and ditching youcompleteme ... it likely is for simplicity!
         ale
 
-        vim-illuminate# Highlight similar words as are under the cursor
-        vim-numbertoggle# Use relative number on focused buffer only
-        range-highlight-nvim# Highlight range as specified in commandline e.g. :10,15
-        vimade# Dim unfocused buffers
-        vim-twiggy# Fugitive plugin to add branch control
-        vimwiki# Vim Wiki
-        YouCompleteMe# Code completion engine
+        vim-illuminate # Highlight similar words as are under the cursor
+        vim-numbertoggle # Use relative number on focused buffer only
+        range-highlight-nvim # Highlight range as specified in commandline e.g. :10,15
+        vimade # Dim unfocused buffers
+        vim-twiggy # Fugitive plugin to add branch control
+        vimwiki # Vim Wiki
+        YouCompleteMe # Code completion engine
 
         # TODO: nixvim: make sure this is working and not conflicting with YCM
         # supertab # Use <tab> for insert completion needs - https://github.com/ervandew/supertab/
 
         # Keep vim-devicons as last entry
-        vim-devicons;
+        vim-devicons
+        ;
     };
 
     # ========= Mapleader =========
@@ -299,21 +298,27 @@
         mode = [ "" ];
         key = "<Leader>ve";
         action = "<cmd>e ~/.config/.vimrc<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # reload vimrc
         mode = [ "n" ];
         key = "<Leader>vr";
         action = "<cmd>so $MYVIMRC<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # clear search highlighting
         mode = [ "n" ];
         key = "<space><space>";
         action = "<cmd>nohlsearch<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
 
       # ======== Movement ========
@@ -322,35 +327,45 @@
         mode = [ "n" ];
         key = "j";
         action = "gj";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # move up through wrapped lines
         mode = [ "n" ];
         key = "k";
         action = "gk";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # rebind 1/2 page down
         mode = [ "n" ];
         key = "<C-j>";
         action = "<C-d>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # rebind 1/2 page up
         mode = [ "n" ];
         key = "<C-k>";
         action = "<C-u>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # move to beginning/end of line
         mode = [ "n" ];
         key = "E";
         action = "$";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       # {
       #   # disable default move to beginning/end of line
@@ -365,21 +380,27 @@
         mode = [ "n" ];
         key = "<Leader>gs";
         action = "<cmd>G<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # quick merge command: take from right page (tab 3) upstream
         mode = [ "n" ];
         key = "<Leader>gj";
         action = "<cmd>diffget //3<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # quick merge command: take from left page (tab 2) head
         mode = [ "n" ];
         key = "<Leader>gf";
         action = "<cmd>diffget //2<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
 
       # ========== Telescope Plugin =========
@@ -388,28 +409,36 @@
         mode = [ "n" ];
         key = "<Leader>ff";
         action = "<cmd>Telescope find_files<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # live grep
         mode = [ "n" ];
         key = "<Leader>fg";
         action = "<cmd>Telescope live_grep<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # buffers
         mode = [ "n" ];
         key = "<Leader>fb";
         action = "<cmd>Telescope buffers<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
       {
         # help tags
         mode = [ "n" ];
         key = "<Leader>fh";
         action = "<cmd>Telescope help_tags<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
 
       # ========= Twiggy =============
@@ -418,7 +447,9 @@
         mode = [ "n" ];
         key = "<Leader>tw";
         action = ":Twiggy<CR>";
-        options = { noremap = true; };
+        options = {
+          noremap = true;
+        };
       }
     ];
     extraConfigVim = ''

@@ -1,4 +1,8 @@
-{ lib, stdenv, fetchgit }:
+{
+  lib,
+  stdenv,
+  fetchgit,
+}:
 let
   pname = "cd-gitroot";
   install_path = "share/zsh/${pname}";
@@ -21,16 +25,17 @@ stdenv.mkDerivation {
   meta = with lib; {
     homepage = "https://github.com/mollifier/cd-gitroot";
     license = licenses.mit;
-    longDescription = ''zsh plugin to change directory to git repository root directory.
-    You can add the following to your `programs.zsh.plugins` list:
-    ```nix
-    programs.zsh.plugins = [
-      {
-        name = "${pname}";
-        src = "''${pkgs.${pname}}/${install_path}";
-      }
-    ];
-    ```
+    longDescription = ''
+      zsh plugin to change directory to git repository root directory.
+          You can add the following to your `programs.zsh.plugins` list:
+          ```nix
+          programs.zsh.plugins = [
+            {
+              name = "${pname}";
+              src = "''${pkgs.${pname}}/${install_path}";
+            }
+          ];
+          ```
     '';
     maintainers = with maintainers; [ fidgetingbits ];
   };

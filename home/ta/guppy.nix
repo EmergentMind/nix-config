@@ -2,7 +2,7 @@
 {
   imports = [
     #################### Required Configs ####################
-    common/core #required
+    common/core # required
 
   ];
 

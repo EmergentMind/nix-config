@@ -1,7 +1,13 @@
-{ config, lib, pkgs, outputs, configLib, ... }:
 {
-  imports = (configLib.scanPaths ./.)
-    ++ (builtins.attrValues outputs.homeManagerModules);
+  config,
+  lib,
+  pkgs,
+  outputs,
+  configLib,
+  ...
+}:
+{
+  imports = (configLib.scanPaths ./.) ++ (builtins.attrValues outputs.homeManagerModules);
 
   services.ssh-agent.enable = true;
 
@@ -30,28 +36,29 @@
 
       # TODO: spaces before comment are removed by nixpkgs-fmt
       # See: https://github.com/nix-community/nixpkgs-fmt/issues/305
-      borgbackup# backups
-      btop# resource monitor
-      coreutils# basic gnu utils
+      borgbackup # backups
+      btop # resource monitor
+      coreutils # basic gnu utils
       # curl
-      eza# ls replacement
-      fd# tree style ls
-      findutils# find
-      fzf# fuzzy search
-      jq# JSON pretty printer and manipulator
-      nix-tree# nix package tree viewer
-      ncdu# TUI disk usage
+      eza # ls replacement
+      fd # tree style ls
+      findutils # find
+      fzf # fuzzy search
+      jq # JSON pretty printer and manipulator
+      nix-tree # nix package tree viewer
+      ncdu # TUI disk usage
       pciutils
-      pfetch# system info
-      pre-commit# git hooks
-      p7zip# compression & encryption
-      ripgrep# better grep
+      pfetch # system info
+      pre-commit # git hooks
+      p7zip # compression & encryption
+      ripgrep # better grep
       usbutils
-      tree# cli dir tree viewer
-      unzip# zip extraction
-      unrar# rar extraction
-      wget# downloader
-      zip; # zip compression
+      tree # cli dir tree viewer
+      unzip # zip extraction
+      unrar # rar extraction
+      wget # downloader
+      zip
+      ; # zip compression
   };
 
   nixpkgs = {
@@ -66,7 +73,11 @@
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {
-      experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "repl-flake"
+      ];
       warn-dirty = false;
     };
   };

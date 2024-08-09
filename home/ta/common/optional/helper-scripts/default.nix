@@ -10,18 +10,13 @@ let
       runtimeInputs = with pkgs; [ subversion ];
       text = builtins.readFile ./copy-github-subfolder.sh;
     };
-    linktree = pkgs.writeShellApplication
-      {
-        name = "linktree";
-        runtimeInputs = with pkgs; [ ];
-        text = builtins.readFile ./linktree.sh;
-      };
+    linktree = pkgs.writeShellApplication {
+      name = "linktree";
+      runtimeInputs = with pkgs; [ ];
+      text = builtins.readFile ./linktree.sh;
+    };
   };
 in
 {
-  home.packages = builtins.attrValues {
-    inherit (scripts)
-      copy-github-subfolder
-      linktree;
-  };
+  home.packages = builtins.attrValues { inherit (scripts) copy-github-subfolder linktree; };
 }

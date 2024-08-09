@@ -1,4 +1,8 @@
-{ lib, stdenv, fetchgit }:
+{
+  lib,
+  stdenv,
+  fetchgit,
+}:
 let
   pname = "zsh-term-title";
 in
@@ -18,6 +22,9 @@ stdenv.mkDerivation {
     homepage = "https://github.com/pawel-slowik/zsh-term-title";
     license = licenses.mit;
     description = "This Zsh plugin puts current command and working directory in your terminal title. It can also set tmux window name and pane title.";
-    maintainers = with maintainers; [ fidgetingbits emergentmind ];
+    maintainers = with maintainers; [
+      fidgetingbits
+      emergentmind
+    ];
   };
 }

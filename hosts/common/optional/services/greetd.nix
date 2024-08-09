@@ -3,7 +3,12 @@
 # display manager -> greetd https://man.sr.ht/~kennylevinsen/greetd/
 #
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   cfg = config.autoLogin;

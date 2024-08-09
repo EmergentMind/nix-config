@@ -1,11 +1,15 @@
-{ lib, pkgs, configLib, configVars, ... }:
+{
+  lib,
+  pkgs,
+  configLib,
+  configVars,
+  ...
+}:
 let
   sshPort = configVars.networking.sshPort;
 in
 {
-  imports = [
-    (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
-  ];
+  imports = [ (configLib.relativeToRoot "hosts/common/users/${configVars.username}") ];
 
   fileSystems."/boot".options = [ "umask=0077" ]; # Removes permissions and security warnings.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -45,15 +49,13 @@ in
     };
   };
 
-  environment.systemPackages = builtins.attrValues {
-    inherit (pkgs)
-      wget
-      curl
-      rsync;
-  };
+  environment.systemPackages = builtins.attrValues { inherit (pkgs) wget curl rsync; };
 
   nix.settings = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
     warn-dirty = false;
   };
   system.stateVersion = "23.11";

@@ -1,4 +1,9 @@
-{ lib, config, configVars, ... }:
+{
+  lib,
+  config,
+  configVars,
+  ...
+}:
 let
   sshPort = configVars.networking.sshPort;
 
@@ -22,10 +27,12 @@ in
       GatewayPorts = "clientspecified";
     };
 
-    hostKeys = [{
-      path = "${lib.optionalString hasOptinPersistence "/persist"}/etc/ssh/ssh_host_ed25519_key";
-      type = "ed25519";
-    }];
+    hostKeys = [
+      {
+        path = "${lib.optionalString hasOptinPersistence "/persist"}/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }
+    ];
     # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
     authorizedKeysFiles = lib.mkForce [ "/etc/ssh/authorized_keys.d/%u" ];
   };

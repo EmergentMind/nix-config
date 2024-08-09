@@ -1,3 +1,4 @@
+{ }
 #
 #  TODO stage 4 this is a placeholder list for now
 #
@@ -5,21 +6,20 @@
 #imports
 #   ./dev
 
-
 # edc
-flameshot ?? maybe somewhere else
+#flameshot ?? maybe somewhere else
 
 # Productivity
-remmina
-libreoffice
-gimp
-draw.io
-inkscape
+#remmina
+#libreoffice
+#gimp
+#draw.io
+#inkscape
 
 # privacy:
-veracrypt
-keepassxc
+#veracrypt
+#keepassxc
 
 # imaging
-rpi-imager
-etcher
+#rpi-imager
+#etcher

@@ -8,9 +8,7 @@ let
   homeDirectory = config.home.homeDirectory;
 in
 {
-  imports = [
-    inputs.sops-nix.homeManagerModules.sops
-  ];
+  imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
   sops = {
     # This is the location of the host specific age-key for ta and will to have been extracted to this location via hosts/common/core/sops.nix on the host

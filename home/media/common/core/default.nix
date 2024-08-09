@@ -1,15 +1,19 @@
-{ config, lib, pkgs, outputs, configLib, ... }:
 {
-  imports = (configLib.scanPaths ./.)
-    ++ (builtins.attrValues outputs.homeManagerModules);
+  config,
+  lib,
+  pkgs,
+  outputs,
+  configLib,
+  ...
+}:
+{
+  imports = (configLib.scanPaths ./.) ++ (builtins.attrValues outputs.homeManagerModules);
 
   home = {
     username = lib.mkDefault "media";
     homeDirectory = lib.mkDefault "/home/${config.home.username}";
     stateVersion = lib.mkDefault "23.05";
-    sessionPath = [
-      "$HOME/.local/bin"
-    ];
+    sessionPath = [ "$HOME/.local/bin" ];
     sessionVariables = {
       SHELL = "zsh";
     };
@@ -19,7 +23,8 @@
     inherit (pkgs)
 
       # Packages that don't have custom configs go here
-      nix-tree;
+      nix-tree
+      ;
   };
 
   nixpkgs = {
@@ -34,7 +39,10 @@
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       warn-dirty = false;
     };
   };

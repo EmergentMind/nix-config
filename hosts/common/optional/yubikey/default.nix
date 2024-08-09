@@ -4,11 +4,7 @@
 let
   yubikey-up = pkgs.writeShellApplication {
     name = "yubikey-up";
-    runtimeInputs = builtins.attrValues {
-      inherit (pkgs)
-        gawk
-        yubikey-manager;
-    };
+    runtimeInputs = builtins.attrValues { inherit (pkgs) gawk yubikey-manager; };
     text = builtins.readFile ./scripts/yubikey-up.sh;
   };
   yubikey-down = pkgs.writeShellApplication {
@@ -16,7 +12,7 @@ let
     text = builtins.readFile ./scripts/yubikey-down.sh;
   };
 in
-with pkgs;  #FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
+with pkgs; # FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
 {
   environment.systemPackages = [
     # yubikey-personalization
@@ -36,7 +32,6 @@ with pkgs;  #FIXME needs to be refactored according to best practices but not su
 
   # FIXME: Put this behind an option for yubikey ssh
   # Create ssh files
-
 
   # FIXME: Not sure if we need the wheel one. Also my idProduct gruop is 0407
   # Yubikey 4/5 U2F+CCID
@@ -60,7 +55,5 @@ with pkgs;  #FIXME needs to be refactored according to best practices but not su
   # Yubikey required services and config. See Dr. Duh NixOS config for reference
   services.pcscd.enable = true; # smartcard service
 
-  services.udev.packages = [
-    yubikey-personalization
-  ];
+  services.udev.packages = [ yubikey-personalization ];
 }

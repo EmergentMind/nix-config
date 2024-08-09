@@ -2,7 +2,12 @@
 # FIXME check for dependency somehow? Requires the msmtp.nix option for email notifications
 #
 
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   # FIXME
   # isEnabled = name: predicate: {
@@ -11,18 +16,17 @@ let
   # };
 
   # Function to notify users and admin when a suspicious file is detected
-  notify-all-users = pkgs.writeScript "notify-all-users-of-sus-file"
-    ''
-      #!/usr/bin/env bash
-      ALERT="Signature detected by clamav: $CLAM_VIRUSEVENT_VIRUSNAME in $CLAM_VIRUSEVENT_FILENAME"
-      # Send an alert to all graphical users.
-      for ADDRESS in /run/user/*; do
-          USERID=''${ADDRESS#/run/user/}
-         /run/wrappers/bin/sudo -u "#$USERID" DBUS_SESSION_BUS_ADDRESS="unix:path=$ADDRESS/bus" ${pkgs.libnotify}/bin/notify-send -i dialog-warning "Suspicious file" "$ALERT"
-      done
+  notify-all-users = pkgs.writeScript "notify-all-users-of-sus-file" ''
+    #!/usr/bin/env bash
+    ALERT="Signature detected by clamav: $CLAM_VIRUSEVENT_VIRUSNAME in $CLAM_VIRUSEVENT_FILENAME"
+    # Send an alert to all graphical users.
+    for ADDRESS in /run/user/*; do
+        USERID=''${ADDRESS#/run/user/}
+       /run/wrappers/bin/sudo -u "#$USERID" DBUS_SESSION_BUS_ADDRESS="unix:path=$ADDRESS/bus" ${pkgs.libnotify}/bin/notify-send -i dialog-warning "Suspicious file" "$ALERT"
+    done
 
-      echo -e "To:$(hostname).alerts.net@hexagon.cx\n\nSubject: Suspicious file on $(hostname)\n\n$ALERT" | msmtp -a default alerts.net@hexagon.cx
-    '';
+    echo -e "To:$(hostname).alerts.net@hexagon.cx\n\nSubject: Suspicious file on $(hostname)\n\n$ALERT" | msmtp -a default alerts.net@hexagon.cx
+  '';
 in
 {
   # FIXME
@@ -31,10 +35,9 @@ in
   # };
 
   security.sudo = {
-    extraConfig =
-      ''
-        clamav ALL = (ALL) NOPASSWD: SETENV: ${pkgs.libnotify}/bin/notify-send
-      '';
+    extraConfig = ''
+      clamav ALL = (ALL) NOPASSWD: SETENV: ${pkgs.libnotify}/bin/notify-send
+    '';
   };
 
   services = {

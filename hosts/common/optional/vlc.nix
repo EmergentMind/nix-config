@@ -2,7 +2,5 @@
 
 { pkgs, ... }:
 {
-  environment.systemPackages = [
-    pkgs.vlc
-  ];
+  environment.systemPackages = [ pkgs.vlc ];
 }

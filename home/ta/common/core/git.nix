@@ -1,4 +1,11 @@
-{ pkgs, lib, config, configLib, configVars, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  configLib,
+  configVars,
+  ...
+}:
 let
   handle = configVars.handle;
   publicGitEmail = configVars.gitHubEmail;
@@ -34,7 +41,10 @@ in
       signByDefault = true;
       key = publicKey;
     };
-    ignores = [ ".direnv" "result" ];
+    ignores = [
+      ".direnv"
+      "result"
+    ];
   };
   # NOTE: To verify github.com update commit signatures, you need to manually import
   # https://github.com/web-flow.gpg... would be nice to do that here
