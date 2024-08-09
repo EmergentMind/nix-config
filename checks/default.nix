@@ -1,4 +1,10 @@
-{ inputs, pkgs, system, ... }: {
+{
+  inputs,
+  pkgs,
+  system,
+  ...
+}:
+{
   pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
     src = ./.;
     default_stages = [ "pre-commit" ];
@@ -25,12 +31,9 @@
       destroyed-symlinks = {
         enable = true;
         name = "destroyed-symlinks";
-        description =
-          "detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to.";
+        description = "detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to.";
         package = inputs.pre-commit-hooks.checks.${system}.pre-commit-hooks;
-        entry = "${
-            inputs.pre-commit-hooks.checks.${system}.pre-commit-hooks
-          }/bin/destroyed-symlinks";
+        entry = "${inputs.pre-commit-hooks.checks.${system}.pre-commit-hooks}/bin/destroyed-symlinks";
         types = [ "symlink" ];
       };
 
@@ -41,7 +44,6 @@
       shfmt.enable = true;
 
       end-of-file-fixer.enable = true;
-
     };
   };
 }

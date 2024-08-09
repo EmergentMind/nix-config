@@ -108,39 +108,50 @@
         import ./pkgs { inherit pkgs; }
       );
 
-      checks = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in import ./checks { inherit inputs system pkgs; });
+      checks = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        import ./checks { inherit inputs system pkgs; }
+      );
 
       # TODO change this to something that has better looking output rules
       # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
-      formatter = forAllSystems
-        (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
 
       # ################### DevShell ####################
       #
       # Custom shell for bootstrapping on new hosts, modifying nix-config, and secrets management
 
-      devShells = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in {
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
           default = pkgs.mkShell {
-            NIX_CONFIG =
-              "extra-experimental-features = nix-command flakes repl-flake";
+            NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
 
             inherit (self.checks.${system}.pre-commit-check) shellHook;
-            buildInputs =
-              self.checks.${system}.pre-commit-check.enabledPackages;
+            buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
 
             nativeBuildInputs = builtins.attrValues {
               inherit (pkgs)
 
-                nix home-manager git just
+                nix
+                home-manager
+                git
+                just
 
-                age ssh-to-age sops;
+                age
+                ssh-to-age
+                sops
+                ;
             };
           };
-        });
+        }
+      );
 
       #################### NixOS Configurations ####################
       #

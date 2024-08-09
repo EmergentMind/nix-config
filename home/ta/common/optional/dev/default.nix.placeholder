@@ -1,9 +1,9 @@
 { }
-  #
-  # TODO stage 4: this is a placeholder list for now
-  #
+#
+# TODO stage 4: this is a placeholder list for now
+#
 
-  #code
+#code
 
   #TODO stage 4: Add the following packages for LSP, Linting, and Fixing as required by nvim ale (see "ale" in home/ta/core/nvim/devtools.nix )
   ansible-language-server

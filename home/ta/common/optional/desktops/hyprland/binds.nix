@@ -43,27 +43,23 @@
           k = up;
           j = down;
         };
-
-        #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
-        #playerctl = "${config.services.playerctld.package}/bin/playerctl";
-        #playerctld = "${config.services.playerctld.package}/bin/playerctld";
-        #makoctl = "${config.services.mako.package}/bin/makoctl";
-        #wofi = "${config.programs.wofi.package}/bin/wofi";
-        #pass-wofi = "${pkgs.pass-wofi.override {
-        #pass = config.programs.password-store.package;
-        #}}/bin/pass-wofi";
-
-        #grimblast = "${pkgs.inputs.hyprwm-contrib.grimblast}/bin/grimblast";
-        #pactl = "${pkgs.pulseaudio}/bin/pactl";
-        #tly = "${pkgs.tly}/bin/tly";
-        #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
-        #notify-send = "${pkgs.libnotify}/bin/notify-send";
-
-        #gtk-launch = "${pkgs.gtk3}/bin/gtk-launch";
-        #xdg-mime = "${pkgs.xdg-utils}/bin/xdg-mime";
-        #defaultApp = type: "${gtk-launch} $(${xdg-mime} query default ${type})";
-
       in
+      #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
+      #playerctl = "${config.services.playerctld.package}/bin/playerctl";
+      #playerctld = "${config.services.playerctld.package}/bin/playerctld";
+      #makoctl = "${config.services.mako.package}/bin/makoctl";
+      #wofi = "${config.programs.wofi.package}/bin/wofi";
+      #pass-wofi = "${pkgs.pass-wofi.override {
+      #pass = config.programs.password-store.package;
+      #}}/bin/pass-wofi";
+      #grimblast = "${pkgs.inputs.hyprwm-contrib.grimblast}/bin/grimblast";
+      #pactl = "${pkgs.pulseaudio}/bin/pactl";
+      #tly = "${pkgs.tly}/bin/tly";
+      #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
+      #notify-send = "${pkgs.libnotify}/bin/notify-send";
+      #gtk-launch = "${pkgs.gtk3}/bin/gtk-launch";
+      #xdg-mime = "${pkgs.xdg-utils}/bin/xdg-mime";
+      #defaultApp = type: "${gtk-launch} $(${xdg-mime} query default ${type})";
       #terminal = config.home.sessionVariables.TERM;
       #browser = defaultApp "x-scheme-handler/https";
       #editor = defaultApp "text/plain";

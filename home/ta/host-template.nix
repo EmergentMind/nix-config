@@ -1,6 +1,5 @@
 { lib, configVars, ... }:
 let
-
 in
 {
   imports = [
@@ -15,7 +14,6 @@ in
     ./common/core # required
 
     #################### Host-specific Optional Configs ####################
-
   ];
 
   home = {

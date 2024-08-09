@@ -44,7 +44,7 @@
     in
     {
       nixosConfigurations = {
-        # host = newConfig "name" disk" "withSwap" "swapSize" 
+        # host = newConfig "name" disk" "withSwap" "swapSize"
         # Swap size is in GiB
         grief = newConfig "grief" "/dev/vda" false "0";
         guppy = newConfig "guppy" "/dev/vda" false "0";
