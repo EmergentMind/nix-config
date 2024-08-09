@@ -1,4 +1,4 @@
-{ inputs, system, ... }: {
+{ inputs, pkgs, system, ... }: {
   pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
     src = ./.;
     default_stages = [ "pre-commit" ];
@@ -34,7 +34,10 @@
         types = [ "symlink" ];
       };
 
-      nixpkgs-fmt.enable = true;
+      nixfmt = {
+        enable = true;
+        package = pkgs.nixfmt-rfc-style;
+      };
       shfmt.enable = true;
 
       end-of-file-fixer.enable = true;

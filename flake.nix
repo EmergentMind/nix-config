@@ -114,7 +114,8 @@
 
       # TODO change this to something that has better looking output rules
       # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
+      formatter = forAllSystems
+        (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
 
       # ################### DevShell ####################
       #
