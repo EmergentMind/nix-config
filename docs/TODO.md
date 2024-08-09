@@ -4,16 +4,9 @@
 
 ## Short Term
 
-- Stage 3
-  - revise docs in nix-secrets
+- update docs in nix-secrets
+- stage 4 prep
 
-  - close out Stage 3
-    - Update README
-    - Update Long Term Roadmap
-    - Add/verify links to site
-
-  - Videos
-   - part 4
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
@@ -69,7 +62,7 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 - ~~Review and complete applicable TODO sops, TODO yubi, and TODO stage 2~~
 - ~~Deploy gusto~~
 
-#### 3. Installation Automation  and drive encryption - Current
+#### 3. Installation Automation and drive encryption - Completed: 2024.08.08
 
 Introduce declarative partitioning, custom iso generation, install automation, and full drive encryption. This stage was also initially intended to add impermanence and several other improvements aimed at keeping a
 cleaner environment. However, automation took substantially longer than anticipated and I need to start using NixOS as a daily driver sooner than later. Being spread across two distros and different config paradigms while putting 99% of the effort into the new distro/config is becoming unsustainable. As such, several features have been deferred until later stages.
@@ -112,7 +105,7 @@ DEFERRED:
 
 - setup borg module
 - hyprland prep
-  - map i3 binds to hyperland binds
+  - map i3 binds to hyprland binds
   - config hyprland essentials
   - test on Grief
 - migrate dotfiles to nix-config

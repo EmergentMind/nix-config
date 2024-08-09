@@ -66,6 +66,8 @@ Completed features will be added here as each stage is complete.
 - Persistance
 - More disk space
 
+This is a personalized configuration that has several technical requirements to build successfully. This nix-config will serve you best as a reference, learning resource, and template for crafting your own configuration. I am continuing to provide resources throughout the repository and my website to help but you must also experiment and learn as you go to be successful to create a NixOS environment that will meet your needs.
+
 ## Structure Quick Reference
 
 For details about design concepts, constraints, and how structural elements interact, see the article and/or Youtube video [Anatomy of a NixOS Config](https://unmovedcentre.com/posts/anatomy-of-a-nixos-config/) available on my website.
@@ -83,7 +85,7 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
     - `disks` - Declarative disk partition and format specifications via disko.
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
-  - `genoa` - stage 3
+  - `genoa` - stage 5
   - `ghost` - stage 4
   - `grief` - Lab - Qemu VM
   - `gooey` - stage 5
@@ -109,6 +111,8 @@ Secrets for this config are stored in a private repository called nix-secrets th
 For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/technology/2024/03/22/secrets-management.html) available on my website.
 
 ## Support
+
+Thank you to my generous supporters!
 
 If you find what I do helpful, please consider supporting my work on Ko-fi.
 

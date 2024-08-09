@@ -29,6 +29,7 @@
 
         age
         ssh-to-age
+        git-agecrypt
         sops;
     };
   };

@@ -2,6 +2,20 @@
 
 [README](../README.md) > Install Notes
 
+## Building nix-config on a NixOS installation
+
+This is a personalized configuration that has several technical requirements to build successfully. This nix-config will serve you best as a reference, learning resource, and template for crafting your own configuration. I am continuing to provide resources throughout the repository and my website to help but you must also experiment and learn as you go to be successful to create a NixOS environment that will meet your needs.
+
+Assuming you have an adequately configured nix-secrets repository, linked to nix-config in the flake inputs _and_ that you have configured modules in nix-config to suit your hosts and home requirements, you can build the config using a convenient just repo as follows:
+
+from the root of the repository on your host run `just rebuild-update` to build the config.
+
+## Automated remote installation
+
+NixOS and this nix-config can be installed remotely from a source machine running nix to a target machine but running `./scripts/bootstrap-nixos.sh -n [hostname] -d [destination] -k [ssh key path]`
+
+Details of this process are described in the article and video [Remotely Installing NixOS and nix-config with Secrets]( https://unmovedcentre.com/posts/remote-install-nixos-config/) available on my site.
+
 ## Remote installation using nixos-anywhere and a lightweight ./nixos-installer flake - Feb 27, 2024
 
 This process involves remote, unattended installation of nixos on a target machine. As usual the steps here will refined during testing and automated, where applicable. A lightweight flake is used so that I can gradually test out new tools (e.g. nixos-anywhere, disko, declarative-disk encryption, impermanence, etc) overtime without compromising anything in the full nix-config.
