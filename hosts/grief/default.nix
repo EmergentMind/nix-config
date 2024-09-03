@@ -13,9 +13,9 @@
       ./hardware-configuration.nix
 
       #################### Hardware Modules ####################
-      inputs.hardware.nixosModules.common-cpu-amd
-      inputs.hardware.nixosModules.common-gpu-amd
-      inputs.hardware.nixosModules.common-pc-ssd
+      #inputs.hardware.nixosModules.common-cpu-amd
+      #inputs.hardware.nixosModules.common-gpu-amd
+      #inputs.hardware.nixosModules.common-pc-ssd
 
       #################### Disk Layout ####################
       inputs.disko.nixosModules.disko
@@ -82,6 +82,12 @@
       "virtio_blk"
     ];
   };
+
+  # borg backup
+  #services.backup = {
+  #  enable = false;
+  #  borgBackupStartTime = "01:00:00";
+  #};
 
   # This is a fix to enable VSCode to successfully remote SSH on a client to a NixOS host
   # https://wiki.nixos.org/wiki/Visual_Studio_Code # Remote_SSH
