@@ -15,9 +15,6 @@
 
     #################### Utilities ####################
 
-    # Access flake-based devShells with nix-shell seamlessly
-    flake-compat.url = "github:edolstra/flake-compat";
-
     # Declarative partitioning and formatting
     disko = {
       url = "github:nix-community/disko";
@@ -129,29 +126,9 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          checks = self.checks.${system};
         in
-        {
-          default = pkgs.mkShell {
-            NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
-
-            inherit (self.checks.${system}.pre-commit-check) shellHook;
-            buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-
-            nativeBuildInputs = builtins.attrValues {
-              inherit (pkgs)
-
-                nix
-                home-manager
-                git
-                just
-
-                age
-                ssh-to-age
-                sops
-                ;
-            };
-          };
-        }
+          import ./shell.nix { inherit checks pkgs; }
       );
 
       #################### NixOS Configurations ####################
