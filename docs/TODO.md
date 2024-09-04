@@ -5,7 +5,28 @@
 ## Short Term
 
 - update docs in nix-secrets
-- stage 4 prep
+- ~~add private but unencrypted vars to nix-secrets~~
+- 4.1 - Prep
+  - setup borg module
+    - ~~add module~~
+    - config refinement
+    - testing
+  - hyprland prep
+    - map i3 binds to hyprland binds
+    - config hyprland essentials
+    - test on Grief
+  - migrate dotfiles to nix-config
+    - start with raw dump into nix extras for now
+    - connect to grief first to test each one individually
+  - ghost modules
+    - host
+      - config mounting extra drives
+    - home
+    - nixos-installer
+  - change over and recovery plan
+    - audit main drive on ghost for missed items
+    - final grief tests
+    - push
 
 
 - New tools to integrate
