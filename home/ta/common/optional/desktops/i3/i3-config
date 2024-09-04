@@ -1,0 +1,431 @@
+### i3 config file (v4) Please see https://i3wm.org/docs/userguide.html for a complete reference!  This config file uses keycodes (bindsym) and was written for the QWERTY # layout.
+#
+# To get a config file with the same key positions, but for your current
+# layout, use the i3-config-wizard
+
+# ===================== LAYOUT ==========================
+#
+# Set monitor layout
+exec --no-startup-id $HOME/.config/i3/randr_monitor_layout.sh
+
+# Layout Mode for new containers
+# This option determines in which mode new containers on workspace level will start.
+# Syntax: workspace_layout default|stacking|tabbed
+
+# Workspace Names
+#set $w1 1: WWW
+#set $w2 2: WORK
+#set $w3 3: DEV
+#set $w4 4: GAMES
+#set $w5 5
+#set $w6 6
+#set $w7 7
+#set $w8 8:
+#set $w9 9: Utils
+#set $w10 10: Monitor
+#set $wdummy dummy
+
+# Workspace Screen Assignment
+workspace 1 output DisplayPort-0
+workspace 2 output DisplayPort-0
+workspace 3 output DisplayPort-0
+workspace 4 output DisplayPort-0
+workspace 5 output DisplayPort-0
+workspace 6 output DisplayPort-0
+workspace 7 output DisplayPort-0
+workspace 8 output DisplayPort-1
+workspace 9 output DisplayPort-2
+workspace 10 output HDMI-A-0
+
+# Set inner/outer gaps
+gaps inner 8
+gaps outer 5
+
+# Additionally, you can issue commands with the following syntax. This is useful to bind keys to changing the gap size.
+# gaps inner|outer current|all set|plus|minus <px>
+# gaps inner all set 10
+# gaps outer all plus 5
+
+# Smart gaps (gaps used if only more than one container on the workspace)
+#smart_gaps on
+
+# Smart borders (draw borders around container only if it is not the only container on this workspace)
+# on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)
+#smart_borders on
+
+# ===================== MOUSE ============================
+#
+focus_follows_mouse no
+
+# ===================== KEY BINDS ============================
+#
+# ---- basic i3 control ----
+
+# reload the configuration file
+bindsym Mod1+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym Mod1+Shift+r restart
+# exit i3 (logs you out of your X session)
+#bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session. -b 'Yes, exit i3' 'i3-msg exit'"
+
+# Set shut down, restart and locking features
+bindsym Mod1+Shift+e mode "$mode_system"
+set $mode_system (l)ock, e(x)it, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
+mode "$mode_system" {
+    bindsym l exec --no-startup-id i3exit lock, mode "default"
+    bindsym s exec --no-startup-id i3exit suspend, mode "default"
+    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
+    bindsym x exec --no-startup-id i3exit logout, mode "default"
+    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
+    bindsym r exec --no-startup-id i3exit reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id i3exit shutdown, mode "default"
+
+    # exit system mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# ---- Navigation and layout control ----
+
+# set up primary nav binds to use in addition to standard cursor/arrow keys
+set $up k
+set $down j
+set $left h
+set $right l
+
+# change focus
+bindsym Mod1+$left focus left
+bindsym Mod1+$down focus down
+bindsym Mod1+$up focus up
+bindsym Mod1+$right focus right
+
+# alternatively, you can use the cursor keys:
+bindsym Mod1+Left focus left
+bindsym Mod1+Down focus down
+bindsym Mod1+Up focus up
+bindsym Mod1+Right focus right
+# move focused window
+bindsym Mod1+Shift+$left move left
+bindsym Mod1+Shift+$down move down
+bindsym Mod1+Shift+$up move up
+bindsym Mod1+Shift+$right move right
+
+# alternatively, you can use the cursor keys:
+bindsym Mod1+Shift+Left move left
+bindsym Mod1+Shift+Down move down
+bindsym Mod1+Shift+Up move up
+bindsym Mod1+Shift+Right move right
+
+# drag floating windows
+# use Mouse+Mod1 to drag floating windows to their wanted position
+floating_modifier Mod1
+
+# split in horizontal orientation
+bindsym Mod1+g split h
+
+# split in vertical orientation
+bindsym Mod1+v split v
+
+# enter fullscreen mode for the focused container
+bindsym Mod1+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym Mod1+s layout stacking
+bindsym Mod1+w layout tabbed
+bindsym Mod1+x layout toggle split
+
+# toggle tiling / floating
+bindsym Mod1+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym Mod1+space focus mode_toggle
+
+# focus the parent container
+bindsym Mod1+a focus parent
+
+# focus the child container
+#bindsym Mod1+d focus child
+
+# move the currently focused window to the scratchpad
+bindsym Mod1+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# lf there are multiple scratchpad windows, this command cycles through them.
+bindsym Mod1+minus scratchpad show
+
+# switch to workspace
+bindsym Mod1+1 workspace 1
+bindsym Mod1+2 workspace 2
+bindsym Mod1+3 workspace 3
+bindsym Mod1+4 workspace 4
+bindsym Mod1+5 workspace 5
+bindsym Mod1+6 workspace 6
+bindsym Mod1+7 workspace 7
+bindsym Mod1+8 workspace 8
+bindsym Mod1+9 workspace 9
+bindsym Mod1+0 workspace 10
+
+# move focused container to workspace
+bindsym Mod1+Shift+1 move container to workspace 1
+bindsym Mod1+Shift+2 move container to workspace 2
+bindsym Mod1+Shift+3 move container to workspace 3
+bindsym Mod1+Shift+4 move container to workspace 4
+bindsym Mod1+Shift+5 move container to workspace 5
+bindsym Mod1+Shift+6 move container to workspace 6
+bindsym Mod1+Shift+7 move container to workspace 7
+bindsym Mod1+Shift+8 move container to workspace 8
+bindsym Mod1+Shift+9 move container to workspace 9
+bindsym Mod1+Shift+0 move container to workspace 10
+
+#navigate workspaces next / previous
+#bindsym Mod1+Ctrl+Right workspace next
+#bindsym Mod1+Ctrl+Left workspace prev
+
+# ---- Resize mode ----
+bindsym Mod1+r mode "resize"
+
+# binds when in resize mode (you can also use the mouse for that)
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym $left       resize shrink width 5 px or 5 ppt
+        bindsym $down       resize grow height 5 px or 5 ppt
+        bindsym $up         resize shrink height 5 px or 5 ppt
+        bindsym $right      resize grow width 5 px or 5 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left        resize shrink width 5 px or 5 ppt
+        bindsym Down        resize grow height 5 px or 5 ppt
+        bindsym Up          resize shrink height 5 px or 5 ppt
+        bindsym Right       resize grow width 5 px or 5 ppt
+}
+
+# ---- Gaps Control ----
+# Press Mod1+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or 0 (remove gaps for current workspace). If you also press Shift with these keys, the change will be global for all workspaces.
+#set Mod1e_gaps Gaps: (o) outer, (i) inner
+#set Mod1e_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+#set Mod1e_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+#bindsym Mod1+Shift+g mode "Mod1e_gaps"
+
+#mode "Mod1e_gaps" {
+#        bindsym o      mode "Mod1e_gaps_outer"
+#        bindsym i      mode "Mod1e_gaps_inner"
+#        bindsym Return mode "default"
+#        bindsym Escape mode "default"
+#}
+#mode "Mod1e_gaps_inner" {
+#        bindsym plus  gaps inner current plus 5
+#        bindsym minus gaps inner current minus 5
+#        bindsym 0     gaps inner current set 0
+#
+#        bindsym Shift+plus  gaps inner all plus 5
+#        bindsym Shift+minus gaps inner all minus 5
+#        bindsym Shift+0     gaps inner all set 0
+#
+#        bindsym Return mode "default"
+#        bindsym Escape mode "default"
+#}
+#mode "Mod1e_gaps_outer" {
+#        bindsym plus  gaps outer current plus 5
+#        bindsym minus gaps outer current minus 5
+#        bindsym 0     gaps outer current set 0
+#
+#        bindsym Shift+plus  gaps outer all plus 5
+#        bindsym Shift+minus gaps outer all minus 5
+#        bindsym Shift+0     gaps outer all set 0
+#
+#        bindsym Return mode "default"
+#        bindsym Escape mode "default"
+#}
+
+# ---- Launch binds ----
+# kill focused window
+bindsym Mod1+Shift+q kill
+
+# start a terminal
+bindsym Mod1+Return exec kitty
+bindsym Mod1+Control+t exec kitty
+# start a nvim in a terminal
+bindsym Mod1+Control+v exec "kitty nvim"
+
+# start a file explorer window
+bindsym Mod1+Control+f exec thunar
+
+# Custom rofi menu bind
+# To find the keycode, run xev from terminal and press the desired key to get the keycode
+# Left-Windows key is 133 and Right-Windows key is 134
+bindcode 133 exec rofi -show run
+bindcode 134 exec rofi -show run
+# Display list of all open windows
+bindsym Mod1+Tab exec rofi -show window
+
+# Start flameshot screen shooter
+bindsym Mod1+Control+4 exec "flameshot gui"
+
+# start dmenu (a program launcher)
+#bindsym Mod1+d exec dmenu_recur
+# There also is the (new) i3-dmenu-desktop which only displays applications
+# shipping a .desktop file. It is a wrapper around dmenu, so you need that
+# installed.
+# bindsym Mod1+d exec --no-startup-id i3-dmenu-desktop
+
+# ---- Pulse Audio controls ----
+# Volume controls
+
+# Dependencies: pactl
+# run `pactl list sinks` to determine RUNNING sinks and then add a `pactl set-sink-volume <SINK#> <ARG>` for each
+#bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +1% && pactl set-sink-volume 2 +1% #increase sound volume
+#bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -1% && pactl set-sink-volume 2 -1% #decrease sound volume
+#bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle && pactl set-sink-mute 1 toggle # mute sound
+
+# Dependencies: pulseaudio-control for polybar
+# switched to using pulseaudio-control instead of pactl above so that volume control affects whatever the active device is rather than sink specific. Also keeps mouse scroll control in polybar module the same as keybaord wheel.
+bindsym XF86AudioRaiseVolume exec --no-startup-id /usr/bin/pulseaudio-control --volume-max 100 up #increase sound volume
+bindsym XF86AudioLowerVolume exec --no-startup-id /usr/bin/pulseaudio-control --volume-max 100 down #decrease sound volume
+bindsym XF86AudioMute exec --no-startup-id /usr/bin/pulseaudio-control togmute # mute sound
+
+# Media player controls
+# Dependencies: playerctl
+bindsym XF86AudioPlay exec "playerctl --ignore-player=firefox,chromium play-pause"
+bindsym XF86AudioNext exec "playerctl --ignore-player=firefox,chromium next"
+bindsym XF86AudioPrev exec "playerctl --ignore-player=firefox,chromium previous"
+
+# ---- ThinkPad function key binds
+# basic configuration for thinkpad function keys
+bindsym XF86MonBrightnessUp exec xbacklight -inc 10
+bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+bindsym XF86Calculator exec galculator
+bindsym XF86Display exec arandr
+
+# ==========================  BAR CONFIGS =========================
+#
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+#
+#bar {
+#       status_command i3status
+#}
+
+# hide/unhide i3status bar
+#bindsym Mod1+m bar mode toggle
+
+# ==========================  THEME CONTROL =========================
+#
+# Configure border style
+# default_border normal|none|pixel
+# default_border normal|pixel <px>
+# default_floating_border normal|none|pixel
+# default_floating_border normal|pixel <px>
+#
+# Setting border style to pixel eliminates title bars.
+# The border style normal allows you to adjust edge border width while keeping your title bar.
+
+default_border pixel 3
+
+default_floating_border pixel 1
+
+# Hide borders
+# hide_edge_borders none
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+# font pango:monospace 8
+
+font xft:Noto Mono Sans 10
+
+# Colors set from ~/.Xresources
+set_from_resource  $background   background
+set_from_resource  $foreground   foreground
+set_from_resource  $color00      color0
+set_from_resource  $color01      color1
+set_from_resource  $color02      color2
+set_from_resource  $color03      color3
+set_from_resource  $color04      color4
+set_from_resource  $color05      color5
+set_from_resource  $color06      color6
+set_from_resource  $color07      color7
+set_from_resource  $color08      color8
+set_from_resource  $color09      color9
+set_from_resource  $color10      color10
+set_from_resource  $color11      color11
+set_from_resource  $color12      color12
+set_from_resource  $color13      color13
+set_from_resource  $color14      color14
+set_from_resource  $color15      color15
+
+# Theme colors
+# color class           border      backgr.      text          indiccator       child_border
+client.focused          $color02    $background  $color04      $color04         $color04
+client.unfocused        $color00    $background  $color00      $color00         $background
+client.focused_inactive $color00    $background  $color00      $color00         $background
+client.urgent           $color08    $background  $color08      $background      $background
+client.placeholder      $foreground $foreground  $background   $background      $background
+
+client.background       $background
+
+# ==========================  LAUNCH CONTROL =========================
+#
+# Open specific applications in floating mode
+for_window [class="Galculator"] floating enable border pixel 1
+for_window [class="GParted"] floating enable border normal
+for_window [title="i3_help"] floating enable sticky enable border normal
+for_window [class="Lightdm-gtk-greeter-settings"] floating enable
+for_window [class="Manjaro Settings Manager"] floating enable border normal
+for_window [class="Manjaro Welcome"] floating enable
+for_window [class="Nitrogen"] floating enable sticky enable border normal
+for_window [class="Pamac-manager"] floating enable
+for_window [class="^Pavucontrol$"] floating enable
+for_window [class="awakened-poe-trade"] floating enable
+
+# https://github.com/ValveSoftware/steam-for-linux/issues/1040
+for_window [class="^Steam$"] floating enable
+for_window [class="^Steam$" title="^Friends$"] floating enable
+for_window [class="^Steam$" title="Steam - News"] floating enable
+for_window [class="^Steam$" title=".* - Chat"] floating enable
+for_window [class="^Steam$" title="^Settings$"] floating enable
+for_window [class="^Steam$" title=".* - event started"] floating enable
+for_window [class="^Steam$" title=".* CD key"] floating enable
+for_window [class="^Steam$" title="^Steam - Self Updater$"] floating enable
+for_window [class="^Steam$" title="^Screenshot Uploader$"] floating enable
+for_window [class="^Steam$" title="^Steam Guard - Computer Authorization Required$"] floating enable
+for_window [title="^Steam Keyboard$"] floating enable
+
+# Open applications on specific workspaces
+assign [class="^Steam$"] 7
+assign [class="Spotify"] 8
+assign [class="KeePassXC"] 8
+assign [class="Signal"] 9
+assign [class="Slack"] 9
+assign [class="Discord"] 9
+assign [class="Telegram"] 9
+assign [class="Yubico Authenticator"] 9
+assign [class="Remmina Remote Desktop Client"] 8
+
+# Autostart core applications
+exec --no-startup-id nitrogen --restore;
+exec_always --no-startup-id $HOME/.config/polybar/scripts/launch.sh;
+exec --no-startup-id sleep 5; picom -b;
+exec --no-startup-id blueman-applet;
+exec --no-startup-id nm-applet;
+exec_always --no-startup-id syncthing;
+
+# Autostart non-core apps
+#exec --no-startup-id signal-desktop;
+#exec --no-startup-id keepassxc;
+
+#Disabling resurrect for the time being becuase it doesn't really work how I need it to and my i3 skills are solid enough that it doesn't matter
+# Autoload layouts and programs via i3-resurrect
+#set $loc $HOME/dotfiles/i3/.config/i3/i3-resurrect
+
+# Load layouts
+# only autoload layouts for 9 and 10 because too many race conditions otherwise and it gets messy
+#exec --no-startup-id i3-resurrect restore -w 10 --layout-only -d $loc
+#exec --no-startup-id sleep 1; i3-resurrect restore -w 9 --layout-only -d $loc
