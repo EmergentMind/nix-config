@@ -39,6 +39,8 @@
   services.xserver.enable = true;
   services.xserver.displayManager = {
     lightdm.enable = true;
+  };
+  services.displayManager = {
     autoLogin.enable = true;
     autoLogin.user = "media";
   };
