@@ -14,15 +14,13 @@
   - hyprland prep
     - ~~map i3 binds to hyprland binds~~
     - config hyprland essentials
-    - test on Grief
   - migrate dotfiles to nix-config
     - ~~start with raw dump into nix extras for now~~
-    - connect to grief first to test each one individually
   - ghost modules
-    - host
-      - config mounting extra drives
-    - home
-    - nixos-installer
+    - ~~host~~
+      - ~~config mounting extra drives~~
+    - ~~home~~
+    - ~~nixos-installer~~
   - change over and recovery plan
     - audit main drive on ghost for missed items
     - final grief tests
