@@ -4,32 +4,15 @@
 
 ## Short Term
 
-- update docs in nix-secrets
-- ~~add private but unencrypted vars to nix-secrets~~
-- 4.1 - Prep
-  - setup borg module
-    - ~~add module~~
-    - config refinement
-    - testing
-  - hyprland prep
-    - ~~map i3 binds to hyprland binds~~
-    - config hyprland essentials
-  - migrate dotfiles to nix-config
-    - ~~start with raw dump into nix extras for now~~
-  - ghost modules
-    - ~~host~~
-      - ~~config mounting extra drives~~
-    - ~~home~~
-    - ~~nixos-installer~~
-  - change over and recovery plan
-    - audit main drive on ghost for missed items
-    - final grief tests
-    - push
+- install nixos on Ghost
+- verify drives
+- verify critical apps and services functionality
+- enable backup
+- enable mediashare
 
-daedalus-mainnet
+update docs in nix-secrets
 update yubikey stuff from fidgeting bits
   - which authenticator app... yubioath-flutter ?? https://github.com/Yubico/yubioath-flutter
-unifi backup (normally goes to raid drive)
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
@@ -126,30 +109,19 @@ DEFERRED:
 
 ##### 4.1 Prep
 
-- setup borg module
-- hyprland prep
-  - map i3 binds to hyprland binds
-  - config hyprland essentials
-  - test on Grief
-- migrate dotfiles to nix-config
-  - start with raw dump into nix extras for now
-  - connect to grief first to test each one individually
-- ghost modules
-  - host
-    - config mounting extra drives
-  - home
-  - nixos-installer
-- change over and recovery plan
-  - audit main drive on ghost for missed items
-  - final grief tests
-  - push
+- ~~setup borg module~~
+- ~~hyprland prep~~
+- ~~migrate dotfiles to nix-config~~
+- ~~ghost modules~~
+- ~~change over and recovery plan~~
 
 ##### 4.2 Change over
 
 - install nixos on Ghost
 - verify drives
 - verify critical apps and services functionality
-- verify backups
+- enable backup
+- enable mediashare
 
 ##### 4.3 Get comfortable
 

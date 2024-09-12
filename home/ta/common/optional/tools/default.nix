@@ -14,6 +14,9 @@
     drawio
     drawio-export-all
 
+    # cryptocurrency
+    # daedalus-mainnet #doubtful this is in home-manager
+
     # Privacy
     #veracrypt
     #keepassxc
