@@ -22,6 +22,21 @@
     # plugins = [];
 
     settings = {
+      # Configure your Display resolution, offset, scale and Monitors here, use `hyprctl monitors` to get the info.
+      # https://wiki.hyprland.org/Configuring/Monitors/
+      #            ------
+      #           | DP-3 |
+      #            ------ 
+      #  ------   -----   ------
+      # | DP-2 | | DP-0  | HDMI-A-0 |
+      #  ------   -----   ------
+      monitor = [
+        "DP-0, 2550x1440@240, 2560x1080, 1"
+        "DP-1, 2550x2880@60, 0x840, 1"
+        "DP-2, 1920x1880@60, 2880x0, 1, transform, 2"
+        "HDMI-A-0, 2550x2880@60, 5120x840, 1"
+      ];
+
       env = [
         "NIXOS_OZONE_WL, 1" # for ozone-based and electron apps to run on wayland
         "MOZ_ENABLE_WAYLAND, 1" # for firefox to run on wayland
@@ -37,19 +52,8 @@
       #     gaps_out = 5;
       #     border_size = 3;
       #     cursor_inactive_timeout = 4;
-      #   };
-      #
-      #   input = {
-      #   kb_layout = "us";
-      #     # mouse = {
-      #     #   acceleration = 1.0;
-      #     #   naturalScroll = true;
-      #     # };
-      #   };
-      #
-      #   decoration = {
-      #     active_opacity = 0.94;
-      #     inactive_opacity = 0.75;
+      #     col.inactive-border = "0x00000000";
+      #     col.active-border = over18?dest=https%3A%2F%2Fold.reddit.com%2Fr%2Fnsfw0.75;
       #     fullscreen_opacity = 1.0;
       #     # rounding = 7;
       #     blur = {
@@ -65,6 +69,14 @@
       #   "col.shadow" = "0x44000000";
       #   "col.shadow_inactive" = "0x66000000";
       # };
+      #  misc = {
+      #  disable_hyprland_logo = true;
+      #  animate_manual_resizes = true;
+      #  animate_mouse_windowdragging = true;
+      #  disable_autoreload = true;
+      #  new_window_takes_over_fullscreen = 1;
+      #  initial_workspace_tracking = 0;
+      #};    
 
       # exec-once = ''${startupScript}/path'';
     };
@@ -73,25 +85,20 @@
     # extraConfig = ''    '';
   };
 
-  # # TODO: move below into individual .nix files with their own configs
-  # home.packages = builtins.attrValues {
-  #   inherit (pkgs)
-  #   nm-applet --indicator &  # notification manager applet.
-  #   bar
-  #   waybar  # closest thing to polybar available
-  #   where is polybar? not supported yet: https://github.com/polybar/polybar/issues/414
-  #   eww # alternative - complex at first but can do cool shit apparently
-  #
-  #   # Wallpaper daemon
-  #   hyprpaper
-  #   swaybg
-  #   wpaperd
-  #   mpvpaper
-  #   swww # vimjoyer recoomended
-  #   nitrogen
-  #
-  #   # app launcher
-  #   rofi-wayland;
-  #   wofi # gtk rofi
-  # };
+  # TODO: move below into individual .nix files with their own configs
+  home.packages = builtins.attrValues {
+     inherit (pkgs)
+   
+    # Wallpaper daemon
+    # NOTE: most of these don't exist in home-manager so maybe just go with one that is
+    hyprpaper
+    #   swaybg
+    #   wpaperd
+    #   mpvpaper
+    # swww # vimjoyer recoomended
+    #   nitrogen
+  
+    # App launcher
+    rofi-wayland;
+  };
 }
