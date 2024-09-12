@@ -91,8 +91,10 @@
     in
     {
       # Custom modules to enable special functionality for nixos or home-manager oriented configs.
-      nixosModules = { inherit (import ./modules/nixos); };
-      homeManagerModules = { inherit (import ./modules/home-manager); };
+      #nixosModules = { inherit (import ./modules/nixos); };
+      #homeManagerModules = { inherit (import ./modules/home-manager); };
+      nixosModules =  import ./modules/nixos;
+      homeManagerModules =  import ./modules/home-manager;
 
       # Custom modifications/overrides to upstream packages.
       overlays = import ./overlays { inherit inputs outputs; };
@@ -114,7 +116,6 @@
         import ./checks { inherit inputs system pkgs; }
       );
 
-      # TODO change this to something that has better looking output rules
       # Nix formatter available through 'nix fmt' https://nix-community.github.io/nixpkgs-fmt
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
 
@@ -136,6 +137,15 @@
       # Building configurations available through `just rebuild` or `nixos-rebuild --flake .#hostname`
 
       nixosConfigurations = {
+        # Main
+        ghost = lib.nixosSystem {
+          inherit specialArgs;
+          modules = [
+            home-manager.nixosModules.home-manager
+            { home-manager.extraSpecialArgs = specialArgs; }
+            ./hosts/ghost
+          ];
+        };
         # Qemu VM dev lab
         grief = lib.nixosSystem {
           inherit specialArgs;

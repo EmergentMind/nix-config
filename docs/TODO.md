@@ -12,11 +12,11 @@
     - config refinement
     - testing
   - hyprland prep
-    - map i3 binds to hyprland binds
+    - ~~map i3 binds to hyprland binds~~
     - config hyprland essentials
     - test on Grief
   - migrate dotfiles to nix-config
-    - start with raw dump into nix extras for now
+    - ~~start with raw dump into nix extras for now~~
     - connect to grief first to test each one individually
   - ghost modules
     - host
@@ -28,6 +28,10 @@
     - final grief tests
     - push
 
+daedalus-mainnet
+update yubikey stuff from fidgeting bits
+  - which authenticator app... yubioath-flutter ?? https://github.com/Yubico/yubioath-flutter
+unifi backup (normally goes to raid drive)
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
@@ -152,6 +156,9 @@ DEFERRED:
 ##### 4.3 Get comfortable
 
 - setup and enable hyprland
+  - hyprlock ?
+  - hyprpaper wallpaper
+  - 
 - reestablish workflow
 
 ##### 4.3.x Extras
@@ -260,6 +267,8 @@ Migrating bash scripts to nix
 
 - gui dev
   - host specific colours via stylix or nix-colors
+
+- eww as a potential replacement to waybar
 
 - plymouth
 - grub - https://www.gnome-look.org/browse?cat=109&ord=latest

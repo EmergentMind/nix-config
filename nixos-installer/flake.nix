@@ -50,6 +50,18 @@
         guppy = newConfig "guppy" "/dev/vda" false "0";
         gusto = newConfig "gusto" "/dev/sda" true "8";
 
+        ghost = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = minimalSpecialArgs;
+          modules = [
+            inputs.disko.nixosModules.disko
+            (configLib.relativeToRoot "hosts/common/disks/ghost.nix")
+            ./minimal-configuration.nix
+            { networking.hostName = "ghost"; }
+            (configLib.relativeToRoot "hosts/ghost/hardware-configuration.nix")
+          ];
+        }
+
         # Custom ISO
         #
         # `just iso` - from nix-config directory to generate the iso standalone
