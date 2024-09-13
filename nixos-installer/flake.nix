@@ -60,7 +60,7 @@
             { networking.hostName = "ghost"; }
             (configLib.relativeToRoot "hosts/ghost/hardware-configuration.nix")
           ];
-        }
+        };
 
         # Custom ISO
         #
