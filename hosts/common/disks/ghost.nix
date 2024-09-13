@@ -74,7 +74,7 @@
             };
           };
         };
-      }
+      };
       extra = {
         type = "disk";
         device = "/dev/nvme0n1"; #250GB 
@@ -86,11 +86,11 @@
               content = {
                 type = "luks";
                 name = "cryptextra";
-                passwordfile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
+                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
                 settings = {
-                  allowdiscards = true;
+                  allowDiscards = true;
                   # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
-                  crypttabextraopts = [
+                  crypttabExtraOpts = [
                     "fido2-device=auto"
                     "token-timeout=10"
                   ];
@@ -99,11 +99,11 @@
                 # unless their parent is mounted
                 content = {
                   type = "btrfs";
-                  extraargs = [ "-f" ]; # force overwrite
+                  extraArgs = [ "-f" ]; # force overwrite
                   subvolumes = {
                     "@extra" = {
                       mountpoint = "/mnt/extra";
-                      mountoptions = [
+                      mountOptions = [
                         "compress=zstd"
                         "noatime"
                       ];
@@ -114,8 +114,8 @@
             };
           };
         };
-      }
-      VMS = {
+      };
+      vms = {
         type = "disk";
         device = "/dev/sda"; #500GB 
         content = {
@@ -126,11 +126,11 @@
               content = {
                 type = "luks";
                 name = "cryptvms";
-                passwordfile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
+                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
                 settings = {
-                  allowdiscards = true;
+                  allowDiscards = true;
                   # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
-                  crypttabextraopts = [
+                  crypttabExtraOpts = [
                     "fido2-device=auto"
                     "token-timeout=10"
                   ];
@@ -139,11 +139,11 @@
                 # unless their parent is mounted
                 content = {
                   type = "btrfs";
-                  extraargs = [ "-f" ]; # force overwrite
+                  extraArgs = [ "-f" ]; # force overwrite
                   subvolumes = {
                     "@vms" = {
                       mountpoint = "/mnt/vms";
-                      mountoptions = [
+                      mountOptions = [
                         "compress=zstd"
                         "noatime"
                       ];
@@ -156,67 +156,75 @@
         };
       };
       # Raid disks are assembled in mdadm below
-      RAID1-disk0 = {
+      raid1-disk0 = {
         type = "disk";
         device = "/dev/sdb"; #1.8TB 
         content = {
           type = "gpt";
           partitions = {
-            size = "100%";
-            content = {
-              type = "mdraid";
-              name = "raid1";
+            mdadm = {
+              size = "100%";
+              content = {
+                type = "mdraid";
+                name = "raid1";
+              };
             };
           };
         };
       };
-      RAID1-disk1 = {
+      raid1-disk1 = {
         type = "disk";
         device = "/dev/sdc"; #1.8TB 
         content = {
           type = "gpt";
           partitions = {
-            size = "100%";
-            content = {
-              type = "mdraid";
-              name = "raid1";
+            mdadm = {
+              size = "100%";
+              content = {
+                type = "mdraid";
+                name = "raid1";
+              };
             };
           };
         };
       };
     };
+    # declare the mdadm raid1 array as a device
     mdadm = {
       raid1 = {
         type = "mdadm";
         level = 1; # Raid 1 (mirroring)
         content = {
           type = "gpt";
-          partitions.primary = {
-          size = "100%";
-          content = {
-            type = "luks";
-            name = "cryptraid1";
-            passwordfile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
-            settings = {
-              allowdiscards = true;
-              # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
-              crypttabextraopts = [
-                "fido2-device=auto"
-                "token-timeout=10"
-              ];
-            };
-            # subvolumes must set a mountpoint in order to be mounted,
-            # unless their parent is mounted
-            content = {
-              type = "btrfs";
-              extraargs = [ "-f" ]; # force overwrite
-              subvolumes = {
-                "@vms" = {
-                  mountpoint = "/mnt/raid";
-                  mountoptions = [
-                    "compress=zstd"
-                    "noatime"
+          partitions = {
+            luks = {
+              size = "100%";
+              content = {
+                type = "luks";
+                name = "cryptraid1";
+                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
+                settings = {
+                  allowDiscards = true;
+                  # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
+                  crypttabExtraOpts = [
+                    "fido2-device=auto"
+                    "token-timeout=10"
                   ];
+                };
+                # subvolumes must set a mountpoint in order to be mounted,
+                # unless their parent is mounted
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ]; # force overwrite
+                  subvolumes = {
+                    "@vms" = {
+                      mountpoint = "/mnt/raid";
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
+                    };
+                  };
                 };
               };
             };
@@ -225,9 +233,8 @@
       };
     };
   };
-};
 
-environment.systemPackages = [
-pkgs.yubikey-manager # For luks fido2 enrollment before full install
-];
+  environment.systemPackages = [
+  pkgs.yubikey-manager # For luks fido2 enrollment before full install
+  ];
 }
