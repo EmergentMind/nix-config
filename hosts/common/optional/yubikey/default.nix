@@ -1,18 +1,22 @@
 # Modeled on https://github.com/Mic92/dotfiles for now
 
-{ pkgs, ... }:
+{ pkgs, configVars, ... }:
 let
   yubikey-up = pkgs.writeShellApplication {
     name = "yubikey-up";
-    runtimeInputs = builtins.attrValues { inherit (pkgs) gawk yubikey-manager; };
+    runtimeInputs =
+      builtins.attrValues { inherit (pkgs) gawk yubikey-manager; };
     text = builtins.readFile ./scripts/yubikey-up.sh;
   };
   yubikey-down = pkgs.writeShellApplication {
     name = "yubikey-down";
     text = builtins.readFile ./scripts/yubikey-down.sh;
   };
-in
-with pkgs; # FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
+  homeDirectory = if pkgs.stdenv.isLinux then
+    "/home/${configVars.username}"
+  else
+    "/Users/${configVars.username}";
+in with pkgs; # FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
 {
   environment.systemPackages = [
     # yubikey-personalization
@@ -40,20 +44,36 @@ with pkgs; # FIXME needs to be refactored according to best practices but not su
 
   services.udev.extraRules = ''
     # Link/unlink ssh key on yubikey add/remove
-    SUBSYSTEM=="usb", ACTION=="add", ATTR{idVendor}=="1050", RUN+="${lib.getBin yubikey-up}/bin/yubikey-up"
-    SUBSYSTEM=="input", ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", RUN+="${lib.getBin yubikey-down}/bin/yubikey-down"
+    SUBSYSTEM=="usb", ACTION=="add", ATTR{idVendor}=="1050", RUN+="${
+      lib.getBin yubikey-up
+    }/bin/yubikey-up"
+    SUBSYSTEM=="input", ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", RUN+="${
+      lib.getBin yubikey-down
+    }/bin/yubikey-down"
   '';
 
-  # FIXME: Need to create symlinks to the sops-decrypted keys
-
-  # enable pam services to allow u2f auth for login and sudo
-  security.pam.services = {
-    login.u2fAuth = true;
-    sudo.u2fAuth = true;
-  };
-
-  # Yubikey required services and config. See Dr. Duh NixOS config for reference
+  # Yubikey required services and config. See Dr. Duh NixOS config for
+  # reference
   services.pcscd.enable = true; # smartcard service
-
   services.udev.packages = [ yubikey-personalization ];
+
+  services.yubikey-agent.enable = true;
+
+  # yubikey login / sudo
+  security.pam = lib.optionalAttrs pkgs.stdenv.isLinux {
+    sshAgentAuth.enable = true;
+    u2f = {
+      enable = true;
+      cue = false; # Tells user they need to press the button
+      authFile = "${homeDirectory}/.config/Yubico/u2f_keys";
+      #debug = true;
+    };
+    services = {
+      login.u2fAuth = true;
+      sudo = {
+        u2fAuth = true;
+        sshAgentAuth = true; # Use SSH_AUTH_SOCK for sudo
+      };
+    };
+  };
 }

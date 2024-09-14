@@ -1,54 +1,47 @@
-{ lib, config, ... }:
-{
+{ lib, config, ... }: {
   wayland.windowManager.hyprland.settings = {
-    bindm = [
-      "SUPER,mouse:272,movewindow"
-      "SUPER,mouse:273,resizewindow"
-    ];
+    bindm = [ "ALT,mouse:272,movewindow" "ALT,mouse:273,resizewindow" ];
 
-    bind =
-      let
-        workspaces = [
-          "0"
-          "1"
-          "2"
-          "3"
-          "4"
-          "5"
-          "6"
-          "7"
-          "8"
-          "9"
-          "F1"
-          "F2"
-          "F3"
-          "F4"
-          "F5"
-          "F6"
-          "F7"
-          "F8"
-          "F9"
-          "F10"
-          "F11"
-          "F12"
-        ];
-        # Map keys (arrows and hjkl) to hyprland directions (l, r, u, d)
-        directions = rec {
-          left = "l";
-          right = "r";
-          up = "u";
-          down = "d";
-          h = left;
-          l = right;
-          k = up;
-          j = down;
-        };
-      in
+    bind = let
+      workspaces = [
+        "0"
+        "1"
+        "2"
+        "3"
+        "4"
+        "5"
+        "6"
+        "7"
+        "8"
+        "9"
+        "F1"
+        "F2"
+        "F3"
+        "F4"
+        "F5"
+        "F6"
+        "F7"
+        "F8"
+        "F9"
+        "F10"
+        "F11"
+        "F12"
+      ];
+      # Map keys (arrows and hjkl) to hyprland directions (l, r, u, d)
+      directions = rec {
+        left = "l";
+        right = "r";
+        up = "u";
+        down = "d";
+        h = left;
+        l = right;
+        k = up;
+        j = down;
+      };
       #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
       #playerctl = "${config.services.playerctld.package}/bin/playerctl";
       #playerctld = "${config.services.playerctld.package}/bin/playerctld";
       #makoctl = "${config.services.mako.package}/bin/makoctl";
-      #wofi = "${config.programs.wofi.package}/bin/wofi";
       #pass-wofi = "${pkgs.pass-wofi.override {
       #pass = config.programs.password-store.package;
       #}}/bin/pass-wofi";
@@ -63,56 +56,57 @@
       #terminal = config.home.sessionVariables.TERM;
       #browser = defaultApp "x-scheme-handler/https";
       #editor = defaultApp "text/plain";
-      [
-        #################### Program Launch ####################
-        "SHIFTALT,Return,exec,kitty"
+    in [
+      #################### Program Launch ####################
+      "ALT,Return,exec,kitty"
+      "SUPER,space,exec,rofi -show run"
 
-        #################### Basic Bindings ####################
-        "SHIFTALT,q,killactive"
-        "SUPERSHIFT,e,exit"
+      #################### Basic Bindings ####################
+      "SHIFTALT,q,killactive"
+      "ALTSHIFT,e,exit"
 
-        "SUPER,s,togglesplit"
-        "SUPER,f,fullscreen,1"
-        "SUPERSHIFT,f,fullscreen,0"
-        "SUPERSHIFT,space,togglefloating"
-        # "SUPER, foo, pin"
+      "ALT,s,togglesplit"
+      "ALT,f,fullscreen,1"
+      "ALTSHIFT,f,fullscreen,0"
+      "ALTSHIFT,space,togglefloating"
+      # "ALT, foo, pin"
 
-        "SUPER,minus,splitratio,-0.25"
-        "SUPERSHIFT,minus,splitratio,-0.3333333"
+      "ALT,minus,splitratio,-0.25"
+      "ALTSHIFT,minus,splitratio,-0.3333333"
 
-        "SUPER,equal,splitratio,0.25"
-        "SUPERSHIFT,equal,splitratio,0.3333333"
+      "ALT,equal,splitratio,0.25"
+      "ALTSHIFT,equal,splitratio,0.3333333"
 
-        "SUPER,g,togglegroup"
-        "SUPER,t,lockactivegroup,toggle"
-        "SUPER,apostrophe,changegroupactive,f"
-        "SUPERSHIFT,apostrophe,changegroupactive,b"
+      "ALT,g,togglegroup"
+      "ALT,t,lockactivegroup,toggle"
+      "ALT,apostrophe,changegroupactive,f"
+      "ALTSHIFT,apostrophe,changegroupactive,b"
 
-        "SUPER,u,togglespecialworkspace"
-        "SUPERSHIFT,u,movetoworkspacesilent,special"
-      ]
-      ++
-        # Change workspace
-        (map (n: "ALT,${n},workspace,name:${n}") workspaces)
-      ++
-        # Move window to workspace
-        (map (n: "SHIFTALT,${n},movetoworkspacesilent,name:${n}") workspaces)
-      ++
-        # Move focus
-        (lib.mapAttrsToList (key: direction: "ALT,${key},movefocus,${direction}") directions)
-      ++
-        # Swap windows
-        (lib.mapAttrsToList (key: direction: "SUPERSHIFT,${key},swapwindow,${direction}") directions)
-      ++
-        # Move windows
-        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}") directions)
-      ++
-        # Move monitor focus
-        (lib.mapAttrsToList (key: direction: "SUPERALT,${key},focusmonitor,${direction}") directions)
-      ++
-        # Move workspace to other monitor
-        (lib.mapAttrsToList (
-          key: direction: "SUPERALTSHIFT,${key},movecurrentworkspacetomonitor,${direction}"
-        ) directions);
+      "ALT,u,togglespecialworkspace"
+      "ALTSHIFT,u,movetoworkspacesilent,special"
+    ] ++
+    # Change workspace
+    (map (n: "ALT,${n},workspace,name:${n}") workspaces) ++
+    # Move window to workspace
+    (map (n: "SHIFTALT,${n},movetoworkspacesilent,name:${n}") workspaces) ++
+    # Move focus
+    (lib.mapAttrsToList (key: direction: "ALT,${key},movefocus,${direction}")
+      directions) ++
+    # Swap windows
+    #   (lib.mapAttrsToList
+    #      (key: direction: "ALTSHIFT,${key},swapwindow,${direction}") directions)
+    #    ++
+    # Move windows
+    (lib.mapAttrsToList
+      (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}")
+      directions);
+    # Move monitor focus
+    #(lib.mapAttrsToList
+    #      (key: direction: "ALTALT,${key},focusmonitor,${direction}") directions)
+    #    ++
+    # Move workspace to other monitor
+    #    (lib.mapAttrsToList (key: direction:
+    #      "SHIFTALT,${key},movecurrentworkspacetomonitor,${direction}")
+    #      directions);
   };
 }

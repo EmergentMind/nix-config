@@ -1,5 +1,4 @@
-{ pkgs, lib, ... }:
-{
+{ pkgs, lib, ... }: {
   imports = [
     # custom key binds
     ./binds.nix
@@ -26,15 +25,15 @@
       # https://wiki.hyprland.org/Configuring/Monitors/
       #            ------
       #           | DP-3 |
-      #            ------ 
+      #            ------
       #  ------   -----   ------
-      # | DP-2 | | DP-0  | HDMI-A-0 |
+      # | DP-2 | | DP-1  | HDMI-A-0 |
       #  ------   -----   ------
       monitor = [
-        "DP-0, 2550x1440@240, 2560x1080, 1"
-        "DP-1, 2550x2880@60, 0x840, 1"
-        "DP-2, 1920x1880@60, 2880x0, 1, transform, 2"
-        "HDMI-A-0, 2550x2880@60, 5120x840, 1"
+        "DP-1, 2560x1440@240, 0x0, 1"
+        #"DP-2, 2560x2880@60, -2560x840, 1"
+        "DP-3, 1920x1080@60, 0x-1080, 1, transform, 2"
+        "HDMI-A-0, 2560x2880@60, 2560x840, 1"
       ];
 
       env = [
@@ -76,7 +75,7 @@
       #  disable_autoreload = true;
       #  new_window_takes_over_fullscreen = 1;
       #  initial_workspace_tracking = 0;
-      #};    
+      #};
 
       # exec-once = ''${startupScript}/path'';
     };
@@ -87,18 +86,18 @@
 
   # TODO: move below into individual .nix files with their own configs
   home.packages = builtins.attrValues {
-     inherit (pkgs)
-   
+    inherit (pkgs)
+
     # Wallpaper daemon
     # NOTE: most of these don't exist in home-manager so maybe just go with one that is
-    hyprpaper
-    #   swaybg
-    #   wpaperd
-    #   mpvpaper
-    # swww # vimjoyer recoomended
-    #   nitrogen
-  
-    # App launcher
-    rofi-wayland;
+      hyprpaper
+      #   swaybg
+      #   wpaperd
+      #   mpvpaper
+      # swww # vimjoyer recoomended
+      #   nitrogen
+
+      # App launcher
+      rofi-wayland;
   };
 }
