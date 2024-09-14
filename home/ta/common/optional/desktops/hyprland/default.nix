@@ -9,15 +9,16 @@
 
   wayland.windowManager.hyprland = {
     enable = true;
-    # systemd = {
-    #   enable = true;
-    #   # TODO: experiment with whether this is required.
-    #   # Same as default, but stop the graphical session too
-    #   extraCommands = lib.mkBefore [
-    #     "systemctl --user stop graphical-session.target"
-    #     "systemctl --user start hyprland-session.target"
-    #   ];
-    # };
+    systemd = {
+      enable = true;
+      variables = [ "--all" ]; # fix for https://wiki.hyprland.org/Nix/Hyprland-on-Home-Manager/#programs-dont-work-in-systemd-services-but-do-on-the-terminal
+      #   # TODO: experiment with whether this is required.
+      #   # Same as default, but stop the graphical session too
+      extraCommands = lib.mkBefore [
+        "systemctl --user stop graphical-session.target"
+        "systemctl --user start hyprland-session.target"
+      ];
+    };
 
     # plugins = [];
 
@@ -28,13 +29,13 @@
       #           | DP-3 |
       #            ------
       #  ------   -----   ------
-      # | DP-2 | | DP-1  | HDMI-A-0 |
+      # | DP-2 | | DP-1  | HDMI-A-1 |
       #  ------   -----   ------
       monitor = [
         "DP-1, 2560x1440@240, 0x0, 1"
         "DP-2, 2560x2880@60, -2560x840, 1"
         "DP-3, 1920x1080@60, 0x-1080, 1, transform, 2"
-        "HDMI-A-0, 2560x2880@60, 2560x840, 1"
+        "HDMI-A-1, 2560x2880@60, 2560x840, 1"
       ];
 
       env = [
