@@ -14,7 +14,7 @@
     };
     keybindings = {
       "ctrl+c" = "copy_or_interrupt";
-      "ctrl+v" = "paste_from_clipboard";
+      #      "ctrl+v" = "paste_from_clipboard"; #interferes with visual block mode in vim
     };
     #theme = "";
 
