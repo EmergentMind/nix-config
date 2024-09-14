@@ -62,6 +62,9 @@
       "SUPER,space,exec,rofi -show run"
 
       #################### Basic Bindings ####################
+      "reload the configuration file - after nix-config rebuild"
+      "ALTSHIFT,r,exec,hyprctl reload"
+
       "SHIFTALT,q,killactive"
       "ALTSHIFT,e,exit"
 
