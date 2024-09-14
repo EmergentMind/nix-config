@@ -82,8 +82,8 @@
       "ALT,apostrophe,changegroupactive,f"
       "ALTSHIFT,apostrophe,changegroupactive,b"
 
-      "ALT,u,togglespecialworkspace"
-      "ALTSHIFT,u,movetoworkspacesilent,special"
+      "ALT,-,togglespecialworkspace"
+      "ALTSHIFT,-,movetoworkspacesilent,special"
     ] ++
     # Change workspace
     (map (n: "ALT,${n},workspace,name:${n}") workspaces) ++

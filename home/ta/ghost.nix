@@ -1,5 +1,4 @@
-{ configVars, ... }:
-{
+{ configVars, ... }: {
   imports = [
     #################### Required Configs ####################
     common/core # required
@@ -10,7 +9,7 @@
     common/optional/comms
     #common/optional/games
     common/optional/helper-scripts
-    #common/optional/media
+    common/optional/media
     #common/optional/tools
 
     common/optional/sops.nix
