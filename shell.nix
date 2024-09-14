@@ -13,26 +13,25 @@
   checks,
   ...
 }:
-{ 
-          default = pkgs.mkShell {
-            NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
+{
+  default = pkgs.mkShell {
+    NIX_CONFIG = "extra-experimental-features = nix-command flakes repl-flake";
 
-            inherit (checks.pre-commit-check) shellHook;
-            buildInputs = checks.pre-commit-check.enabledPackages;
+    inherit (checks.pre-commit-check) shellHook;
+    buildInputs = checks.pre-commit-check.enabledPackages;
 
-            nativeBuildInputs = builtins.attrValues {
-              inherit (pkgs)
+    nativeBuildInputs = builtins.attrValues {
+      inherit (pkgs)
 
-                nix
-                home-manager
-                git
-                just
+        nix
+        home-manager
+        git
+        just
 
-                age
-                ssh-to-age
-                sops
-                ;
-            };
-          };
+        age
+        ssh-to-age
+        sops
+        ;
+    };
+  };
 }
-

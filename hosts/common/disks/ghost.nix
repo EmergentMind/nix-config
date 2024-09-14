@@ -1,7 +1,12 @@
 # NOTE: ... is needed because dikso passes diskoFile
 {
 
-lib, pkgs, configVars, ... }: {
+  lib,
+  pkgs,
+  configVars,
+  ...
+}:
+{
   disko.devices = {
     disk = {
       primary = {
@@ -27,13 +32,14 @@ lib, pkgs, configVars, ... }: {
               content = {
                 type = "luks";
                 name = "cryptprimary";
-                passwordFile =
-                  "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
+                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
                 settings = {
                   allowDiscards = true;
                   # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#L36
-                  crypttabExtraOpts =
-                    [ "fido2-device=auto" "token-timeout=10" ];
+                  crypttabExtraOpts = [
+                    "fido2-device=auto"
+                    "token-timeout=10"
+                  ];
                 };
                 # Subvolumes must set a mountpoint in order to be mounted,
                 # unless their parent is mounted
@@ -43,15 +49,24 @@ lib, pkgs, configVars, ... }: {
                   subvolumes = {
                     "@root" = {
                       mountpoint = "/";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                     "@persist" = {
                       mountpoint = "${configVars.persistFolder}";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                     "@nix" = {
                       mountpoint = "/nix";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                   };
                 };
@@ -71,13 +86,14 @@ lib, pkgs, configVars, ... }: {
               content = {
                 type = "luks";
                 name = "cryptextra";
-                passwordFile =
-                  "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
+                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
                 settings = {
                   allowDiscards = true;
                   # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
-                  crypttabExtraOpts =
-                    [ "fido2-device=auto" "token-timeout=10" ];
+                  crypttabExtraOpts = [
+                    "fido2-device=auto"
+                    "token-timeout=10"
+                  ];
                 };
                 # subvolumes must set a mountpoint in order to be mounted,
                 # unless their parent is mounted
@@ -87,7 +103,10 @@ lib, pkgs, configVars, ... }: {
                   subvolumes = {
                     "@extra" = {
                       mountpoint = "/mnt/extra";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                   };
                 };
@@ -107,13 +126,14 @@ lib, pkgs, configVars, ... }: {
               content = {
                 type = "luks";
                 name = "cryptvms";
-                passwordFile =
-                  "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
+                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
                 settings = {
                   allowDiscards = true;
                   # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
-                  crypttabExtraOpts =
-                    [ "fido2-device=auto" "token-timeout=10" ];
+                  crypttabExtraOpts = [
+                    "fido2-device=auto"
+                    "token-timeout=10"
+                  ];
                 };
                 # subvolumes must set a mountpoint in order to be mounted,
                 # unless their parent is mounted
@@ -123,7 +143,10 @@ lib, pkgs, configVars, ... }: {
                   subvolumes = {
                     "@vms" = {
                       mountpoint = "/mnt/vms";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
                     };
                   };
                 };

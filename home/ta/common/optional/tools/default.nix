@@ -4,36 +4,35 @@
 
   home.packages = builtins.attrValues {
     inherit (pkgs)
-    
-    #remmina
-    # edc
-    flameshot ?? maybe somewhere else
 
-    # Productivity
-    libreoffice
-    drawio
-    drawio-export-all
+      #remmina
+      # edc
+      flameshot # ?? maybe somewhere else
 
-    # cryptocurrency
-    # daedalus-mainnet #doubtful this is in home-manager
+      # Productivity
+      libreoffice
+      drawio
+      drawio-export-all
 
-    # Privacy
-    #veracrypt
-    #keepassxc
-    
-    # imaging
-    wally-cli #mechanical keeb firmware flasher
-    rpi-imager
-    etcher
+      # cryptocurrency
+      # daedalus-mainnet #doubtful this is in home-manager
 
-    # media production
-    audacity
-    blender
-    gimp
-    inkscape
-    obs-studio
-    
-    ;
+      # Privacy
+      #veracrypt
+      #keepassxc
+
+      # imaging
+      wally-cli # mechanical keeb firmware flasher
+      rpi-imager
+      etcher
+
+      # media production
+      audacity
+      blender
+      gimp
+      inkscape
+      obs-studio
+
+      ;
   };
 }
-

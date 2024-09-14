@@ -4,11 +4,11 @@
 
   home.packages = builtins.attrValues {
     inherit (pkgs)
-    
-    signal-desktop
-    #telegram-desktop
-    #discord
-    #slack
-    ;
+
+      signal-desktop
+      #telegram-desktop
+      #discord
+      #slack
+      ;
   };
 }

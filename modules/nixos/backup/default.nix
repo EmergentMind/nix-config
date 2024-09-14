@@ -176,7 +176,7 @@ in
         BORG_SERVER="''${BORG_SERVER:-${cfg.borgServer}}"
         BORG_PORT="''${BORG_PORT:-${cfg.borgPort}}"
         BORG_HOST="''${BORG_HOST:-${config.networking.hostName}}"
-        BORG_REMOTE_REPO="''$BORG_SERVER:''${BORG_REMOTE_REPO:-${cfg.borgBackupPath}/$BORG_HOST}"
+        BORG_REMOTE_REPO="$BORG_SERVER:''${BORG_REMOTE_REPO:-${cfg.borgBackupPath}/$BORG_HOST}"
         BORG_SSH_KEY="''${BORG_SSH_KEY:-${cfg.borgSshKey}}"
         BORG_REMOTE_PATH="''${BORG_REMOTE_PATH:---remote-path ${cfg.borgRemotePath}}"
         BORG_BACKUP_NAME="''${BORG_BACKUP_NAME:-${cfg.borgBackupName}}"
@@ -426,8 +426,8 @@ in
           path = "${config.users.users.root.home}/.ssh/id_borg";
         };
       };
-# TODO set this up
-#      services.per-network-services.trustedNetworkServices = [ "borg-backup" ];
+      # TODO set this up
+      #      services.per-network-services.trustedNetworkServices = [ "borg-backup" ];
     }
   );
 }

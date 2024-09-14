@@ -1,4 +1,5 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, ... }:
+{
   imports = [
     # custom key binds
     ./binds.nix
@@ -88,8 +89,8 @@
   home.packages = builtins.attrValues {
     inherit (pkgs)
 
-    # Wallpaper daemon
-    # NOTE: most of these don't exist in home-manager so maybe just go with one that is
+      # Wallpaper daemon
+      # NOTE: most of these don't exist in home-manager so maybe just go with one that is
       hyprpaper
       #   swaybg
       #   wpaperd
@@ -98,6 +99,7 @@
       #   nitrogen
 
       # App launcher
-      rofi-wayland;
+      rofi-wayland
+      ;
   };
 }

@@ -55,7 +55,7 @@
       unrar # rar extraction
       wget # downloader
       zip # zip compression
-      ; 
+      ;
   };
 
   nixpkgs = {
