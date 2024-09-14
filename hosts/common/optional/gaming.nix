@@ -6,4 +6,8 @@
   environment.variables = {
     STEAM_FORCE_DESKTOPUI_SCALING = configVars.scaling;
   };
+
+  #TODO
+  # path-of-building
+  # awakened-poe-trade
 }

@@ -28,11 +28,13 @@
       #################### Host-specific Optional Configs ####################
       "hosts/common/optional/services/openssh.nix" # allow remote SSH access
       #"hosts/common/optional/services/clamav.nix" # av scanner
+      "hosts/common/optional/nvtop.nix" # GPU monitor (not available in home-manager)
       "hosts/common/optional/pipewire.nix" # audio
       "hosts/common/optional/vlc.nix" # media player
       "hosts/common/optional/yubikey"
+      "hosts/common/optional/gaming.nix"
 
-      #################### Desktop####################
+      #################### Desktop ####################
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/hyprland.nix" # window manager
 

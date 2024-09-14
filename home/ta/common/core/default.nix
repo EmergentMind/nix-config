@@ -49,6 +49,7 @@
       pre-commit # git hooks
       p7zip # compression & encryption
       ripgrep # better grep
+      steam-run # for running non-NixOS-packaged binaries on Nix
       usbutils
       tree # cli dir tree viewer
       unzip # zip extraction

@@ -8,7 +8,6 @@
     common/optional/browsers
     common/optional/desktops # default is hyprland
     common/optional/comms
-    #common/optional/games
     common/optional/helper-scripts
     common/optional/media
     #common/optional/tools
