@@ -4,14 +4,11 @@
 
 ## Short Term
 
-- install nixos on Ghost
-- verify drives
-- verify critical apps and services functionality
 - enable backup
 - enable mediashare
+- luks decrypt qol
 
 update docs in nix-secrets
-update yubikey stuff from fidgeting bits
   - which authenticator app... yubioath-flutter ?? https://github.com/Yubico/yubioath-flutter
 
 - New tools to integrate
@@ -117,9 +114,9 @@ DEFERRED:
 
 ##### 4.2 Change over
 
-- install nixos on Ghost
-- verify drives
-- verify critical apps and services functionality
+- ~~install nixos on Ghost~~
+- ~~verify drives~~
+- ~~verify critical apps and services functionality~~
 - enable backup
 - enable mediashare
 
@@ -128,14 +125,13 @@ DEFERRED:
 - setup and enable hyprland
   - hyprlock ?
   - hyprpaper wallpaper
-  - 
+  -
 - reestablish workflow
 
 ##### 4.3.x Extras
 
 - Investigate outstanding yubikey FIXMEs
-- yubiauth and u2f for passwordless sudo
-  - FidgetingBits still encounter significant issues with this when remoting
+- ~~yubiauth and u2f for passwordless sudo~~
 - Confirm clamav scan notification
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
@@ -242,7 +238,7 @@ Migrating bash scripts to nix
 
 - plymouth
 - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
-  
+
 - maybe rEFInd
 - greetd
 - p10k - consider config so that line glyphs don't interfere with yanking

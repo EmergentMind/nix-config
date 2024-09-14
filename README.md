@@ -86,7 +86,7 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
   - `genoa` - stage 5
-  - `ghost` - stage 4
+  - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (12 core), 64MB RAM, Radeon RX5600XT
   - `grief` - Lab - Qemu VM
   - `gooey` - stage 5
   - `guppy` - Remote Install Lab - Qemu VM
