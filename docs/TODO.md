@@ -122,10 +122,11 @@ DEFERRED:
 
 ##### 4.3 Get comfortable
 
-- setup and enable hyprland
+- setup and enable hyprland basics
   - hyprlock ?
   - hyprpaper wallpaper
-  -
+  - dunst
+  - rofi-wayland
 - reestablish workflow
 
 ##### 4.3.x Extras

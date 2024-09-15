@@ -1,6 +1,18 @@
 { lib, config, ... }:
 {
   wayland.windowManager.hyprland.settings = {
+
+    input = {
+
+      follow_mouse = 2;
+      # follow_mouse options:
+      # 0 - Cursor movement will not change focus.
+      # 1 - Cursor movement will always change focus to the window under the cursor.
+      # 2 - Cursor focus will be detached from keyboard focus. Clicking on a window will move keyboard focus to that window.
+      # 3 - Cursor focus will be completely separate from keyboard focus. Clicking on a window will not change keyboard focus.
+      mouse_refocus = false;
+    };
+
     bindm = [
       "ALT,mouse:272,movewindow"
       "ALT,mouse:273,resizewindow"
@@ -68,11 +80,11 @@
         "SUPER,space,exec,rofi -show run"
 
         #################### Basic Bindings ####################
-        #reload the configuration file - after nix-config rebuild
+        #reload the configuration file
         "ALTSHIFT,r,exec,hyprctl reload"
 
         "SHIFTALT,q,killactive"
-        "ALTSHIFT,e,exit"
+        #"ALTSHIFT,e,exit"
 
         "ALT,s,togglesplit"
         "ALT,f,fullscreen,1"

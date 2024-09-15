@@ -23,21 +23,6 @@
     # plugins = [];
 
     settings = {
-      # Configure your Display resolution, offset, scale and Monitors here, use `hyprctl monitors` to get the info.
-      # https://wiki.hyprland.org/Configuring/Monitors/
-      #            ------
-      #           | DP-3 |
-      #            ------
-      #  ------   -----   ------
-      # | DP-2 | | DP-1  | HDMI-A-1 |
-      #  ------   -----   ------
-      monitor = [
-        "DP-1, 2560x1440@240, 0x0, 1"
-        "DP-2, 2560x2880@60, -2560x840, 1"
-        "DP-3, 1920x1080@60, 0x-1080, 1, transform, 2"
-        "HDMI-A-1, 2560x2880@60, 2560x840, 1"
-      ];
-
       env = [
         "NIXOS_OZONE_WL, 1" # for ozone-based and electron apps to run on wayland
         "MOZ_ENABLE_WAYLAND, 1" # for firefox to run on wayland
@@ -48,13 +33,45 @@
         # "QT_QPA_PLATFORM,wayland"
       ];
 
-      #   general = {
-      #     gaps_in = 8;
-      #     gaps_out = 5;
-      #     border_size = 3;
-      #     cursor_inactive_timeout = 4;
+      # Configure your Display resolution, offset, scale and Monitors here, use `hyprctl monitors` to get the info.
+      # https://wiki.hyprland.org/Configuring/Monitors/
+      #           ------
+      #          | DP-3 |
+      #           ------
+      #  ------   ------    ------
+      # | DP-2 | | DP-1 | | HDMI-A-1 |
+      #  ------   ------    ------
+      monitor = [
+        "DP-1, 2560x1440@240, 0x0, 1"
+        "DP-2, 2560x2880@60, -2560x840, 1"
+        "DP-3, 1920x1080@60, 0x-1080, 1, transform, 2"
+        "HDMI-A-1, 2560x2880@60, 2560x840, 1"
+      ];
+
+      workspace = [
+        "1, monitor:DP-1, default:true"
+        "2, monitor:DP-1, default:true"
+        "3, monitor:DP-1, default:true"
+        "4, monitor:DP-1, default:true"
+        "5, monitor:DP-1, default:true"
+        "6, monitor:DP-1, default:true"
+        "7, monitor:DP-1, default:true"
+        "8, monitor:DP-2, default:true"
+        "9, monitor:DP-3, default:true"
+        "0, monitor:HDMI-A-1, default:true"
+      ];
+
+      general = {
+        gaps_in = 6;
+        gaps_out = 6;
+        border_size = 3;
+        resize_on_border = true;
+        hover_icon_on_border = true;
+        #cursor_inactive_timeout = 4;
+      };
+      #      decoration = {
       #     col.inactive-border = "0x00000000";
-      #     col.active-border = over18?dest=https%3A%2F%2Fold.reddit.com%2Fr%2Fnsfw0.75;
+      #     col.active-border = "0x0000000";
       #     fullscreen_opacity = 1.0;
       #     # rounding = 7;
       #     blur = {
@@ -69,7 +86,12 @@
       #   shadow_offset = "3 3";
       #   "col.shadow" = "0x44000000";
       #   "col.shadow_inactive" = "0x66000000";
-      # };
+      #};
+      # group = {
+
+      #groupbar = {
+      #          };
+      #};
       #  misc = {
       #  disable_hyprland_logo = true;
       #  animate_manual_resizes = true;
@@ -80,10 +102,21 @@
       #};
 
       # exec-once = ''${startupScript}/path'';
-    };
+      windowrulev2 =
+        let
+          steam = "title:^()$,class:^(steam)$";
+          steamGame = "class:^(steam_app_[0-9]*)$";
+        in
+        [
+          "stayfocused, ${steam}"
+          "minsize 1 1, ${steam}"
 
-    # load at the end of the hyperland set
-    # extraConfig = ''    '';
+          "immediate, ${steamGame}"
+        ];
+
+      # load at the end of the hyperland set
+      # extraConfig = ''    '';
+    };
   };
 
   # TODO: move below into individual .nix files with their own configs

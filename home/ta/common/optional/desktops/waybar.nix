@@ -22,19 +22,19 @@
         ];
         modules-left = [
           "hyprland/workspaces"
-          "hyprland/mode"
-          "hyprland/taskbar"
+          #TODO waybar warning say these are unknown modules... need to customize below
+          #          "hyprland/mode"
+          #          "hyprland/taskbar"
         ];
         modules-center = [ "hyprland/window" ];
         modules-right = [
           "pulseaudio"
-          "mpd"
-          "temperature"
+          #"mpd"
           "tray"
           "clock"
         ];
 
-        "sway/workspaces" = {
+        "hyprland/workspaces" = {
           disable-scroll = true;
           all-outputs = true;
         };
@@ -47,8 +47,8 @@
             "alsa_output.pci-0000_00_1f.3.analog-stereo" = "";
             "alsa_output.pci-0000_00_1f.3.analog-stereo-muted" = "";
             "headphone" = "";
-            "hands-free" = "";
-            "headset" = "";
+            "hands-free" = "";
+            "headset" = "";
             "phone" = "";
             "phone-muted" = "";
             "portable" = "";
