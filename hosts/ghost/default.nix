@@ -31,6 +31,7 @@
       "hosts/common/optional/libvirt.nix" # vm tools
       "hosts/common/optional/nvtop.nix" # GPU monitor (not available in home-manager)
       "hosts/common/optional/obsidian.nix" # wiki
+      "hosts/common/optional/thunar.nix" # file manager
       "hosts/common/optional/pipewire.nix" # audio
       "hosts/common/optional/vlc.nix" # media player
       "hosts/common/optional/yubikey"
