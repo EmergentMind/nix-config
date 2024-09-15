@@ -10,7 +10,7 @@
     common/optional/comms
     common/optional/helper-scripts
     common/optional/media
-    #common/optional/tools
+    common/optional/tools
 
     common/optional/sops.nix
   ];
