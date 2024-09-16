@@ -24,7 +24,7 @@ with pkgs; # FIXME needs to be refactored according to best practices but not su
     #    yubikey-personalization
     #    yubikey-personalization-gui
     #    yubico-piv-tool
-    #    yubioath-flutter # yubioath-desktop on older nixpkg channels
+    yubioath-flutter # yubioath-desktop on older nixpkg channels
     pam_u2f # for yubikey with sudo
 
     yubikey-up
