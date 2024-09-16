@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 {
   wayland.windowManager.hyprland.settings = {
 
@@ -55,16 +60,16 @@
           k = up;
           j = down;
         };
+        #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
+        pactl = "${pkgs.pulseaudio}/bin/pactl"; # installed via /hosts/common/optional/pipewire.nix
+        playerctl = "${config.services.playerctld.package}/bin/playerctl"; # installed via /home/common/optional/desktops/playerctl.nix
+        playerctld = "${config.services.playerctld.package}/bin/playerctld"; # installed via /home/common/optional/desktops/playerctl.nix
       in
-      #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
-      #playerctl = "${config.services.playerctld.package}/bin/playerctl";
-      #playerctld = "${config.services.playerctld.package}/bin/playerctld";
       #makoctl = "${config.services.mako.package}/bin/makoctl";
       #pass-wofi = "${pkgs.pass-wofi.override {
       #pass = config.programs.password-store.package;
       #}}/bin/pass-wofi";
       #grimblast = "${pkgs.inputs.hyprwm-contrib.grimblast}/bin/grimblast";
-      #pactl = "${pkgs.pulseaudio}/bin/pactl";
       #tly = "${pkgs.tly}/bin/tly";
       #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
       #notify-send = "${pkgs.libnotify}/bin/notify-send";
@@ -77,34 +82,57 @@
       [
         #################### Program Launch ####################
         "ALT,Return,exec,kitty"
+        "CTRL_ALT,v,exec,kitty nvim"
         "SUPER,space,exec,rofi -show run"
+        "ALT,tab,exec,rofi -show window"
+        "CTRL_ALT,f,exec,thunar"
+        #FIXME: this isn't working... may need a rule for window handling in hyprland
+        "CTRL_ALT,8,exec,flameshot gui"
 
         #################### Basic Bindings ####################
         #reload the configuration file
-        "ALTSHIFT,r,exec,hyprctl reload"
+        "SHIFTALT,r,exec,hyprctl reload"
 
         "SHIFTALT,q,killactive"
-        #"ALTSHIFT,e,exit"
+        #"SHIFTALT,e,exit"
 
         "ALT,s,togglesplit"
-        "ALT,f,fullscreen,1"
-        "ALTSHIFT,f,fullscreen,0"
-        "ALTSHIFT,space,togglefloating"
+        "ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
+        #FIXME: play around with fullscreenstate to get a setting that works with maximizing sec cams in window
+        #",,fullscreenstate,0"
+        "SHIFTALT,space,togglefloating"
         # "ALT, foo, pin"
 
         "ALT,minus,splitratio,-0.25"
-        "ALTSHIFT,minus,splitratio,-0.3333333"
+        "SHIFTALT,minus,splitratio,-0.3333333"
 
         "ALT,equal,splitratio,0.25"
-        "ALTSHIFT,equal,splitratio,0.3333333"
+        "SHIFTALT,equal,splitratio,0.3333333"
 
         "ALT,g,togglegroup"
         "ALT,t,lockactivegroup,toggle"
         "ALT,apostrophe,changegroupactive,f"
-        "ALTSHIFT,apostrophe,changegroupactive,b"
+        "SHIFTALT,apostrophe,changegroupactive,b"
 
         "ALT,-,togglespecialworkspace"
-        "ALTSHIFT,-,movetoworkspacesilent,special"
+        "SHIFTALT,-,movetoworkspacesilent,special"
+
+        #################### Media Controls ####################
+        # Output
+        ", XF86AudioMute, exec, ${pactl} set-sink-mute @DEFAULT_SINK@ toggle"
+        ", XF86AudioRaiseVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ +5%"
+        ", XF86AudioLowerVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ -5%"
+        # Input
+        ", XF86AudioMute, exec, ${pactl} set-source-mute @DEFAULT_SOURCE@ toggle"
+        ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +5%"
+        ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -5%"
+        # Player controls
+        #FIXME playerctl
+        ", XF86AudioPlay, exec, '${playerctl} --ignore-player=firefox,chromium,brave play-pause'"
+        ", XF86AudioNext, exec, '${playerctl} --ignore-player=firefox,chromium,brave next'"
+        ", XF86AudioPrev, exec, '${playerctl} --ignore-player=firefox,chromium,brave previous'"
+        # Restart player daemon
+        "SHIFT, XF86AudioPlay, exec, '${playerctld} --user restart playerctld"
       ]
       ++
         # Change workspace
@@ -118,7 +146,7 @@
       ++
         # Swap windows
         #   (lib.mapAttrsToList
-        #      (key: direction: "ALTSHIFT,${key},swapwindow,${direction}") directions)
+        #      (key: direction: "SHIFTALT,${key},swapwindow,${direction}") directions)
         #    ++
         # Move windows
         (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}") directions);

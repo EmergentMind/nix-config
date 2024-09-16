@@ -8,12 +8,14 @@
     ########## Utilities ##########
     #./services/dunst.nix # Notification daemon
     ./waybar.nix # infobar
-    #   ./rofi-wayland.nix #app launcher
     #   ./swww.nix #wallpaper daemon
-
+    #./fonts.nix
+    ./playerctl.nix # cli util and lib for controlling media players that implement MPRIS
     #    ./gtk.nix # mainly in gnome
     #    ./qt.nix # mainly in kde
-    #./fonts.nix
   ];
-  home.packages = [ pkgs.rofi-wayland ];
+  home.packages = [
+    pkgs.rofi-wayland # app launcher
+    pkgs.pavucontrol # gui for pulseaudio server and volume controls
+  ];
 }
