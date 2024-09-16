@@ -22,25 +22,66 @@
         ];
         modules-left = [
           "hyprland/workspaces"
-          #TODO waybar warning say these are unknown modules... need to customize below
-          #          "hyprland/mode"
-          #          "hyprland/taskbar"
+          "hyprland/mode"
         ];
         modules-center = [ "hyprland/window" ];
         modules-right = [
+          "gamemode"
           "pulseaudio"
           #"mpd"
           "tray"
-          "clock"
+          "network"
+          "clock#time"
+          "clock#date"
         ];
 
-        "hyprland/workspaces" = {
-          disable-scroll = true;
-          all-outputs = true;
-        };
+        #
+        # ========= Modules =========
+        #
 
+        #TODO
+        #"hyprland/window" ={};
+
+        "hyprland/workspaces" = {
+          all-outputs = false;
+          disable-scroll = true;
+          on-click = "actviate";
+          show-special = true; # display special workspaces along side regular ones (scratch for example)
+        };
+        "clock#time" = {
+          interval = 1;
+          format = "{:%H:%M}";
+          tooltip = false;
+        };
+        "clock#date" = {
+          interval = 10;
+          format = "{:%d.%b.%y.%a}";
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+        };
+        "gamemode" = {
+          "format" = "{glyph}";
+          "format-alt" = "{glyph} {count}";
+          "glyph" = "";
+          "hide-not-running" = true;
+          "use-icon" = true;
+          "icon-name" = "input-gaming-symbolic";
+          "icon-spacing" = 4;
+          "icon-size" = 20;
+          "tooltip" = true;
+          "tooltip-format" = "Games running: {count}";
+        };
+        "network" = {
+          format-wifi = "{essid} ({signalStrength}%) ";
+          format-ethernet = "{ipaddr} ";
+          tooltip-format = "{ifname} via {gwaddr} ";
+          format-linked = "{ifname} (No IP) ";
+          format-disconnected = "Disconnected ⚠";
+          format-alt = "{ifname}: {ipaddr}/{cidr}";
+        };
         "pulseaudio" = {
           "format" = "{volume}% {icon}";
+          #              "format-source" = "Mic ON";
+          #              "format-source-muted" = "Mic OFF";
           "format-bluetooth" = "{volume}% {icon}";
           "format-muted" = "";
           "format-icons" = {
@@ -87,6 +128,9 @@
         #    "tooltip-format" = "MPD (connected)";
         #    "tooltip-format-disconnected" = "MPD (disconnected)";
         #};
+        "tray" = {
+          spacing = 10;
+        };
       };
     };
   };
