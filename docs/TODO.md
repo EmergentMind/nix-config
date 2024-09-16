@@ -4,12 +4,22 @@
 
 ## Short Term
 
-- enable backup
-- enable mediashare
+- raid drives
+    - enable backup
 - luks decrypt qol
 
+- dunst - need to redo config... lots of deprecated stuff in the old dotfile
+    - test yubiauth notifier
+- waybar - fix workspace issue
+- libvirt network bridge
+- symlink home stuff with /mnt/extra/foo
+- enable mediashare
+- investigate
+    - gamemode
+    - gamescope
+    - steam.nix from misterio https://github.com/Misterio77/nix-config/blob/d128eac9476f5357f5af39a7da031c4927c93010/home/gabriel/features/games/steam.nix#L20
+
 update docs in nix-secrets
-  - which authenticator app... yubioath-flutter ?? https://github.com/Yubico/yubioath-flutter
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
