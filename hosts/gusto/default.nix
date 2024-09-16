@@ -26,7 +26,7 @@
       #################### Host-specific Optional Configs ####################
       "hosts/common/optional/services/openssh.nix" # allow remote SSH access
       "hosts/common/optional/xfce.nix" # window manager until I get hyprland configured
-      "hosts/common/optional/pipewire.nix" # audio
+      "hosts/common/optional/audio.nix" # pipewire and cli controls
       "hosts/common/optional/smbclient.nix" # mount the ghost mediashare
       "hosts/common/optional/vlc.nix" # media player
 

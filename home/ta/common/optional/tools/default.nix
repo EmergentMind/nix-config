@@ -20,9 +20,6 @@
       #veracrypt
       #keepassxc
 
-      # zsa keyboard mapping app
-      keymapp
-
       # imaging
       rpi-imager
       #etcher #was disable in nixpkgs due to depency on insecure version of Electron

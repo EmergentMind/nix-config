@@ -61,9 +61,8 @@
           j = down;
         };
         #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
-        pactl = "${pkgs.pulseaudio}/bin/pactl"; # installed via /hosts/common/optional/pipewire.nix
-        playerctl = "${config.services.playerctld.package}/bin/playerctl"; # installed via /home/common/optional/desktops/playerctl.nix
-        playerctld = "${config.services.playerctld.package}/bin/playerctld"; # installed via /home/common/optional/desktops/playerctl.nix
+        pactl = "${pkgs.pulseaudio}/bin/pactl"; # installed via /hosts/common/optional/audio.nix
+        playerctl = "${pkgs.playerctl}/bin/playerctl"; # installed via /home/common/optional/desktops/playerctl.nix
       in
       #makoctl = "${config.services.mako.package}/bin/makoctl";
       #pass-wofi = "${pkgs.pass-wofi.override {
@@ -127,12 +126,9 @@
         ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +5%"
         ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -5%"
         # Player controls
-        #FIXME playerctl
         ", XF86AudioPlay, exec, '${playerctl} --ignore-player=firefox,chromium,brave play-pause'"
         ", XF86AudioNext, exec, '${playerctl} --ignore-player=firefox,chromium,brave next'"
         ", XF86AudioPrev, exec, '${playerctl} --ignore-player=firefox,chromium,brave previous'"
-        # Restart player daemon
-        "SHIFT, XF86AudioPlay, exec, '${playerctld} --user restart playerctld"
       ]
       ++
         # Change workspace

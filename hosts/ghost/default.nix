@@ -32,10 +32,11 @@
       "hosts/common/optional/nvtop.nix" # GPU monitor (not available in home-manager)
       "hosts/common/optional/obsidian.nix" # wiki
       "hosts/common/optional/thunar.nix" # file manager
-      "hosts/common/optional/pipewire.nix" # audio
+      "hosts/common/optional/audio.nix" # pipewire and cli controls
       "hosts/common/optional/vlc.nix" # media player
       "hosts/common/optional/yubikey"
       "hosts/common/optional/gaming.nix"
+      "hosts/common/optional/zsa-keeb.nix" # Moonlander Keeb flashing stuff
 
       #################### Desktop ####################
       "hosts/common/optional/services/greetd.nix" # display manager

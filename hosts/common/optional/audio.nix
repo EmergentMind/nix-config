@@ -18,7 +18,8 @@
 
   environment.systemPackages = builtins.attrValues {
     inherit (pkgs)
-      #      pamixer # pulseaudio sound mixer
+      playerctl # cli utility and lib for controlling media players
+      # pamixer # cli pulseaudio sound mixer
       ;
   };
 }
