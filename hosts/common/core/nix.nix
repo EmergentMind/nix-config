@@ -32,9 +32,10 @@
     };
 
     # Garbage Collection
-    gc = {
-      automatic = true;
-      options = "--delete-older-than 10d";
-    };
+    # Disabled here in favor of using nh based gc. See hosts/common/core/default.nix
+    #    gc = {
+    #      automatic = true;
+    #      options = "--delete-older-than 10d";
+    #    };
   };
 }
