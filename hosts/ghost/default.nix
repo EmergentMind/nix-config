@@ -41,10 +41,21 @@
       #################### Desktop ####################
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/hyprland.nix" # window manager
+      "hosts/common/optional/waypaper.nix" # wallpaper manage (nitrogen analog for wayland)
 
       #################### Users to Create ####################
       "hosts/common/users/ta"
     ]);
+
+  #FIXME FINISH THIS
+  # needed unlock LUKS on secondary drives
+  # https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives
+  # /dev/nvme1n1p1 UUID=569e2951-1957-4387-8b51-f445741b02b6
+  # /dev/sda1 UUID=273039ba-b3f2-464a-af55-03c74644e62f
+  environment.etc.cryptab.text = ''
+    cryptstorage UUID=569e2951-1957-4387-8b51-f445741b02b6 /luks-secondary-unlock.key
+    cryptstorage UUID=273039ba-b3f2-464a-af55-03c74644e62f /luks-secondary-unlock.key
+  '';
 
   networking = {
     hostName = "ghost";
