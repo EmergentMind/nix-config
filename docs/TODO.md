@@ -6,12 +6,46 @@
 
 - raid drives
     - enable backup
-- luks decrypt qol
+- copy the following notes to install section:
+```md
+###        Change LUKS2's passphrase and enroll yubikeys
 
+# test the old passphrase
+# path to device should specify partition eg. /de/nvme0n1p2
+sudo cryptsetup --verbose open --test-passphrase /path/to/dev/
+
+# change the passphrase
+sudo cryptsetup luksChangeKey /path/to/dev/
+
+# test the new passphrase
+sudo cryptsetup --verbose open --test-passphrase /path/to/dev/
+
+## Ulocking secondary drives after boot using cryptab and keyfile
+First, create a keyfile for your secondary drive, store it safely and add it as a LUKS key:
+dd bs=512 count=4 if=/dev/random of=/root/mykeyfile.key iflag=fullblock
+chmod 400 /root/mykeyfile.key
+cryptsetup luksAddKey /dev/sdb /root/mykeyfile.key
+Next, create /etc/crypttab in configuration.nix using the following option (replacing UUID-OF-SDB with the actual UUID of /dev/sdb):
+{
+   environment.etc.crypttab.text = ''
+    cryptstorage UUID=UUID-OF-SDB /root/mykeyfile.key
+  ''
+}
+With this approach, the secondary drive is unlocked just before the boot process completes, without the need to enter its password.
+
+Again, the secondary drive will be unlocked and made available under /dev/mapper/cryptstorage for mounting.
+
+Enable yubikey support:
+NOTE: This requires LUKS2 (use cryptsetup luksDump /path/to/dev/ to check)
+
+sudo systemd-cryptenroll --fido2-device=auto /path/to/dev/
+
+
+You will need to do it for each yubikey you want to use.
+```
 - dunst - need to redo config... lots of deprecated stuff in the old dotfile
     - test yubiauth notifier
-- waybar - fix workspace issue
-- libvirt network bridge
+- waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 - symlink home stuff with /mnt/extra/foo
 - enable mediashare
 - investigate
