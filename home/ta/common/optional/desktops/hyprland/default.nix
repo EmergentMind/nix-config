@@ -118,22 +118,4 @@
       # extraConfig = ''    '';
     };
   };
-
-  # TODO: move below into individual .nix files with their own configs
-  home.packages = builtins.attrValues {
-    inherit (pkgs)
-
-      # Wallpaper daemon
-      # NOTE: most of these don't exist in home-manager so maybe just go with one that is
-      hyprpaper
-      #   swaybg
-      #   wpaperd
-      #   mpvpaper
-      # swww # vimjoyer recoomended
-      #   nitrogen
-
-      # App launcher
-      rofi-wayland
-      ;
-  };
 }

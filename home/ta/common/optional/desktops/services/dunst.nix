@@ -37,15 +37,10 @@
 
         #TODO dynamic fonts
         font = "Droid Sans 9";
+        alignment = "left"; # Options are "left", "center", and "right".
 
-        # Options are "left", "center", and "right".
-        alignment = "left";
-
-        # Sort messages by urgency.
-        sort = "yes";
-
-        # Show how many messages are currently hidden (because of geometry).
-        indicate_hidden = "yes";
+        sort = "yes"; # Sort messages by urgency.
+        indicate_hidden = "yes"; # Show how many messages are currently hidden (because of geometry).
 
         # The frequency with wich text that is longer than the notification
         # window allows bounces back and forth.
