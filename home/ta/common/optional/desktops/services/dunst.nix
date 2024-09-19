@@ -36,7 +36,7 @@
         format = "%I %s %p\n%b";
 
         #TODO dynamic fonts
-        font = "Droid Sans 9";
+        font = "Droid Sans 12";
         alignment = "left"; # Options are "left", "center", and "right".
 
         sort = "yes"; # Sort messages by urgency.
@@ -140,7 +140,8 @@
         width = 300;
         height = 300;
         offset = "30x50";
-        origin = "top-right";
+        #origin = "top-right";
+        origin = "top-center";
 
         #TODO dynamic theme colours
         frame_color = "#dc7f41";
