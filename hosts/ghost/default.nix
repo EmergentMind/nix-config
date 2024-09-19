@@ -47,16 +47,6 @@
       "hosts/common/users/ta"
     ]);
 
-  #FIXME FINISH THIS
-  # needed unlock LUKS on secondary drives
-  # https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives
-  # /dev/nvme1n1p1 UUID=569e2951-1957-4387-8b51-f445741b02b6
-  # /dev/sda1 UUID=273039ba-b3f2-464a-af55-03c74644e62f
-  environment.etc.cryptab.text = ''
-    cryptstorage UUID=569e2951-1957-4387-8b51-f445741b02b6 /luks-secondary-unlock.key
-    cryptstorage UUID=273039ba-b3f2-464a-af55-03c74644e62f /luks-secondary-unlock.key
-  '';
-
   networking = {
     hostName = "ghost";
     networkmanager.enable = true;
@@ -72,6 +62,16 @@
   boot.initrd = {
     systemd.enable = true;
   };
+
+  #FIXME FINISH THIS
+  # needed unlock LUKS on secondary drives
+  # https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives
+  # /dev/nvme1n1p1 UUID=569e2951-1957-4387-8b51-f445741b02b6
+  # /dev/sda1 UUID=273039ba-b3f2-464a-af55-03c74644e62f
+  environment.etc.crypttab.text = ''
+    cryptextra UUID=569e2951-1957-4387-8b51-f445741b02b6 /luks-secondary-unlock.key
+    cryptvms UUID=273039ba-b3f2-464a-af55-03c74644e62f /luks-secondary-unlock.key
+  '';
 
   # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "24.05";

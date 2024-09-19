@@ -271,10 +271,10 @@ sudo systemd-cryptenroll --fido2-device=auto /path/to/dev/
 
 You will need to do it for each yubikey you want to use.
 
-### Unlocking secondary drives after boot using cryptabe and a keyfile
+### Unlocking secondary drives after boot using crypttab and a keyfile
 From - https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives :
 
-1. Create a keyfile for your secondary drive(s), store ti safely and add it as a LUKS key:
+1. Create a keyfile for your secondary drive(s), store it safely and add it as a LUKS key:
 
 ```bash
 # dd bs=512 count=4 if=/dev/random of=/luks-secondary-unlock.key iflag=fullblock
@@ -287,10 +287,21 @@ You can specify your own name for `luks-secondary-unlock.key`
 ```
 3. Create /etc/crypttab in configuration.nix using the following option (replacing UUID-OF-SDB with the actual UUID of /dev/sdb):
 
+To list the UUIDs of the devices use: `sudo lsblk -o +name,mountpoint,uuid`
+You need the UUID of the partition that the volume exists on, not the uuid of the volume itself
+
 ```nix
 {
    environment.etc.crypttab.text = ''
-    cryptstorage UUID=UUID-OF-SDB /root/mykeyfile.key
+    volumename UUID=UUID-OF-SDB /mykeyfile.key
+  ''
+}
+```
+exmaple:
+```nix
+{
+   environment.etc.crypttab.text = ''
+    cryptextra UUID=569e2951-1957-4387-8b51-f445741b02b6 /luks-secondary-unlock.key
   ''
 }
 ```

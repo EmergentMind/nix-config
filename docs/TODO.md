@@ -6,6 +6,7 @@
 
 - raid drives
     - enable backup
+
 - copy the following notes to install section:
 - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 - symlink home stuff with /mnt/extra/foo
@@ -131,7 +132,7 @@ DEFERRED:
 - setup and enable hyprland basics
   - hyprlock ?
   - hyprpaper wallpaper
-  - dunst
+  - ~~dunst~~
   - rofi-wayland
 - reestablish workflow
 
