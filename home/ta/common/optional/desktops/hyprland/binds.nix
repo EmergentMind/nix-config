@@ -145,14 +145,14 @@
         #      (key: direction: "SHIFTALT,${key},swapwindow,${direction}") directions)
         #    ++
         # Move windows
-        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}") directions);
+        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}") directions)
+      ++
+        # Move workspace to other monitor
+        (lib.mapAttrsToList (
+          key: direction: "CTRLSHIFT,${key},movecurrentworkspacetomonitor,${direction}"
+        ) directions);
     # Move monitor focus
     #(lib.mapAttrsToList
     #      (key: direction: "ALTALT,${key},focusmonitor,${direction}") directions)
-    #    ++
-    # Move workspace to other monitor
-    #    (lib.mapAttrsToList (key: direction:
-    #      "SHIFTALT,${key},movecurrentworkspacetomonitor,${direction}")
-    #      directions);
   };
 }
