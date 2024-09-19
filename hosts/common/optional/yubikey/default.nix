@@ -1,6 +1,11 @@
 # Modeled on https://github.com/Mic92/dotfiles for now
 
-{ pkgs, configVars, ... }:
+{
+  lib,
+  pkgs,
+  configVars,
+  ...
+}:
 let
   yubikey-up = pkgs.writeShellApplication {
     name = "yubikey-up";
@@ -14,24 +19,29 @@ let
   homeDirectory =
     if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in
-with pkgs; # FIXME needs to be refactored according to best practices but not sure how in this case. https://nix.dev/guides/best-practices#with-scopes
 {
-  environment.systemPackages = [
-    # yubikey-personalization
-    # Yubico's official tools
-    #    yubikey-manager
-    #    yubikey-manager-qt
-    #    yubikey-personalization
-    #    yubikey-personalization-gui
-    #    yubico-piv-tool
-    yubioath-flutter # yubioath-desktop on older nixpkg channels
-    pam_u2f # for yubikey with sudo
+  environment.systemPackages =
+    (lib.attrValues {
+      inherit (pkgs)
+        # yubikey-personalization
+        # Yubico's official tools
+        #    yubikey-manager
+        #    yubikey-manager-qt
+        #    yubikey-personalization
+        #    yubikey-personalization-gui
+        #    yubico-piv-tool
+        yubioath-flutter # yubioath-desktop on older nixpkg channels
+        pam_u2f # for yubikey with sudo
 
-    yubikey-up
-    yubikey-down
-    yubikey-manager # For ykman
-  ];
-
+        yubikey-manager # For ykman
+        ;
+    })
+    ++
+    # custom packages not in nixpkgs
+    [
+      yubikey-up
+      yubikey-down
+    ];
   # FIXME: Put this behind an option for yubikey ssh
   # Create ssh files
 
@@ -49,7 +59,7 @@ with pkgs; # FIXME needs to be refactored according to best practices but not su
   # Yubikey required services and config. See Dr. Duh NixOS config for
   # reference
   services.pcscd.enable = true; # smartcard service
-  services.udev.packages = [ yubikey-personalization ];
+  services.udev.packages = [ pkgs.yubikey-personalization ];
 
   services.yubikey-agent.enable = true;
 
