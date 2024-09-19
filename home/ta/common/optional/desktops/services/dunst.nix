@@ -131,7 +131,7 @@
         # This is mainly for error detection, since dbus (re-)starts dunst
         # automatically after a crash.
 
-        #FIXME change to false once working
+        #set to true for debugging
         startup_notification = false;
 
         # Align icons left/right/off

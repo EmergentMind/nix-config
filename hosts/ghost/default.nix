@@ -63,7 +63,6 @@
     systemd.enable = true;
   };
 
-  #FIXME FINISH THIS
   # needed unlock LUKS on secondary drives
   # https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives
   # /dev/nvme1n1p1 UUID=569e2951-1957-4387-8b51-f445741b02b6

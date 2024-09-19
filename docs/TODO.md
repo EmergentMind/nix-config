@@ -4,8 +4,7 @@
 
 ## Short Term
 
-- raid drives
-    - enable backup
+- enable backup (waiting on aa for access to oops)
 
 - copy the following notes to install section:
 - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
@@ -138,7 +137,7 @@ DEFERRED:
 
 ##### 4.3.x Extras
 
-- Investigate outstanding yubikey FIXMEs
+- ~~Investigate outstanding yubikey FIXMEs~~
 - ~~yubiauth and u2f for passwordless sudo~~
 - Confirm clamav scan notification
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
