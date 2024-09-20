@@ -5,7 +5,12 @@
 #
 ###############################################################
 
-{ inputs, configLib, ... }:
+{
+  inputs,
+  configVars,
+  configLib,
+  ...
+}:
 {
   imports =
     [
@@ -31,7 +36,7 @@
       "hosts/common/optional/vlc.nix" # media player
 
       #################### Users to Create ####################
-      "hosts/common/users/ta"
+      # ta imported via hosts/common/core
       "hosts/common/users/media"
     ]);
 

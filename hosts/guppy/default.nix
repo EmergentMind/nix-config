@@ -5,7 +5,12 @@
 #
 ###############################################################
 
-{ inputs, configLib, ... }:
+{
+  inputs,
+  configVars,
+  configLib,
+  ...
+}:
 {
   imports =
     [
@@ -35,8 +40,6 @@
       #"hosts/common/optional/initrd-ssh.nix"
       "hosts/common/optional/services/openssh.nix"
 
-      #################### Users to Create ####################
-      "hosts/common/users/ta"
     ]);
 
   services.gnome.gnome-keyring.enable = true;

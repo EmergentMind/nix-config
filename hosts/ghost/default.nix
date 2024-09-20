@@ -42,9 +42,6 @@
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/hyprland.nix" # window manager
       "hosts/common/optional/waypaper.nix" # wallpaper manage (nitrogen analog for wayland)
-
-      #################### Users to Create ####################
-      "hosts/common/users/ta"
     ]);
 
   networking = {

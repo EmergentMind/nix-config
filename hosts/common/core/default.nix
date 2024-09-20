@@ -15,7 +15,10 @@ in
 {
   imports =
     (configLib.scanPaths ./.)
-    ++ [ inputs.home-manager.nixosModules.home-manager ]
+    ++ [
+      (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
+      inputs.home-manager.nixosModules.home-manager
+    ]
     ++ (builtins.attrValues outputs.nixosModules);
 
   programs.nh = {
