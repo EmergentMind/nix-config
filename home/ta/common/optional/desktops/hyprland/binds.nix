@@ -78,7 +78,8 @@
       #terminal = config.home.sessionVariables.TERM;
       #browser = defaultApp "x-scheme-handler/https";
       #editor = defaultApp "text/plain";
-      [
+
+      lib.flatten [
         #################### Program Launch ####################
         "ALT,Return,exec,kitty"
         "CTRL_ALT,v,exec,kitty nvim"
@@ -129,30 +130,30 @@
         ", XF86AudioPlay, exec, '${playerctl} --ignore-player=firefox,chromium,brave play-pause'"
         ", XF86AudioNext, exec, '${playerctl} --ignore-player=firefox,chromium,brave next'"
         ", XF86AudioPrev, exec, '${playerctl} --ignore-player=firefox,chromium,brave previous'"
-      ]
-      ++
+
         # Change workspace
         (map (n: "ALT,${n},workspace,name:${n}") workspaces)
-      ++
+
         # Move window to workspace
         (map (n: "SHIFTALT,${n},movetoworkspacesilent,name:${n}") workspaces)
-      ++
+
         # Move focus
         (lib.mapAttrsToList (key: direction: "ALT,${key},movefocus,${direction}") directions)
-      ++
+
         # Swap windows
         #   (lib.mapAttrsToList
         #      (key: direction: "SHIFTALT,${key},swapwindow,${direction}") directions)
-        #    ++
+
         # Move windows
         (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}") directions)
-      ++
+
         # Move workspace to other monitor
         (lib.mapAttrsToList (
           key: direction: "CTRLSHIFT,${key},movecurrentworkspacetomonitor,${direction}"
-        ) directions);
-    # Move monitor focus
-    #(lib.mapAttrsToList
-    #      (key: direction: "ALTALT,${key},focusmonitor,${direction}") directions)
+        ) directions)
+        # Move monitor focus
+        #(lib.mapAttrsToList
+        #      (key: direction: "ALTALT,${key},focusmonitor,${direction}") directions)
+      ];
   };
 }

@@ -20,7 +20,7 @@ let
     if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in
 {
-  environment.systemPackages =
+  environment.systemPackages = lib.flatten [
     (lib.attrValues {
       inherit (pkgs)
         # yubikey-personalization
@@ -36,12 +36,10 @@ in
         yubikey-manager # For ykman
         ;
     })
-    ++
     # custom packages not in nixpkgs
-    [
-      yubikey-up
-      yubikey-down
-    ];
+    yubikey-up
+    yubikey-down
+  ];
   # FIXME: Put this behind an option for yubikey ssh
   # Create ssh files
 

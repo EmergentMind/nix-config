@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   inputs,
   outputs,
   configLib,
@@ -13,13 +14,12 @@ let
     if pkgs.stdenv.isLinux then "/home/${configVars.username}" else "/Users/${configVars.username}";
 in
 {
-  imports =
+  imports = lib.flatten [
     (configLib.scanPaths ./.)
-    ++ [
-      (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
-      inputs.home-manager.nixosModules.home-manager
-    ]
-    ++ (builtins.attrValues outputs.nixosModules);
+    (configLib.relativeToRoot "hosts/common/users/${configVars.username}")
+    inputs.home-manager.nixosModules.home-manager
+    (builtins.attrValues outputs.nixosModules)
+  ];
 
   programs.nh = {
     enable = true;
