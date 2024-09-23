@@ -56,9 +56,9 @@
         "5, monitor:DP-1, default:true"
         "6, monitor:DP-1, default:true"
         "7, monitor:DP-1, default:true"
-        "8, monitor:DP-2, default:true"
-        "9, monitor:DP-3, default:true"
-        "0, monitor:HDMI-A-1, default:true"
+        "8, monitor:DP-2, default:true, persistent:true"
+        "9, monitor:DP-3, default:true, persistent:true"
+        "0, monitor:HDMI-A-1, default:true, persistent:true"
       ];
 
       general = {
@@ -92,16 +92,19 @@
       #groupbar = {
       #          };
       #};
-      #  misc = {
-      #  disable_hyprland_logo = true;
-      #  animate_manual_resizes = true;
-      #  animate_mouse_windowdragging = true;
-      #  disable_autoreload = true;
-      #  new_window_takes_over_fullscreen = 1;
-      #  initial_workspace_tracking = 0;
-      #};
+      misc = {
+        #  disable_hyprland_logo = true;
+        animate_manual_resizes = true;
+        animate_mouse_windowdragging = true;
+        #  disable_autoreload = true;
+        new_window_takes_over_fullscreen = 2; # 0 - behind, 1 - takes over, 2 - unfullscreen/unmaxize [0/1/2]
+        middle_click_paste = false;
+      };
 
+      # Autostart applications
       # exec-once = ''${startupScript}/path'';
+      # exec-once = ''copyq --start-server'';
+
       windowrulev2 =
         let
           steam = "title:^()$,class:^(steam)$";

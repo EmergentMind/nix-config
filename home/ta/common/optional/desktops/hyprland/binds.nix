@@ -101,13 +101,12 @@
         #FIXME: play around with fullscreenstate to get a setting that works with maximizing sec cams in window
         #",,fullscreenstate,0"
         "SHIFTALT,space,togglefloating"
-        # "ALT, foo, pin"
+        "SHIFTALT, p, pin" # pins a floating window (i.e. show it on all workspaces)
 
-        "ALT,minus,splitratio,-0.25"
-        "SHIFTALT,minus,splitratio,-0.3333333"
+        "SHIFALT, r, resizeactive"
 
-        "ALT,equal,splitratio,0.25"
-        "SHIFTALT,equal,splitratio,0.3333333"
+        #        "SHIFTALT,minus,splitratio,-0.25"
+        #        "SHIFTALT,equal,splitratio,0.25"
 
         "ALT,g,togglegroup"
         "ALT,t,lockactivegroup,toggle"
