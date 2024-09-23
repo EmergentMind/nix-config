@@ -498,6 +498,46 @@
     };
 
     #
+    # ========= LSP ========
+    #
+    plugins.lsp = {
+      enable = true;
+      # inlayHints = true;
+
+      servers = {
+        nixd = {
+          enable = true;
+
+          settings = {
+            nixpkgs = {
+              expr = "import <nixpkgs> {}";
+            };
+            formatting = {
+              command = [ "nixfmt" ];
+            };
+            options = {
+              nixos = {
+                expr = ''
+                  let configs = (builtins.getFlake ("git+file://" + builtins.toString ./.)).nixosConfigurations; in (builtins.head (builtins.attrValues configs)).options
+                '';
+              };
+              home_manager = {
+                expr = ''
+                  let configs = (builtins.getFlake ("git+file://" + builtins.toString ./.)).homeConfigurations; in (builtins.head (builtins.attrValues configs)).options
+                '';
+              };
+              darwin = {
+                expr = ''
+                  let configs = (builtins.getFlake ("git+file://" + builtins.toString ./.)).darwinConfigurations; in (builtins.head (builtins.attrValues configs)).options
+                '';
+              };
+            };
+          };
+        };
+      };
+    };
+
+    #
     # ========= Undo history ========
     #
     plugins.undotree.enable = true;
@@ -789,72 +829,74 @@
       }
     ];
     extraConfigVim = ''
-      " ================ Persistent Undo ==================
-      " Keep undo history across sessions, by storing in file.
-      " Only works all the time.
-      if has('persistent_undo')
-          silent !mkdir ~/.vim/backups > /dev/null 2>&1
-          set undodir=~/.vim/backups
-          set undofile
-      endif
+           " ================ Persistent Undo ==================
+           " Keep undo history across sessions, by storing in file.
+           " Only works all the time.
+           if has('persistent_undo')
+               silent !mkdir ~/.vim/backups > /dev/null 2>&1
+               set undodir=~/.vim/backups
+               set undofile
+           endif
 
-      " ================ Vim Wiki config =================
-      " See :h vimwiki_list for info on registering wiki paths
-      let wiki_0 = {}
-      let wiki_0.path = '~/dotfiles.wiki/'
-      let wiki_0.index = 'home'
-      let wiki_0.syntax = 'markdown'
-      let wiki_0.ext = '.md'
+           " ================ Vim Wiki config =================
+           " See :h vimwiki_list for info on registering wiki paths
+           let wiki_0 = {}
+           let wiki_0.path = '~/dotfiles.wiki/'
+           let wiki_0.index = 'home'
+           let wiki_0.syntax = 'markdown'
+           let wiki_0.ext = '.md'
 
-      " fill spaces in page names with _ in pathing
-      let wiki_0.links_space_char = '_'
+           " fill spaces in page names with _ in pathing
+           let wiki_0.links_space_char = '_'
 
-      " TODO: nixvim: CONFIRM THESE PATHS FOR NIXOS
-      let wiki_1 = {}
-      let wiki_1.path = '~/doc/foundry/thefoundry.wiki/'
-      let wiki_1.index = 'home'
-      let wiki_1.syntax = 'markdown'
-      let wiki_1.ext = '.md'
-      " fill spaces in page names with _ in pathing
-      let wiki_1.links_space_char = '_'
+           " TODO: nixvim: CONFIRM THESE PATHS FOR NIXOS
+           let wiki_1 = {}
+           let wiki_1.path = '~/doc/foundry/thefoundry.wiki/'
+           let wiki_1.index = 'home'
+           let wiki_1.syntax = 'markdown'
 
-      let g:vimwiki_list = [wiki_0, wiki_1]
-      " let g:vimwiki_list = [wiki_0, wiki_1, wiki_2]
+           let wiki_1.ext = '.md'
+           " fill spaces in page names with _ in pathing
+           let wiki_1.links_space_char = '_'
 
-      " ================ Ale ========================
-      let g:ale_linters = {
-                  \ 'c': ['clang-tidy'],
-                  \ 'python': ['flake8'],
-                  \ 'vim': ['vint'],
-                  \ 'markdown': ['markdownlint'],
-      \ }
+           let g:vimwiki_list = [wiki_0, wiki_1]
+           " let g:vimwiki_list = [wiki_0, wiki_1, wiki_2]
 
-      let g:ale_fixers = {
-            \ 'c': ['clang-format'],
-            \ 'javascript': ['prettier', 'eslint'],
-            \ 'json': ['fixjson', 'prettier'],
-            \ 'python': ['black', 'isort'],
-            \ }
+           " ================ Ale ========================
+      "     let g:ale_linters = {
+      "                 \ 'c': ['clang-tidy'],
+      "                 \ 'python': ['flake8'],
+      "                 \ 'vim': ['vint'],
+      "                 \ 'markdown': ['markdownlint'],
+      "     \ }
 
-      " Set global fixers for all file types except Markdown
-      " Why? because double spaces at the end of a line in markdown indicate a
-      " linebreak without creating a new paragraph
-      function! SetGlobalFixers()
-        let g:ale_fixers['*'] = ['trim_whitespace', 'remove_trailing_lines']
-      endfunction
+      "     let g:ale_fixers = {
+      "           \ 'c': ['clang-format'],
+      "           \ 'javascript': ['prettier', 'eslint'],
+      "           \ 'json': ['fixjson', 'prettier'],
+      "           \ 'python': ['black', 'isort'],
 
-      augroup GlobalFixers
-        autocmd!
-        autocmd VimEnter * call SetGlobalFixers()
-      augroup END
+      "           \ }
 
-      " Set buffer-local fixers for Markdown files
-      augroup MarkdownFixers
-        autocmd!
-        autocmd FileType markdown let b:ale_fixers = ['prettier']
-      augroup END
+      "     " Set global fixers for all file types except Markdown
+      "     " Why? because double spaces at the end of a line in markdown indicate a
+      "     " linebreak without creating a new paragraph
+      "     function! SetGlobalFixers()
+      "       let g:ale_fixers['*'] = ['trim_whitespace', 'remove_trailing_lines']
+      "     endfunction
 
-      let g:ale_fix_on_save = 1
+      "     augroup GlobalFixers
+      "       autocmd!
+      "       autocmd VimEnter * call SetGlobalFixers()
+      "     augroup END
+
+      "     " Set buffer-local fixers for Markdown files
+      "     augroup MarkdownFixers
+      "       autocmd!
+      "       autocmd FileType markdown let b:ale_fixers = ['prettier']
+      "     augroup END
+
+      "     let g:ale_fix_on_save = 1
     '';
 
     # extraConfigLua = ''
