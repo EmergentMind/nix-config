@@ -11,7 +11,7 @@
     disk = {
       primary = {
         type = "disk";
-        device = "/dev/nvme1n1"; # 1TB
+        device = "/dev/nvme0n1"; # 1TB
         content = {
           type = "gpt";
           partitions = {
@@ -77,7 +77,7 @@
       };
       extra = {
         type = "disk";
-        device = "/dev/nvme0n1"; # 250GB
+        device = "/dev/nvme1n1"; # 250GB
         content = {
           type = "gpt";
           partitions = {
