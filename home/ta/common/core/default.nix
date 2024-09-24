@@ -61,6 +61,7 @@
       # Packages that don't have custom configs go here
       #borgbackup # backups
       btop # resource monitor
+      copyq
       coreutils # basic gnu utils
       # curl
       eza # ls replacement
