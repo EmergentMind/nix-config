@@ -841,8 +841,8 @@
            " ================ Vim Wiki config =================
            " See :h vimwiki_list for info on registering wiki paths
            let wiki_0 = {}
-           let wiki_0.path = '~/dotfiles.wiki/'
-           let wiki_0.index = 'home'
+           let wiki_0.path = '~/src/dotfiles.wiki/'
+           let wiki_0.index = '0_home'
            let wiki_0.syntax = 'markdown'
            let wiki_0.ext = '.md'
 
