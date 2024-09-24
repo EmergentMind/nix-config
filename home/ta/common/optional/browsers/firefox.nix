@@ -22,6 +22,7 @@ in
     policies = {
       AppAutoUpdate = false; # Disable automatic application update
       BackgroundAppUpdate = false; # Disable automatic application update in the background, when the application is not running.
+      DefaultDownloadDirectory = "${config.home.homeDirectory}/downloads";
       DisableBuiltinPDFViewer = false;
       DisableFirefoxStudies = true;
       DisableFirefoxAccounts = false; # Enable Firefox Sync
@@ -60,21 +61,30 @@ in
             };
           in
           listToAttrs [
+            #TODO Add more of these and test. not high priority though since mozilla sync will pull them in too
             # Development
-            (extension "user-agent-switcher" "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}") # failed
+            #(extension "user-agent-switcher" "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}") # failed
 
             # Privacy / Security
-            (extension "no-script" "{73a6fe31-595d-460b-a920-fcc0f8843232}") # failed
+            (extension "noscript" "{73a6fe31-595d-460b-a920-fcc0f8843232}") # failed
             (extension "ublock-origin" "uBlock0@raymondhill.net")
             (extension "ignore-cookies" "jid1-KKzOGWgsW3Ao4Q@jetpack") # failed # Ignore cookie setting pop-ups
             (extension "proton-pass" "78272b6fa58f4a1abaac99321d503a20@proton.me")
-            (extension "proton-vpn" "vpn@proton.ch") # failed
+            (extension "proton-vpn-firefox-extension" "vpn@proton.ch") # failed
+            (extension "privacy-badger17" "jid1-MnnxcxisBPnSXQ@jetpack")
+            (extension "cookie-autodelete" "CookieAutoDelete@kennydo.com")
 
             # Layout / Themeing
             (extension "tree-style-tab" "treestyletab@piro.sakura.ne.jp")
+            (extension "darkreader" "addon@darkreader.org")
 
+            # Voice
             (extension "domain-in-title" "{966515fa-4c81-4afe-9879-9bbaf8576390}")
-            (extension "rango" "rango@david-tejada")
+            #(extension "rango" "rango@david-tejada")
+
+            # Misc
+            (extension "auto-tab-discard" "{c2c003ee-bd69-42a2-b0e9-6f34222cb046}")
+            (extension "reddit-enhancement-suite" "jid1-xUfzOsOFlzSOXg@jetpack")
           ]
         )
         // {
@@ -109,7 +119,22 @@ in
         "ui.systemUsesDarkTheme" = 1; # force dark theme
         "extensions.pocket.enabled" = false;
       };
-
+      #      containers = {
+      #        FCWA = {
+      #            name = "FCWA";
+      #            color = "blue";
+      #            icon = "circle";
+      #            id = 1;
+      #        };
+      #        FenceStore = {
+      #            name = "The Fence Store";
+      #            color = "red";
+      #            icon = "fence";
+      #            id = 2;
+      #        };
+      #
+      #      };
+      #
       # This just uses the default suggestion from home-manager for now
       userChrome = ''
         /* Hide tab bar in FF Quantum */
