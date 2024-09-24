@@ -170,6 +170,7 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 
 - declare what needs to persist
 - enable impermanence
+    - make sure to include `/luks-secondary-unlock.key`
 
   Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 

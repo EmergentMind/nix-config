@@ -8,6 +8,7 @@
 {
   inputs,
   lib,
+  configVars,
   configLib,
   ...
 }:
@@ -66,12 +67,11 @@
   };
 
   # needed unlock LUKS on secondary drives
+  # use partition UUID
   # https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives
-  # /dev/nvme1n1p1 UUID=569e2951-1957-4387-8b51-f445741b02b6
-  # /dev/sda1 UUID=273039ba-b3f2-464a-af55-03c74644e62f
-  environment.etc.crypttab.text = ''
-    cryptextra UUID=569e2951-1957-4387-8b51-f445741b02b6 /luks-secondary-unlock.key
-    cryptvms UUID=273039ba-b3f2-464a-af55-03c74644e62f /luks-secondary-unlock.key
+  environment.etc.crypttab.text = lib.optionalString (!configVars.isMinimal) ''
+    cryptextra UUID=d90345b2-6673-4f8e-a5ef-dc764958ea14 /luks-secondary-unlock.key
+    cryptvms UUID=ce5f47f8-d5df-4c96-b2a8-766384780a91 /luks-secondary-unlock.key
   '';
 
   # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion

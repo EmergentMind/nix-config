@@ -6,7 +6,7 @@ fidgetingbits:
 Although I use a nix-secrets repo that has sops, in order to do LUKS unlock over ssh I need host keys that aren't
 able to be stored in sops. See here. The solution
 is to use git-agecrypt. However, afaict this can't be exposed through nix-secrets repo, which means that evaluation-time
-NOTE going to have to do this once I've got NixOS on bare metal because I can't seem to redirect yubikey devices to the VM 
+NOTE going to have to do this once I've got NixOS on bare metal because I can't seem to redirect yubikey devices to the VM
 ;w
 secrets must be stored in the local repo.
 his is how I setup:
@@ -17,7 +17,7 @@ ssh-keygen -t ed25519 -N "" -f hosts/ooze/initrd_ed25519_key
 git-agecrypt config add -r "$(cat ~/.ssh/id_yubikey.pub)" -p hosts/ooze/initrd_ed25519_key
 ```
 
-## Impermanence Setup Notes from FidgetingBits 
+## Impermanence Setup Notes from FidgetingBits
 
 FIXME: this impermanence section needs some edits. Also, publish this as a separate article authored by fbits about impermanence that the bootstrap article references. Add additional impermanence article references from roadmap refernces.keep the Change LUKS2's passphrase steps in the bootstrap instructions though.
 
@@ -38,7 +38,7 @@ Basically my requirements are:
 ### systemd initrd
 
 I have some systems with TPM and I want the option to be able to unlock luks using the TPM, which requires the use of
-`boot.initrd.systemd.enable`, as described in 
+`boot.initrd.systemd.enable`, as described in
 https://discourse.nixos.org/t/impermanence-vs-systemd-initrd-w-tpm-unlocking/25167. I realized this was a problem when I
 specified a script in `boot.initrd.postDeviceCommands` and didn't seem to be taking. The solution is to use a systemd
 service that gets started early in the boot process.

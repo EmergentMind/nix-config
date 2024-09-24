@@ -8,6 +8,7 @@ target_user="ta"
 ssh_key=""
 ssh_port="22"
 persist_dir=""
+luks_secondary_drive_labels=""
 # Create a temp directory for generated host keys
 temp=$(mktemp -d)
 
@@ -94,6 +95,10 @@ while [[ $# -gt 0 ]]; do
 	-k)
 		shift
 		ssh_key=$1
+		;;
+	--luks-secondary-drive-labels)
+		shift
+		luks_secondary_drive_labels=$1
 		;;
 	--port)
 		shift
@@ -248,6 +253,18 @@ function generate_user_age_key() {
 	fi
 }
 
+function setup_luks_secondary_drive_decryption() {
+	echo "Generating /luks-secondary-unlock.key"
+	local key=${persist_dir}/luks-secondary-unlock.key
+	$ssh_root_cmd "/bin/sh -c 'dd bs=512 count=4 if=/dev/random of=$key iflag=fullblock && chmod 400 $key'"
+
+	echo "Cryptsetup luksAddKey will now be used to add /luks-secondary-unlock.key for the specified secondary drive names."
+	readarray -td, drivenames <<<"$luks_secondary_drive_labels"
+	for name in ${drivenames}[@]; do
+		cryptsetup luksAddKey /dev/disks/by-label/${name} /luks-secondary-unlock.key
+	done
+}
+
 # Validate required options
 # FIXME: The ssh key and destination aren't required if only rekeying, so could be moved into specific sections?
 if [ -z "${target_hostname}" ] || [ -z "${target_destination}" ] || [ -z "${ssh_key}" ]; then
@@ -258,6 +275,10 @@ fi
 
 if yes_or_no "Run nixos-anywhere installation?"; then
 	nixos_anywhere
+fi
+
+if [ -z "${luks_secondary_drive_labels}"]; then
+	setup_luks_secondary_drive_decryption
 fi
 
 if yes_or_no "Generate host (ssh-based) age key?"; then
@@ -295,12 +316,12 @@ if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $targe
 	green "Copying full nix-secrets to $target_hostname"
 	sync "$target_user" "${git_root}"/../nix-secrets
 
-if yes_or_no "Do you want to rebuild immediately?"; then
-	green "Rebuilding nix-config on $target_hostname"
-	#FIXME there are still a gitlab fingerprint request happening during the rebuild
-	#$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname" switch"
-	$ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
-fi
+	if yes_or_no "Do you want to rebuild immediately?"; then
+		green "Rebuilding nix-config on $target_hostname"
+		#FIXME there are still a gitlab fingerprint request happening during the rebuild
+		#$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname" switch"
+		$ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
+	fi
 else
 	echo
 	green "NixOS was successfully installed!"

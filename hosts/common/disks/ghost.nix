@@ -98,7 +98,7 @@
                 # Whether to add a boot.initrd.luks.devices entry for the this disk.
                 # We only want to unlock cryptroot interactively.
                 # You must have a /etc/crypttab entry set up to auto unlock the drive using a key on cryptroot (see /hosts/ghost/default.nix)
-                initrdUnlock = false;
+                initrdUnlock = if configVars.isMinimal then true else false;
 
                 # subvolumes must set a mountpoint in order to be mounted,
                 # unless their parent is mounted
@@ -135,7 +135,7 @@
                 # Whether to add a boot.initrd.luks.devices entry for the this disk.
                 # We only want to unlock cryptroot interactively.
                 # You must have a /etc/crypttab entry set up to auto unlock the drive using a key on cryptroot (see /hosts/ghost/default.nix)
-                initrdUnlock = false;
+                initrdUnlock = if configVars.isMinimal then true else false;
 
                 settings = {
                   allowDiscards = true;
@@ -165,82 +165,6 @@
           };
         };
       };
-      # Raid disks are assembled in mdadm below
-      #      raid1-disk0 = {
-      #        type = "disk";
-      #        device = "/dev/sdb"; #1.8TB
-      #        content = {
-      #          type = "gpt";
-      #          partitions = {
-      #            mdadm = {
-      #              size = "100%";
-      #              content = {
-      #                type = "mdraid";
-      #                name = "raid1";
-      #              };
-      #            };
-      #          };
-      #        };
-      #      };
-      #      raid1-disk1 = {
-      #        type = "disk";
-      #        device = "/dev/sdc"; #1.8TB
-      #        content = {
-      #          type = "gpt";
-      #          partitions = {
-      #            mdadm = {
-      #              size = "100%";
-      #              content = {
-      #                type = "mdraid";
-      #                name = "raid1";
-      #              };
-      #            };
-      #          };
-      #        };
-      #      };
-      #    };
-      #    # declare the mdadm raid1 array as a device
-      #    mdadm = {
-      #      raid1 = {
-      #        type = "mdadm";
-      #        level = 1; # Raid 1 (mirroring)
-      #        content = {
-      #          type = "gpt";
-      #          partitions = {
-      #            luks = {
-      #              size = "100%";
-      #              content = {
-      #                type = "luks";
-      #                name = "cryptraid1";
-      #                passwordFile = "/tmp/disko-password"; # this is populated by bootstrap-nixos.sh
-      #                settings = {
-      #                  allowDiscards = true;
-      #                  # https://github.com/hmajid2301/dotfiles/blob/a0b511c79b11d9b4afe2a5e2b7eedb2af23e288f/systems/x86_64-linux/framework/disks.nix#l36
-      #                  crypttabExtraOpts = [
-      #                    "fido2-device=auto"
-      #                    "token-timeout=10"
-      #                  ];
-      #                };
-      #                # subvolumes must set a mountpoint in order to be mounted,
-      #                # unless their parent is mounted
-      #                content = {
-      #                  type = "btrfs";
-      #                  extraArgs = [ "-f" ]; # force overwrite
-      #                  subvolumes = {
-      #                    "@vms" = {
-      #                      mountpoint = "/mnt/raid";
-      #                      mountOptions = [
-      #                        "compress=zstd"
-      #                        "noatime"
-      #                      ];
-      #                    };
-      #                  };
-      #                };
-      #              };
-      #            };
-      #          };
-      #        };
-      #      };
     };
   };
 

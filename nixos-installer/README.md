@@ -280,11 +280,14 @@ From - https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_driv
 # dd bs=512 count=4 if=/dev/random of=/luks-secondary-unlock.key iflag=fullblock
 # chmod 400 /luks-secondary-unlock.key
 ```
+
 You can specify your own name for `luks-secondary-unlock.key`
-2. For each secondary device, run the following command and specific the respective device
+2. For each secondary device, run the following command and specify the respective device:
+
 ```bash
 # cryptsetup luksAddKey /path/to/dev /luks-secondary-unlock.key
 ```
+
 3. Create /etc/crypttab in configuration.nix using the following option (replacing UUID-OF-SDB with the actual UUID of /dev/sdb):
 
 To list the UUIDs of the devices use: `sudo lsblk -o +name,mountpoint,uuid`
