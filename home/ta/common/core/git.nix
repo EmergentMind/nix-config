@@ -22,6 +22,7 @@ in
     extraConfig = {
       log.showSignature = "true";
       init.defaultBranch = "main";
+      pull.rebase = "true";
       url = {
         "ssh://git@github.com" = {
           insteadOf = "https://github.com";
