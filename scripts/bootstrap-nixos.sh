@@ -61,19 +61,21 @@ function help_and_exit() {
 	echo "USAGE: $0 -n <target_hostname> -d <target_destination> -k <ssh_key> [OPTIONS]"
 	echo
 	echo "ARGS:"
-	echo "  -n <target_hostname>      specify target_hostname of the target host to deploy the nixos config on."
-	echo "  -d <target_destination>   specify ip or url to the target host."
-	echo "  -k <ssh_key>              specify the full path to the ssh_key you'll use for remote access to the"
-	echo "                            target during install process."
-	echo "                            Example: -k /home/${target_user}/.ssh/my_ssh_key"
+	echo "  -n <target_hostname>                    specify target_hostname of the target host to deploy the nixos config on."
+	echo "  -d <target_destination>                 specify ip or url to the target host."
+	echo "  -k <ssh_key>                            specify the full path to the ssh_key you'll use for remote access to the"
+	echo "                                          target during install process."
+	echo "                                          Example: -k /home/${target_user}/.ssh/my_ssh_key"
 	echo
 	echo "OPTIONS:"
-	echo "  -u <target_user>          specify target_user with sudo access. nix-config will be cloned to their home."
-	echo "                            Default='${target_user}'."
-	echo "  --port <ssh_port>         specify the ssh port to use for remote access. Default=${ssh_port}."
-	echo "  --impermanence            Use this flag if the target machine has impermanence enabled. WARNING: Assumes /persist path."
-	echo "  --debug                   Enable debug mode."
-	echo "  -h | --help               Print this help."
+	echo "  -u <target_user>                        specify target_user with sudo access. nix-config will be cloned to their home."
+	echo "                                          Default='${target_user}'."
+	echo "  --port <ssh_port>                       specify the ssh port to use for remote access. Default=${ssh_port}."
+	echo '  --luks-secondary-drive-labels <drives>  specify the luks device names (as declared with "disko.devices.disk.*.content.luks.name" in host/common/disks/*.nix) separated by commas.'
+	echo '                                          Example: --luks-secondary-drive-labels "cryptprimary,cryptextra"'
+	echo "  --impermanence                          Use this flag if the target machine has impermanence enabled. WARNING: Assumes /persist path."
+	echo "  --debug                                 Enable debug mode."
+	echo "  -h | --help                             Print this help."
 	exit 0
 }
 
@@ -161,9 +163,14 @@ function nixos_anywhere() {
 
 	# when using luks, disko expects a passphrase on /tmp/disko-password, so we set it for now and will update the passphrase later
 	# via the config
-	green "Preparing a temporary password for disko."
-	$ssh_root_cmd "/bin/sh -c 'echo passphrase > /tmp/disko-password'"
-
+	# green "Preparing a temporary password for disko."
+	green "[Optional] Set disk encryption passphrase:"
+	read -s luks_passphrase
+	if [ -n "$luks_passphrase" ]; then
+		$ssh_root_cmd "/bin/sh -c 'echo \'$luks_passphrase\' > /tmp/disko-password'"
+	else
+		$ssh_root_cmd "/bin/sh -c 'echo \'passphrase\' > /tmp/disko-password'"
+	fi
 	green "Generating hardware-config.nix for $target_hostname and adding it to the nix-config."
 	$ssh_root_cmd "nixos-generate-config --no-filesystems --root /mnt"
 	$scp_cmd root@"$target_destination":/mnt/etc/nixos/hardware-configuration.nix "${git_root}"/hosts/"$target_hostname"/hardware-configuration.nix
@@ -260,8 +267,9 @@ function setup_luks_secondary_drive_decryption() {
 
 	echo "Cryptsetup luksAddKey will now be used to add /luks-secondary-unlock.key for the specified secondary drive names."
 	readarray -td, drivenames <<<"$luks_secondary_drive_labels"
-	for name in ${drivenames}[@]; do
-		cryptsetup luksAddKey /dev/disks/by-label/${name} /luks-secondary-unlock.key
+	for name in "${drivenames[@]}"; do
+		device_path=$($ssh_root_cmd -q "/bin/sh -c 'cryptsetup status \"$name\" | awk \'/device:/ {print \$2}\''")
+		$ssh_root_cmd "/bin/sh -c 'echo \"$luks_passphrase\" | cryptsetup luksAddKey $device_path /luks-secondary-unlock.key'"
 	done
 }
 
@@ -277,7 +285,7 @@ if yes_or_no "Run nixos-anywhere installation?"; then
 	nixos_anywhere
 fi
 
-if [ -z "${luks_secondary_drive_labels}"]; then
+if [ -n "$luks_secondary_drive_labels" ]; then
 	setup_luks_secondary_drive_decryption
 fi
 
@@ -319,8 +327,9 @@ if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $targe
 	if yes_or_no "Do you want to rebuild immediately?"; then
 		green "Rebuilding nix-config on $target_hostname"
 		#FIXME there are still a gitlab fingerprint request happening during the rebuild
-		#$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname" switch"
-		$ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
+		$ssh_cmd -oForwardAgent=yes "cd nix-config && sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
+		# FIXME: This fails because `just rebuild` tries to run `nix flake update nix-secrets` but the flake registry doesn't exist yet
+		# $ssh_cmd -oForwardAgent=yes "cd nix-config && just rebuild"
 	fi
 else
 	echo
@@ -330,7 +339,9 @@ else
 	echo "just sync $target_user $target_destination"
 	echo "To rebuild, sign into $target_hostname and run the following command from ~/nix-config"
 	echo "cd nix-config"
-	echo "just rebuild"
+	# see above FIXME
+	echo "sudo nixos-rebuild --show-trace --flake .#$target_hostname switch"
+	# echo "just rebuild"
 	echo
 fi
 
