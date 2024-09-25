@@ -6,7 +6,6 @@
 
 - enable backup (waiting on aa for access to oops)
 
-- copy the following notes to install section:
 - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 - symlink home stuff with /mnt/extra/foo
 - enable mediashare
@@ -101,9 +100,9 @@ Local decryption only for now. Enabling remote decryption while working entirely
 
 DEFERRED:
 
-- Investigate outstanding yubikey FIXMEs
-- Potentially yubiauth and u2f for passwordless sudo
-  FidgetingBits still encounter significant issues with this when remoting
+- ~~Investigate outstanding yubikey FIXMEs~~
+- ~~Potentially yubiauth and u2f for passwordless sudo~~
+  ~~FidgetingBits still encounter significant issues with this when remoting~~
 - Confirm clamav scan notification
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
