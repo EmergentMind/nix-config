@@ -19,8 +19,8 @@ update docs in nix-secrets
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
-  - dh
-  - copyq - https://hluk.github.io/CopyQ/
+  - ~~nh~~
+  - ~~copyq - https://hluk.github.io/CopyQ/~~
   - du-dust
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
 
@@ -129,10 +129,11 @@ DEFERRED:
 ##### 4.3 Get comfortable
 
 - setup and enable hyprland basics
-  - hyprlock ?
-  - hyprpaper wallpaper
+  - hyprlock or similar
+  - logout manager
+  - ~~waypaper~~
   - ~~dunst~~
-  - rofi-wayland
+  - ~~rofi-wayland~~
 - reestablish workflow
 
 ##### 4.3.x Extras
@@ -142,13 +143,13 @@ DEFERRED:
 - Confirm clamav scan notification
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
-- basic themeing via stylix or nix-colors
+- ~~basic themeing via stylix or nix-colors~~
 - dig into fzf and telescope
 - hotkey for sleeping monitors (all or game mode)
 - disk usage notifier
 - check out ananicy - hold over todo from arch but there is a nixos pkg here https://search.nixos.org/packages?channel=23.11&from=0&size=50&sort=relevance&type=packages&query=ananicy
 - more desktop utils and customization
-  - set up copyq clipboard mgr
+  - ~~set up copyq clipboard mgr~~
   - dig into better kitty and zsh usage
   - better linting and fixing in vscode and nvim
   - look at https://github.com/dandavison/delta
