@@ -9,7 +9,7 @@
 let
   handle = configVars.handle;
   publicGitEmail = configVars.gitHubEmail;
-  publicKey = "${config.home.homeDirectory}].ssh/id_yubikey.pub";
+  publicKey = "${config.home.homeDirectory}/.ssh/id_yubikey.pub";
   username = configVars.username;
 in
 {
@@ -20,6 +20,7 @@ in
     userEmail = publicGitEmail;
     aliases = { };
     extraConfig = {
+      log.showSignature = "true";
       init.defaultBranch = "main";
       url = {
         "ssh://git@github.com" = {
@@ -30,13 +31,13 @@ in
         };
       };
 
-      #FIXME stage 4 - Re-enable signing. needs additional setup
-      commit.gpgsign = false;
+      commit.gpgsign = true;
       gpg.format = "ssh";
       user.signing.key = "${publicKey}";
       # Taken from https://github.com/clemak27/homecfg/blob/16b86b04bac539a7c9eaf83e9fef4c813c7dce63/modules/git/ssh_signing.nix#L14
       gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
-      save.directory = "${config.home.homeDirectory}/Sync/obsidian-vault-01/wiki";
+
+      save.directory = "${config.home.homeDirectory}/sync/obsidian-vault-01/wiki";
     };
     signing = {
       signByDefault = true;
