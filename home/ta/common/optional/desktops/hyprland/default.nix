@@ -107,13 +107,18 @@
 
       windowrulev2 =
         let
+          flameshot = "title:^(flameshot)";
           steam = "title:^()$,class:^(steam)$";
-          steamGame = "class:^(steam_app_[0-9]*)$";
+          steamGame = "class:^(steam_app_[1-9]*)$";
         in
         [
+          # flameshot currently doesn't have great wayland support so needs some tweaks
+          "float, ${flameshot}"
+          "move 0 0, ${flameshot}"
+          "suppressevent fullscreen, ${flameshot}"
+
           "stayfocused, ${steam}"
           "minsize 1 1, ${steam}"
-
           "immediate, ${steamGame}"
         ];
 
