@@ -17,5 +17,6 @@
     pkgs.rofi-wayland # app launcher
     pkgs.pavucontrol # gui for pulseaudio server and volume controls
     pkgs.wl-clipboard # wayland copy and paste
+    pkgs.galculator # gtk based calculator
   ];
 }
