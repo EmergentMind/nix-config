@@ -30,8 +30,11 @@
         "XDG_SESSION_TYPE,wayland"
         "WLR_NO_HARDWARE_CURSORS,1"
         "WLR_RENDERER_ALLOW_SOFTWARE,1"
-        # "QT_QPA_PLATFORM,wayland"
+        "QT_QPA_PLATFORM,wayland"
       ];
+      xwayland = {
+        force_zero_scaling = true;
+      };
 
       # Configure your Display resolution, offset, scale and Monitors here, use `hyprctl monitors` to get the info.
       # https://wiki.hyprland.org/Configuring/Monitors/
@@ -103,27 +106,60 @@
 
       # Autostart applications
       # exec-once = ''${startupScript}/path'';
-      # exec-once = ''copyq --start-server'';
+      exec-once = [
+        ''${pkgs.copyq}/bin/copyq''
+        ''${pkgs.signal-desktop}/bin/signal''
+        ''${pkgs.yubioath-flutter}/bin/yubioath-flutter''
+        ''${pkgs.spotify}/bin/spotify''
+      ];
+      windowrule = [
+        # Dialogs
+        "float, title:^(Open File)(.*)$"
+        "float, title:^(Select a File)(.*)$"
+        "float, title:^(Choose wallpaper)(.*)$"
+        "float, title:^(Open Folder)(.*)$"
+        "float, title:^(Save As)(.*)$"
+        "float, title:^(Library)(.*)$"
+        "float, title:^(Accounts)(.*)$"
+      ];
 
       windowrulev2 =
         let
           flameshot = "title:^(flameshot)";
-          steam = "title:^()$,class:^(steam)$";
-          steamGame = "class:^(steam_app_[1-9]*)$";
+          scratch = "class:^(scratch_term)";
+          steam = "title:^()$,class:^([Ss]team)$";
+          steamFloat = "title:^((?![Ss]team).*)$,class:^([Ss]team)$";
+          steamGame = "class:^([Ss]team_app_.*)$";
         in
         [
+          "float, class:^(galculator)$"
+          "float, class:^(waypaper)$"
+
           # flameshot currently doesn't have great wayland support so needs some tweaks
           "float, ${flameshot}"
           "move 0 0, ${flameshot}"
           "suppressevent fullscreen, ${flameshot}"
 
+          "float, ${scratch}"
+          "size 80% 85%, ${scratch}"
+          "workspace special:scratch_term, ${scratch}"
+          "center, ${scratch}"
+
+          "float, ${steamFloat}"
           "stayfocused, ${steam}"
           "minsize 1 1, ${steam}"
           "immediate, ${steamGame}"
+
+          # WORKSPACE ASSIGNMENTS
+          "workspace 8, class:^(virt-manager)"
+          "workspace 8, class:^(obsidian)"
+          "workspace 9, class:^(signal-desktop)"
+          "workspace 9, class:^(yubioath-flutter)"
+          "workspace 0, class:^(spotify)"
         ];
 
       # load at the end of the hyperland set
-      # extraConfig = ''    '';
+      # extraConfig = '''';
     };
   };
 }
