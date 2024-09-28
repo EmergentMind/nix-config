@@ -7,22 +7,19 @@
 
       #remmina
       # edc
-      flameshot # ?? maybe somewhere else
 
       # Productivity
-      libreoffice
       drawio
-
-      # cryptocurrency
-      # daedalus-mainnet #doubtful this is in home-manager
+      flameshot # depends on entry in nix-config/overlays/default.nix as well as 'grim' in hosts/common/optional/wayland.nix
+      libreoffice
 
       # Privacy
       #veracrypt
       #keepassxc
 
-      # imaging
+      # device imaging
       rpi-imager
-      #etcher #was disable in nixpkgs due to depency on insecure version of Electron
+      #etcher #was disabled in nixpkgs due to depency on insecure version of Electron
 
       # media production
       audacity
@@ -30,7 +27,6 @@
       gimp
       inkscape
       obs-studio
-
       ;
   };
 }

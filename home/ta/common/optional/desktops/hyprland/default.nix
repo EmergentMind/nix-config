@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   imports = [
     # custom key binds
@@ -125,8 +130,8 @@
 
       windowrulev2 =
         let
-          flameshot = "title:^(flameshot)";
-          scratch = "class:^(scratch_term)";
+          flameshot = "class:^(flameshot)$,title:^(flameshot)$";
+          scratch = "class:^(scratch_term)$";
           steam = "title:^()$,class:^([Ss]team)$";
           steamFloat = "title:^((?![Ss]team).*)$,class:^([Ss]team)$";
           steamGame = "class:^([Ss]team_app_.*)$";
@@ -136,6 +141,9 @@
           "float, class:^(waypaper)$"
 
           # flameshot currently doesn't have great wayland support so needs some tweaks
+          #          "monitor DP-1, ${flameshot}"
+          "rounding 0, ${flameshot}"
+          "noborder, ${flameshot}"
           "float, ${flameshot}"
           "move 0 0, ${flameshot}"
           "suppressevent fullscreen, ${flameshot}"
