@@ -108,6 +108,9 @@
     #
     # ========= UI Plugins =========
     #
+
+    plugins.web-devicons.enable = true; # Required for plugins.alpha below
+
     # Display colors for when # FFFFFF codes are detected in buffer text.
     plugins.nvim-colorizer = {
       enable = true;
@@ -118,7 +121,6 @@
     # TODO: nixvim: better layout and additional buttons/commands
     plugins.alpha = {
       enable = true;
-      iconsEnabled = true; # installs nvim-web-devicons.
       layout = [
         {
           type = "padding";
@@ -189,7 +191,7 @@
     plugins.airline = {
       enable = true;
       settings = {
-        powerline_fonts = true;
+        powerline_fonts = 1;
         # TODO: nixvim: Figure out tabline extension stuff in nixvim
         # TODO: nixvim: Possibly use bufferline or lightline-bufferline instead
         # """" Tabline settings
@@ -225,15 +227,19 @@
     };
     plugins.bufferline = {
       enable = false;
-      separatorStyle = "slant"; # “slant”, “padded_slant”, “slope”, “padded_slope”, “thick”, “thin”
-      offsets = [
-        {
-          filetype = "neo-tree";
-          text = "Neo-tree";
-          highlight = "Directory";
-          text_align = "left";
-        }
-      ];
+      settings = {
+        options = {
+          separatorStyle = "slant"; # “slant”, “padded_slant”, “slope”, “padded_slope”, “thick”, “thin”
+          offsets = [
+            {
+              filetype = "neo-tree";
+              text = "Neo-tree";
+              highlight = "Directory";
+              text_align = "left";
+            }
+          ];
+        };
+      };
     };
     #FIXME move these to binds area and decide what to keep
     #    keymaps = [

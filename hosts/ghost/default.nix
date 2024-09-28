@@ -47,7 +47,7 @@
       #################### Desktop ####################
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/hyprland.nix" # window manager
-      "hosts/common/optional/waypaper.nix" # wallpaper manage (nitrogen analog for wayland)
+      "hosts/common/optional/wayland.nix" # wayland components and pkgs not avaialble in home-manager
     ])
   ];
 
