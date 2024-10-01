@@ -61,7 +61,7 @@
       # Packages that don't have custom configs go here
       #borgbackup # backups
       btop # resource monitor
-      copyq
+      copyq # clipboard manager
       coreutils # basic gnu utils
       # curl
       eza # ls replacement
@@ -70,6 +70,7 @@
       fzf # fuzzy search
       jq # JSON pretty printer and manipulator
       nix-tree # nix package tree viewer
+      neofetch # fancier system info than pfetch
       ncdu # TUI disk usage
       pciutils
       pfetch # system info
@@ -83,6 +84,7 @@
       unrar # rar extraction
       xdg-utils # provide cli tools such as `xdg-mime` and `xdg-open`
       xdg-user-dirs
+      wev # show wayland events. also handy for detecting keypress codes
       wget # downloader
       zip # zip compression
       ;
