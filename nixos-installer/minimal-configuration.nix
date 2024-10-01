@@ -37,7 +37,6 @@ in
   };
 
   # allow sudo over ssh with yubikey
-  # this potentially causes a security issue that we mitigated above
   security.pam = {
     sshAgentAuth.enable = true;
     services.sudo = {

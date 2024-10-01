@@ -34,7 +34,6 @@ in
     ];
   };
   # yubikey login / sudo
-  # this potentially causes a security issue that we mitigated above
   security.pam = {
     sshAgentAuth.enable = true;
     services = {
