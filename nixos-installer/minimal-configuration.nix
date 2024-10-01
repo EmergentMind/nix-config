@@ -33,9 +33,6 @@ in
       enable = true;
       ports = [ sshPort ];
       settings.PermitRootLogin = "yes";
-      # Fix LPE vulnerability with sudo use SSH_AUTH_SOCK: https://github.com/NixOS/nixpkgs/issues/31611
-      # this mitigates the security issue caused by enabling u2fAuth in pam
-      authorizedKeysFiles = lib.mkForce [ "/etc/ssh/authorized_keys.d/%u" ];
     };
   };
 
