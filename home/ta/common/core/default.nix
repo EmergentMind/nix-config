@@ -25,7 +25,7 @@
       TERM = "kitty";
       TERMINAL = "kitty";
       VISUAL = "nvim";
-      EDITOR = "nvim --wait"; # --wait may be useful for stuff like sops editing
+      EDITOR = "nvim";
       MANPAGER = "batman"; # see ./cli/bat.nix
     };
     preferXdgDirectories = true; # whether to make programs use XDG directories whenever supported
