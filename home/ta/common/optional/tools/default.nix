@@ -9,8 +9,8 @@
       # edc
 
       # Productivity
+      grimblast
       drawio
-      flameshot # depends on entry in nix-config/overlays/default.nix as well as 'grim' in hosts/common/optional/wayland.nix
       libreoffice
 
       # Privacy
@@ -29,4 +29,9 @@
       obs-studio
       ;
   };
+  #Disabled for now. grimblast
+  #  services.flameshot = {
+  #      enable = true;
+  #     package = flameshotGrim;
+  #  };
 }

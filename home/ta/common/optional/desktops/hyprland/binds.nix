@@ -60,15 +60,14 @@
           k = up;
           j = down;
         };
-        #swaylock = "${config.programs.swaylock.package}/bin/swaylock";
-        pactl = "${pkgs.pulseaudio}/bin/pactl"; # installed via /hosts/common/optional/audio.nix
-        playerctl = "${pkgs.playerctl}/bin/playerctl"; # installed via /home/common/optional/desktops/playerctl.nix
+        pactl = lib.getExe' pkgs.pulseaudio "pactl"; # installed via /hosts/common/optional/audio.nix
       in
+      #        playerctl = lib.getExe pkgs.playerctl; # installed via /home/common/optional/desktops/playerctl.nix
+      #swaylock = "lib.getExe pkgs.swaylock;
       #makoctl = "${config.services.mako.package}/bin/makoctl";
       #pass-wofi = "${pkgs.pass-wofi.override {
       #pass = config.programs.password-store.package;
       #}}/bin/pass-wofi";
-      #grimblast = "${pkgs.inputs.hyprwm-contrib.grimblast}/bin/grimblast";
       #tly = "${pkgs.tly}/bin/tly";
       #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
       #notify-send = "${pkgs.libnotify}/bin/notify-send";
@@ -86,8 +85,13 @@
         "SUPER,space,exec,rofi -show run"
         "ALT,tab,exec,rofi -show window"
         "CTRL_ALT,f,exec,thunar"
-        #FIXME: this isn't working... may need a rule for window handling in hyprland
-        "CTRL_ALT,8,exec,flameshot gui"
+
+        # screenshots
+        # TODO check on status of flameshot and multimonitor wayland. as of Oct 2024, it's a clusterfuck
+        # so resorting to grimblast in the meantime
+        #"CTRL_ALT,8,exec,flameshot gui"
+        "CTRL_ALT,8,exec,grimblast --notify --freeze copy area"
+        ",Print,exec,grimblast --notify --freeze copy area"
 
         #################### Basic Bindings ####################
         #reload the configuration file
@@ -126,9 +130,10 @@
         ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +1%"
         ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -1%"
         # Player controls
-        ", XF86AudioPlay, exec, '${playerctl} --ignore-player=firefox,chromium,brave play-pause'"
-        ", XF86AudioNext, exec, '${playerctl} --ignore-player=firefox,chromium,brave next'"
-        ", XF86AudioPrev, exec, '${playerctl} --ignore-player=firefox,chromium,brave previous'"
+        #FIXME For some reason these key pressings aren't firing from Moonlander. Nothing shows when running wev
+        ", XF86AudioPlay, exec, 'playerctl --ignore-player=firefox,chromium,brave play-pause'"
+        ", XF86AudioNext, exec, 'playerctl --ignore-player=firefox,chromium,brave next'"
+        ", XF86AudioPrev, exec, 'playerctl --ignore-player=firefox,chromium,brave previous'"
 
         # Change workspace
         (map (n: "ALT,${n},workspace,name:${n}") workspaces)
