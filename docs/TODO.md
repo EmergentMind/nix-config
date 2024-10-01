@@ -4,15 +4,25 @@
 
 ## Short Term
 
-- enable backup (waiting on aa for access to oops)
+- next video - yubikey
+    - write article/script
+    - preproduction assets
+    - record
+    - edit
+    - publish
+
+- neovim
+    - sort out lsp deficiencies
+    - autolint on write
+
+- enable backup (verify access to oops)
 
 - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 - symlink home stuff with /mnt/extra/foo
 - enable mediashare
 - investigate
-    - gamemode
-    - gamescope
-    - steam.nix from misterio https://github.com/Misterio77/nix-config/blob/d128eac9476f5357f5af39a7da031c4927c93010/home/gabriel/features/games/steam.nix#L20
+    - hyprcursor
+    - hyprlock
 
 update docs in nix-secrets
 
@@ -244,6 +254,7 @@ Migrating bash scripts to nix
 
 - eww as a potential replacement to waybar
 
+- hyprcursor
 - plymouth
 - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
 
