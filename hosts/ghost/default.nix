@@ -108,7 +108,7 @@
     #};
     opacity = {
       applications = 1.0;
-      terminal = 0.6;
+      terminal = 1.0;
       desktop = 1.0;
       popups = 0.8;
     };

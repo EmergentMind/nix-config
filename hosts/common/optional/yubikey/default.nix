@@ -23,17 +23,15 @@ in
   environment.systemPackages = lib.flatten [
     (lib.attrValues {
       inherit (pkgs)
-        # yubikey-personalization
         # Yubico's official tools
-        #    yubikey-manager
-        #    yubikey-manager-qt
-        #    yubikey-personalization
-        #    yubikey-personalization-gui
-        #    yubico-piv-tool
-        yubioath-flutter # yubioath-desktop on older nixpkg channels
-        pam_u2f # for yubikey with sudo
+        yubioath-flutter # gui-based authenticator tool. yubioath-desktop on older nixpkg channels
+        yubikey-manager # cli-based authenticator tool. accessed via `ykman`
+        # yubikey-manager-qt
+        # yubikey-personalization # enabled below in services.udev
+        # yubikey-personalization-gui
+        # yubico-piv-tool
 
-        yubikey-manager # For ykman
+        pam_u2f # for yubikey with sudo
         ;
     })
     # custom packages not in nixpkgs
@@ -54,8 +52,7 @@ in
     SUBSYSTEM=="input", ACTION=="remove", ENV{ID_VENDOR_ID}=="1050", RUN+="${lib.getBin yubikey-down}/bin/yubikey-down"
   '';
 
-  # Yubikey required services and config. See Dr. Duh NixOS config for
-  # reference
+  # Yubikey required services and config. See Dr. Duh NixOS config for reference
   services.pcscd.enable = true; # smartcard service
   services.udev.packages = [ pkgs.yubikey-personalization ];
 

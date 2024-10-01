@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   lib,
   ...
@@ -37,9 +36,6 @@
         "WLR_RENDERER_ALLOW_SOFTWARE,1"
         "QT_QPA_PLATFORM,wayland"
       ];
-      xwayland = {
-        force_zero_scaling = true;
-      };
 
       # Configure your Display resolution, offset, scale and Monitors here, use `hyprctl monitors` to get the info.
       # https://wiki.hyprland.org/Configuring/Monitors/
@@ -156,6 +152,7 @@
           "float, ${steamFloat}"
           "stayfocused, ${steam}"
           "minsize 1 1, ${steam}"
+          "workspace 7, ${steamGame}"
           "immediate, ${steamGame}"
 
           # WORKSPACE ASSIGNMENTS
