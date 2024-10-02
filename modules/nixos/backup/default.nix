@@ -78,7 +78,7 @@ in
     };
     borgPort = lib.mkOption {
       type = str; # FIXME: int?
-      default = "${builtins.toString configVars.networkign.sshPort}";
+      default = "${builtins.toString configVars.networking.ports.tcp.ssh}";
       description = "The ssh port to use for the borg server";
     };
     borgBackupPath = lib.mkOption {

@@ -1,15 +1,17 @@
-{ inputs, lib }:
+{ inputs }:
 {
-  networking = import ./networking.nix { inherit lib; };
+  inherit (inputs.nix-secrets) networking;
 
   username = "ta";
   domain = inputs.nix-secrets.domain;
   userFullName = inputs.nix-secrets.full-name;
   handle = "emergentmind";
-  userEmail = inputs.nix-secrets.user-email;
+  userEmail = inputs.nix-secrets.email.user;
   gitHubEmail = "7410928+emergentmind@users.noreply.github.com";
   gitLabEmail = "2889621-emergentmind@users.noreply.gitlab.com";
-  workEmail = inputs.nix-secrets.work-email;
+  workEmail = inputs.nix-secrets.email.work;
+  backupEmail = inputs.nix-secrets.email.backup;
+  notifierEmail = inputs.nix-secrets.email.notifier;
   persistFolder = "/persist";
 
   # System-specific settings (FIXME: Likely make options)

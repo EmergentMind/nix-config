@@ -1,13 +1,12 @@
 {
   pkgs,
   lib,
-  config,
   configLib,
   configVars,
   ...
 }:
 let
-  sshPort = configVars.networking.sshPort;
+  sshPort = configVars.networking.ports.tcp.ssh;
 in
 {
   imports = [ (configLib.relativeToRoot "hosts/common/users/${configVars.username}") ];
