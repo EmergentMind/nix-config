@@ -65,10 +65,6 @@
       #        playerctl = lib.getExe pkgs.playerctl; # installed via /home/common/optional/desktops/playerctl.nix
       #swaylock = "lib.getExe pkgs.swaylock;
       #makoctl = "${config.services.mako.package}/bin/makoctl";
-      #pass-wofi = "${pkgs.pass-wofi.override {
-      #pass = config.programs.password-store.package;
-      #}}/bin/pass-wofi";
-      #tly = "${pkgs.tly}/bin/tly";
       #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
       #notify-send = "${pkgs.libnotify}/bin/notify-send";
       #gtk-launch = "${pkgs.gtk3}/bin/gtk-launch";
@@ -76,7 +72,6 @@
       #defaultApp = type: "${gtk-launch} $(${xdg-mime} query default ${type})";
       #terminal = config.home.sessionVariables.TERM;
       #browser = defaultApp "x-scheme-handler/https";
-      #editor = defaultApp "text/plain";
 
       lib.flatten [
         #################### Program Launch ####################
@@ -102,7 +97,7 @@
 
         "ALT,s,togglesplit"
         "ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
-        #FIXME: play around with fullscreenstate to get a setting that works with maximizing sec cams in window
+        #FIXME play around with fullscreenstate to get a setting that works with maximizing sec cams in window
         #",,fullscreenstate,0"
         "SHIFTALT,space,togglefloating"
         "SHIFTALT, p, pin" # pins a floating window (i.e. show it on all workspaces)

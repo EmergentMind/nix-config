@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, configVars, ... }:
 {
   programs.zsh = {
     enable = true;
@@ -114,15 +114,10 @@
       vim = "nvim";
 
       #-----------Nix related----------------
-      ne = "nix-instantiate --eval";
-      nb = "nix-build";
-      ns = "nix-shell";
-
-      #-----------Remotes----------------
-      cakes = "ssh -l freshcakes freshcakes.memeoid.cx";
-      gooey = "ssh -l pi 10.13.37.69";
-      gusto = "ssh -l ta 10.13.37.5";
-      grief = "ssh -l ta 10.13.37.7";
+      nfc = "nix flake check";
+      ne = "nix instantiate --eval";
+      nb = "nix build";
+      ns = "nix shell";
 
       #-------------Git Goodness-------------
       # just reference `$ alias` and use the defautls, they're good.
