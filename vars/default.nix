@@ -1,5 +1,6 @@
-{ inputs }:
+{ inputs, ... }:
 {
+  #TODO refactor to inherit email, domain and fullname
   inherit (inputs.nix-secrets) networking;
 
   username = "ta";
