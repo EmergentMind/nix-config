@@ -96,7 +96,7 @@ in
         host = "oops";
         hostname = "${configVars.networking.subnets.oops.ip}";
         user = "${configVars.username}";
-        port = "${configVars.netwoking.subnets.oops.port}";
+        port = configVars.networking.subnets.oops.port;
         forwardAgent = true;
         identitiesOnly = true;
         identityFile = [
@@ -110,9 +110,9 @@ in
         localForwards = [
           {
             bind.address = "localhost";
-            bind.port = "${configVars.networking.external.cakes.localForwardsPort}";
+            bind.port = configVars.networking.external.cakes.localForwardsPort;
             host.address = "localhost";
-            host.port = "${configVars.networking.external.cakes.localForwardsPort}";
+            host.port = configVars.networking.external.cakes.localForwardsPort;
           }
         ];
       };
