@@ -27,7 +27,6 @@
 update docs in nix-secrets
 
 - New tools to integrate
-  - lazygit or preferably neogit https://github.com/NeogitOrg/neogit
   - atuin - https://github.com/atuinsh/atuin
   - ~~nh~~
   - ~~copyq - https://hluk.github.io/CopyQ/~~
