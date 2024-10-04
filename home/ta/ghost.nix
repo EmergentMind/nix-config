@@ -12,6 +12,7 @@
     common/optional/media
     common/optional/tools
 
+    common/optional/xdg.nix # file associations
     common/optional/sops.nix
   ];
 
