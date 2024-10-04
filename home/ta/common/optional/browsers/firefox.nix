@@ -50,7 +50,6 @@ in
       # `jq .applications.gecko.id manifest.json` to get the UUID
       ExtensionSettings =
         (
-          with builtins;
           let
             extension = shortId: uuid: {
               name = uuid;
@@ -60,7 +59,7 @@ in
               };
             };
           in
-          listToAttrs [
+          builtins.listToAttrs [
             #TODO Add more of these and test. not high priority though since mozilla sync will pull them in too
             # Development
             #(extension "user-agent-switcher" "{a6c4a591-f1b2-4f03-b3ff-767e5bedf4e7}") # failed

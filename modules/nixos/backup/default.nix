@@ -64,40 +64,40 @@ let
 in
 {
   imports = [ (configLib.relativeToRoot "hosts/common/optional/msmtp.nix") ];
-  options.services.backup = with lib.types; {
+  options.services.backup = {
     enable = lib.mkEnableOption "Enable borg-based backup service";
     borgUser = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "borg";
       description = "The user to run the borg backup as";
     };
     borgServer = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "";
       description = "The borg server to backup to";
     };
     borgPort = lib.mkOption {
-      type = str; # FIXME: int?
+      type = lib.types.str; # FIXME: int?
       default = "${builtins.toString configVars.networking.ports.tcp.ssh}";
       description = "The ssh port to use for the borg server";
     };
     borgBackupPath = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "/volume1/backups";
       description = "The path on the borg server to store backups";
     };
     borgSshKey = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "/root/.ssh/id_borg";
       description = "The ssh key to use for borg";
     };
     borgRemotePath = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "/usr/local/bin/borg";
       description = "The borg binary path on the borg server";
     };
     borgMountDir = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "${homeDirectory}/mount/backup";
       description = "The directory to mount backups to";
     };
@@ -106,64 +106,64 @@ in
         persistFolder = lib.optionalString config.system.impermanence.enable configVars.persistFolder;
       in
       lib.mkOption {
-        type = str;
+        type = lib.types.str;
         default = "${persistFolder}/.cache/borg";
         description = "The cache directory for borg";
       };
     borgBackupPaths = lib.mkOption {
-      type = listOf str;
+      type = lib.types.listOf lib.types.str;
       default = [ "${homeDirectory}" ];
       description = "The paths on host to backup";
     };
     borgBackupName = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "${config.networking.hostName}-$(date +%Y-%m-%d_%H-%M)";
       description = "The name of the backup";
     };
     borgBtrfsVolume = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "/dev/mapper/encrypted-nixos";
       description = "The btrfs volume containing the subvolume backup";
     };
     # FIXME: This should be a list of subvolumes to backup
     borgBtrfsSubvolume = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "@persist";
       description = "The btrfs subvolume to mount and backup";
     };
     borgBackupExpiryDaily = lib.mkOption {
-      type = int;
+      type = lib.types.int;
       default = 7;
       description = "The number of daily backups to keep";
     };
     borgBackupExpiryWeekly = lib.mkOption {
-      type = int;
+      type = lib.types.int;
       default = 4;
       description = "The number of weekly backups to keep";
     };
     borgBackupExpiryMonthly = lib.mkOption {
-      type = int;
+      type = lib.types.int;
       default = 6;
       description = "The number of monthly backups to keep";
     };
     borgBackupExpiryYearly = lib.mkOption {
-      type = int;
+      type = lib.types.int;
       default = 3;
       description = "The number of yearly backups to keep";
     };
     borgBackupStartTime = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "00:00:00";
       description = "The time to start the backup";
     };
     borgBackupLogPath = lib.mkOption {
-      type = str;
+      type = lib.types.str;
       default = "/root/backup.log";
       description = "The log location for the backup";
     };
     # Some of these shouldn't even be options probably? Just always exclude them, but allow for custom ones
     borgExcludes = lib.mkOption {
-      type = listOf str;
+      type = lib.types.listOf lib.types.str;
       default = [ ];
       description = "A list of extra paths to exclude from the backup";
     };

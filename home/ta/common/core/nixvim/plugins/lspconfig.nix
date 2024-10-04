@@ -61,7 +61,7 @@
                 };
               };
             };
-            tsserver = {
+            ts-ls = {
               enable = false;
               filetypes = [
                 "javascript"

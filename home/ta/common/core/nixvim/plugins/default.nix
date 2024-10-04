@@ -41,7 +41,7 @@
     #
     # ========== trees ??? ==========
     #
-    nixvim-config.plugins.neo-tree.enable = lib.mkDefault false;
+    nixvim-config.plugins.neo-tree.enable = lib.mkDefault true;
     nixvim-config.plugins.undotree.enable = lib.mkDefault true;
     #
     # ========== git ==========
@@ -65,8 +65,8 @@
     #
     # ========== lsp ==========
     #
-    nixvim-config.plugins.fidget.enable = lib.mkDefault false;
-    nixvim-config.plugins.lspconfig.enable = lib.mkDefault false;
+    nixvim-config.plugins.fidget.enable = lib.mkDefault true;
+    nixvim-config.plugins.lspconfig.enable = lib.mkDefault true;
     #
     # ========== search ==========
     #

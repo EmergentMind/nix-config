@@ -22,9 +22,9 @@ stdenv.mkDerivation {
     install -m755 -D cd-gitroot --target-directory $out/${install_path}/
     install -m755 -D _cd-gitroot --target-directory $out/share/zsh/site-functions/
   '';
-  meta = with lib; {
+  meta = {
     homepage = "https://github.com/mollifier/cd-gitroot";
-    license = licenses.mit;
+    license = lib.licenses.mit;
     longDescription = ''
       zsh plugin to change directory to git repository root directory.
           You can add the following to your `programs.zsh.plugins` list:
@@ -37,6 +37,6 @@ stdenv.mkDerivation {
           ];
           ```
     '';
-    maintainers = with maintainers; [ fidgetingbits ];
+    maintainers = [ lib.maintainers.fidgetingbits ];
   };
 }

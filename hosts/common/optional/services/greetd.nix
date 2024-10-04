@@ -26,7 +26,7 @@ in
   };
 
   config = {
-    #    environment.systemPackages = with pkgs; [ greetd.tuigreet ];
+    #    environment.systemPackages = [ pkgs.greetd.tuigreet ];
     services.greetd = {
       enable = true;
 

@@ -18,10 +18,10 @@ stdenv.mkDerivation {
   installPhase = ''
     install -m755 -D zhooks.plugin.zsh --target-directory $out/share/zsh/zhooks/
   '';
-  meta = with lib; {
+  meta = {
     homepage = "https://github.com/agkozak/zhooks";
-    license = licenses.mit;
+    license = lib.licenses.mit;
     description = "zhooks is a tool for displaying the code for all Zsh hook functions (such as precmd), as well as the contents of hook arrays (such as precmd_functions).";
-    maintainers = with maintainers; [ fidgetingbits ];
+    maintainers = [ lib.maintainers.fidgetingbits ];
   };
 }
