@@ -5,7 +5,7 @@
 ## Structural Concept
 
 The following diagram depicts the conceptual anatomy of my nix-config. It is not an accurate representation of the current state but will be updated over time to represent additional elements and details as the config evolves.
-![Anatomy v3](diagrams/anatomy_v3.png)
+![Anatomy v4](diagrams/anatomy_v4.png)
 
 ## Details
 
@@ -13,6 +13,7 @@ For details about the design concepts, constraints, and how structural elements 
 
 ## Previous Iterations of the Structural Concept
 
+![Anatomy v3](diagrams/anatomy_v3.png)
 ![Anatomy v2](diagrams/anatomy_v2.png)
 ![Anatomy v1](diagrams/anatomy_v1.png)
 

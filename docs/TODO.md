@@ -76,9 +76,12 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
   - ~~private repo for secrets~~
   - ~~personal documentation for secrets management, i.e. README for nix-secrets private repo~~
   - ~~public documentation for secrets management, i.e. how to use this repo with the private repo~~
-- DEFERRED - Potentially yubiauth and u2f for passwordless sudo
 - ~~Review and complete applicable TODO sops, TODO yubi, and TODO stage 2~~
 - ~~Deploy gusto~~
+
+DEFERRED:
+
+- ~~Potentially yubiauth and u2f for passwordless sudo~~
 
 #### 3. Installation Automation and drive encryption - Completed: 2024.08.08
 
@@ -168,15 +171,9 @@ DEFERRED:
 - [stylix](https://github.com/danth/stylix)
 - [nix-colors](https://github.com/Misterio77/nix-colors)
 
-#### 5. Laptops
+#### 5. Squeaky clean
 
-Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
-
-- laptop utils
-
-#### 6. Squeaky clean
-
-##### 6.x impermanence
+##### 5.x impermanence
 
 - declare what needs to persist
 - enable impermanence
@@ -184,7 +181,7 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 
   Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
-##### 6.x remote luks decryption
+##### 5.x remote luks decryption
 
 The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
 
@@ -192,13 +189,13 @@ The following has to happen on bare metal because I can't seem to get the yubike
   - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
   - add initrd-ssh module that will spawn an ssh service for use during boot
 
-##### 6.x automate config deployment
+##### 5.x automate config deployment
 
 - Per host branch scheme
 - Automated machine update on branch release
 - Handle general auto updates as well
 
-##### 6.x script cleaning
+##### 5.x script cleaning
 
 - Consider nixifying bash scripts (see refs below)
 - Overhaul just file
@@ -206,12 +203,12 @@ The following has to happen on bare metal because I can't seem to get the yubike
   - add {{just.executable()}} to just entries
   - explore direnv
 
-##### 6.x reduce duplication and modularize
+##### 5.x reduce duplication and modularize
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
 - Re-implement modules to make use of options for enablement
 
-##### 6.x secure boot
+##### 5.x secure boot
 
 - lanzaboote https://github.com/nix-community/lanzaboote
 
@@ -220,14 +217,14 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 - https://github.com/ElvishJerricco/stage1-tpm-tailscale
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
 
-##### 6.x Extras
+##### 5.x Extras
 
 - automatic scheduled sops rotate
 - Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputting the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
 - move Gusto to disko
 - revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
 
-##### Stage 6 references
+##### Stage 5 references
 
 Impermanence - These two are the references to follow and integrate. The primer list below is good review before diving into this:
 
@@ -246,6 +243,12 @@ Impermanence primer info
 Migrating bash scripts to nix
 - https://www.youtube.com/watch?v=diIh0P12arA and https://www.youtube.com/watch?v=qRE6kf30u4g
 - Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
+
+#### 6. Laptops
+
+Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
+
+- laptop utils
 
 #### 7. Ricing
 
