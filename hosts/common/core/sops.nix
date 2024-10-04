@@ -48,15 +48,18 @@ in
       # extract username/password to /run/secrets-for-users/ so it can be used to create the user
       "${configVars.username}/password".neededForUsers = true;
 
+      # extract to default pam-u2f authfile location for passwordless sudo. see hosts/common/optional/yubikey
+      "yubico/u2f_keys" = {
+        owner = config.users.users.${configVars.username}.name;
+        inherit (config.users.users.${configVars.username}) group;
+        path = "${homeDirectory}/.config/Yubico/u2f_keys";
+      };
+
       #FIXME move to mstmp.nix and also have host and address being assigned to configVars as per fidgetingbits
       msmtp-host = { };
       msmtp-address = { };
       msmtp-password = { };
 
-      # extract to default pam-u2f authfile location for passwordless sudo. see ../optional/yubikey
-      "yubico/u2f_keys" = {
-        path = "/home/${configVars.username}/.config/Yubico/u2f_keys";
-      };
     };
   };
   # The containing folders are created as root and if this is the first ~/.config/ entry,
