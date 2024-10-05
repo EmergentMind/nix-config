@@ -6,7 +6,7 @@
 
   config = lib.mkIf config.nixvim-config.plugins.copilot.enable {
     programs.nixvim.plugins = {
-      nvim-copilot = {
+      copilot = {
         enable = true;
         autoEnableSources = true;
         experimental = {

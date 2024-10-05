@@ -1,3 +1,5 @@
+# git interface for nvim
+# https://github.com/NeogitOrg/neogit
 { config, lib, ... }:
 {
   options = {
@@ -5,8 +7,8 @@
   };
 
   config = lib.mkIf config.nixvim-config.plugins.neogit.enable {
-    programs.nixvim.plugins = {
-      neogit = {
+    programs.nixvim = {
+      plugins.neogit = {
         enable = true;
         #disableBuiltinNotifications = true;
       };

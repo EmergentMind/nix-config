@@ -21,20 +21,52 @@
             };
             val = [
               ""
-              "       ooooooo"
-              "     oo        oo"
-              "   oo            oo"
-              "  o                o"
-              " o                  o"
-              "o                    o"
-              "o         ##         o"
-              "o         ##         o"
-              "o                    o"
-              " o                  o"
-              "  o                o"
-              "   oo            oo"
-              "     oo        oo"
-              "        oooooo"
+              "                            *                             "
+              "                            *                             "
+              "                            *                             "
+              "                            **                            "
+              "                            **                            "
+              "                            **                            "
+              "                            **                            "
+              "                            **                            "
+              "                            **                            "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                           ****                           "
+              "                          *****                           "
+              "                         ****                             "
+              "                       *****                              "
+              "                      ****                                "
+              "                    ****                                  "
+              "                  *****************                       "
+              "                 *******************                      "
+              "               ****               ****                    "
+              "              ***                  ****                   "
+              "            ****                    ****                  "
+              "           ****                      ****                 "
+              "         ****                         ****                "
+              "        ****                            ***               "
+              "       ***                               ****             "
+              "     ***                                  ****            "
+              "    **                                     ****           "
+              "   *                                        ****          "
+              " *                                           ****         "
+              "                                               ***        "
+              "                                                ***       "
+              "                                                 ***      "
+              "                                                  ***     "
+              "                                                    **    "
+              "                                                     **   "
+              "                                                       *  "
+              "                                                        * "
+              "                                                         *"
               ""
             ];
           }
@@ -43,19 +75,19 @@
             val = [
               {
                 type = "button";
-                val = "  New file";
+                val = "   New file";
                 on_press.raw = "function() vim.cmd[[ene]] end";
                 opts = {
-                  shortcut = "<Leader>cn";
+                  shortcut = " <Leader>cn ";
                   position = "center";
                 };
               }
               {
                 type = "button";
-                val = "  Quit Neovim";
+                val = "   Quit Neovim";
                 on_press.raw = "function() vim.cmd[[qa]] end";
                 opts = {
-                  shortcut = ":q";
+                  shortcut = " :q ";
                   position = "center";
                 };
               }
