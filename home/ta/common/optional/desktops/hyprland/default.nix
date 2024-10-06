@@ -65,32 +65,37 @@
         "0, monitor:HDMI-A-1, default:true, persistent:true"
       ];
 
+      #FIXME-rice colors conflict with stylix
       general = {
         gaps_in = 6;
         gaps_out = 6;
-        border_size = 3;
+        border_size = 0;
+        #col.inactive-border = "0x00000000";
+        #col.active-border = "0x0000000";
         resize_on_border = true;
         hover_icon_on_border = true;
-        #cursor_inactive_timeout = 4;
+        allow_tearing = true; # used to reduce latency and/or jitter in games
       };
-      #      decoration = {
-      #     col.inactive-border = "0x00000000";
-      #     col.active-border = "0x0000000";
-      #     fullscreen_opacity = 1.0;
-      #     # rounding = 7;
-      #     blur = {
-      #     enabled = false;
-      #     size = 5;
-      #     passes = 3;
-      #     new_optimizations = true;
-      #     ignore_opacity = true;
-      #   };
-      #   drop_shadow = false;
-      #   shadow_range = 12;
-      #   shadow_offset = "3 3";
-      #   "col.shadow" = "0x44000000";
-      #   "col.shadow_inactive" = "0x66000000";
-      #};
+      cursor.inactive_timeout = 10;
+      decoration = {
+        active_opacity = 1.0;
+        inactive_opacity = 0.85;
+        fullscreen_opacity = 1.0;
+        rounding = 10;
+        blur = {
+          enabled = false;
+          size = 5;
+          passes = 3;
+          new_optimizations = true;
+          ignore_opacity = true;
+          popups = true;
+        };
+        drop_shadow = true;
+        shadow_range = 12;
+        shadow_offset = "3 3";
+        #"col.shadow" = "0x44000000";
+        #        "col.shadow_inactive" = "0x66000000";
+      };
       # group = {
 
       #groupbar = {
