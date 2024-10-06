@@ -76,6 +76,11 @@
         hover_icon_on_border = true;
         allow_tearing = true; # used to reduce latency and/or jitter in games
       };
+      #general bindings. for keybinds see ./binds.nix
+      binds = {
+        workspace_center_on = 1; # Whether switching workspaces should center the cursor on the workspace (0) or on the last active window for that workspace (1)
+        movefocus_cycles_fullscreen = false; # If enabled, when on a fullscreen window, movefocus will cycle fullscreen, if not, it will move the focus in a direction.
+      };
       cursor.inactive_timeout = 10;
       decoration = {
         active_opacity = 1.0;
