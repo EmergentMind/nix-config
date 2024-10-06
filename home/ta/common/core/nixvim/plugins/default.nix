@@ -8,36 +8,6 @@
 
   #   config = lib.mkIf config.nixvim-config.enable {  # don't want to gif on options one level out of here yet
   config = {
-    #TODO nixvim plugins to explore or setup still
-    # todo-comments # maybe too fluff https://github.com/folke/todo-comments.nvim
-    # hardtime # training tool to stop bad vim habits # https://github.com/m4xshen/hardtime.nvim
-    # lint # not sure if this is redundant with all the other language stuff
-    # conform # meant to make lsp less disruptive to the buffer #https://github.com/stevearc/conform.nvim
-    # lspsaga # meant to improve the lsps experience for nvim #https://github.com/nvimdev/lspsaga.nvim
-    # trouble # side or bottom list of all 'trouble' items in your code.#https://github.com/folke/trouble.nvim/
-    # none-ls # inject LSP diagnostics, code actions, and more via LUA #https://github.com/nvimtools/none-ls.nvim
-    # harpoon #file nav
-    # ultimate-autopair #https://github.com/altermo/ultimate-autopair.nvim
-    #    works with nvim-surround
-    # nvim-surround #https://github.com/kylechui/nvim-surround
-    # or tim popes surround
-    # vim-grepper
-    # better-escape #https://github.com/max397574/better-escape.nvim
-    # toggle-term #https://github.com/akinsho/toggleterm.nvim
-
-    # vim-polyglot # a collection of language packs for vim
-    # # The following are already included in vim-polyglot
-    # #but in case poly-glot fails I want to be able to quickly enable what I need.
-    # haskell-vim
-    # plantuml-syntax
-    # pgsql-vim
-    # python-syntax
-    # rust-vim
-    # vim-markdown
-    # vim-nix
-    # vim-terraform
-    # vim-tomlolyglot # collection of language packs
-
     #
     # ========== ui ==========
     #
@@ -90,6 +60,7 @@
     # ========== utils ==========
     #
     nixvim-config.plugins.markdown-preview.enable = lib.mkDefault true;
+    nixvim-config.plugins.todo-comments.enable = lib.mkDefault true;
     nixvim-config.plugins.which-key.enable = lib.mkDefault true;
   };
 }

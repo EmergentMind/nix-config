@@ -7,13 +7,13 @@
   };
 
   config = lib.mkIf config.nixvim-config.plugins.which-key.enable {
-    programs.nixvim.plugins = {
-      which-key = {
+    programs.nixvim = {
+      plugins.which-key = {
         enable = true;
-        opts = {
-          timeout = true;
-          timeoutlen = 300;
-        };
+      };
+      opts = {
+        timeout = true;
+        timeoutlen = 300;
       };
     };
   };

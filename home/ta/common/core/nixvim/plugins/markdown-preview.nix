@@ -12,8 +12,10 @@
     programs.nixvim = {
       plugins.markdown-preview = {
         enable = true;
-        browser = "firefox";
-        theme = "dark";
+        settings = {
+          browser = "firefox";
+          theme = "dark";
+        };
       };
       keymaps = [
         {
