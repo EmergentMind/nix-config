@@ -19,13 +19,12 @@ in
     config.allowUnfree = true;
   };
 
-  # FIXME: Reference generic nix file
+  # NOTE this could be referenced in a generic nix file but it's not worth the extra overhead required elsewhere to do it
   nix = {
     settings.experimental-features = [
       "nix-command"
       "flakes"
     ];
-    extraOptions = "experimental-features = nix-command flakes";
   };
 
   services = {
