@@ -51,8 +51,15 @@ Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emer
   - Modular, optional configs for user and host-specific needs
 - Secrets management via sops-nix and a _private_ nix-secrets repo which is included as a flake input
 - Automated remote-bootstrapping of NixOS, nix-config, and _private_ nix-secrets
-- Multiple YubiKey device handling and agent forwarding
-- Basic NixOS and Home-Manager build automation recipes
+- Multiple YubiKey device handling and agent forwarding for touch-based/passwordless authentication during:
+
+    - login
+    - sudo
+    - ssh
+    - git commit signing
+    - LUKS2 decryption
+
+- NixOS and Home-Manager automation recipes
 
 The roadmap of additional features is laid across functionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
 
@@ -85,6 +92,7 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
     - `disks` - Declarative disk partition and format specifications via disko.
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
+        - `<user>/keys` - Public keys for the user that are symlinked to ~/.ssh
   - `genoa` - stage 5
   - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (12 core), 64MB RAM, Radeon RX5600XT
   - `grief` - Lab - Qemu VM
@@ -114,7 +122,9 @@ For details on how this is accomplished, how to approach different scenarios, an
 
 Thank you to my generous supporters!
 
-If you find what I do helpful, please consider supporting my work on Ko-fi.
+If you find what I do helpful, please consider supporting my work.
+
+<iframe src="https://github.com/sponsors/EmergentMind/button" title="Sponsor EmergentMind" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P6VO0HV)
 
