@@ -20,6 +20,9 @@
       #veracrypt
       #keepassxc
 
+      # Web sites
+      zola
+
       # Media production
       audacity
       blender
