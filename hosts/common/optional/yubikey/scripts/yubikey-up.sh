@@ -22,8 +22,6 @@ if [ -z "$key_name" ]; then
 	exit 0
 fi
 
-echo "Creating links to /etc/ssh/id_${key_name}"
-# ln -sf "/etc/ssh/id_${key_name}" /etc/ssh/id_yubikey
-# ln -sf "/etc/ssh/id_${key_name}.pub" /etc/ssh/id_yubikey.pub
-ln -sf "/home/ta/.ssh/id_${key_name}" /home/ta/.ssh/id_yubikey
-ln -sf "/home/ta/.ssh/id_${key_name}.pub" /home/ta/.ssh/id_yubikey.pub
+echo "Creating links to ~/.ssh/id_${key_name}"
+ln -sf "~/.ssh/id_${key_name}" ~/.ssh/id_yubikey
+ln -sf "~/.ssh/id_${key_name}.pub" ~/.ssh/id_yubikey.pub

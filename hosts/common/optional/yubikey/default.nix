@@ -64,7 +64,7 @@ in
     u2f = {
       enable = true;
       settings = {
-        cue = false; # Tells user they need to press the button
+        cue = true; # Tells user they need to press the button
         authFile = "${homeDirectory}/.config/Yubico/u2f_keys";
         #debug = true;
       };

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "ran" >/home/ta/yubikey-down.log
-#rm /etc/ssh/{id_yubikey,id_yubikey.pub}
-rm /home/ta/.ssh/{id_yubikey,id_yubikey.pub}
+#The echos are for debugging
+#echo "ran" > ~/yubikey-down.log
 
-echo "deleted" >>/home/ta/yubikey-down.log
+rm ~/.ssh/{id_yubikey,id_yubikey.pub}
+
+#The echo is for debugging
+#echo "deleted" >> ~/yubikey-down.log
