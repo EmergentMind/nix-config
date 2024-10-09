@@ -7,15 +7,18 @@
 - next video - yubikey
     - ~~write article/script~~
     - ~~record camera/audio~~
-    - record screencaptures
-    - preproduction assets
-    - edit
-    - publish
+    - ~~record screencaptures~~
+    - ~~preproduction assets~~
+    - ~~edit~~
+    - final render and publish
+
+- printer
 
 - neovim
     - sort out lsp deficiencies
 
-- enable backup (verify access to oops)
+- enable backup
+    - ~~access to oops~~
 
 - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 - symlink home stuff with /mnt/extra/foo
@@ -23,8 +26,9 @@
 - investigate
     - hyprcursor
     - hyprlock
+    - wlogout
 
-update docs in nix-secrets
+- update docs in nix-secrets
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
