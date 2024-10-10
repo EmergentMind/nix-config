@@ -8,16 +8,16 @@
     programs.nixvim.plugins = {
       auto-session = {
         enable = true;
-        logLevel = "error";
-        autoSave.enabled = true;
-        autoRestore.enabled = false;
-        autoSession = {
+        settings = {
+          logLevel = "error";
           suppressDirs = [
             "~/"
             "~/downloads"
             "~/doc"
             "~/tmp"
           ];
+          autoSave.enabled = true;
+          autoRestore.enabled = false;
           useGitBranch = true; # include git branch name in session name to differentiate btwn sessions for different branches
         };
       };
