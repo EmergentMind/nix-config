@@ -32,7 +32,7 @@ let
   );
 
   identityFiles = [
-    "id_yubikey" # This is an auto symlink to whatever yubikey is plugged in. See hosts/common/optional/yubikey
+    "id_yubikey" # This is an auto symlink to whatever yubikey is plugged in. See modules/common/yubikey
     "id_manu" # fallback to id_manu if yubikeys are not present
   ];
 

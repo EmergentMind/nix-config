@@ -3,5 +3,6 @@
 
 {
   backup = import ./backup;
+  yubikey = import ./yubikey;
   zsa-udev-rules = import ./zsa-udev-rules.nix;
 }

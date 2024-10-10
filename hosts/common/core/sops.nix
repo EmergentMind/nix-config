@@ -48,7 +48,7 @@ in
       # extract username/password to /run/secrets-for-users/ so it can be used to create the user
       "${configVars.username}/password".neededForUsers = true;
 
-      # extract to default pam-u2f authfile location for passwordless sudo. see hosts/common/optional/yubikey
+      # extract to default pam-u2f authfile location for passwordless sudo. see modules/common/yubikey
       "yubico/u2f_keys" = {
         owner = config.users.users.${configVars.username}.name;
         inherit (config.users.users.${configVars.username}) group;

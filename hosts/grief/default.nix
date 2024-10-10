@@ -37,7 +37,7 @@
 
       #################### Host-specific Optional Configs ####################
       #    "hosts/common/optional/initrd-ssh.nix"
-      "hosts/common/optional/yubikey"
+      "hosts/common/optional/yubikey.nix"
       "hosts/common/optional/services/clamav.nix" # depends on optional/msmtp.nix
       "hosts/common/optional/msmtp.nix" # required for emailing clamav alerts
       "hosts/common/optional/services/openssh.nix"
