@@ -13,7 +13,7 @@
       mainBar = {
         layer = "top";
         position = "top";
-        height = 30;
+        height = 36; # 36 is the minimum height required by the modules
         output = [
           "DP-1"
           "DP-2"
