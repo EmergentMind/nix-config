@@ -12,7 +12,6 @@ let
   associations = {
     "text/*" = editor;
     "text/plain" = editor;
-    "text/csv" = editor;
 
     # "text/html" = browser;
     "application/x-zerosize" = editor; # empty files
@@ -68,6 +67,7 @@ let
     #
     # Office Stuff
     #
+    "text/csv" = spreadsheet;
     "application/vnd.ms-excel" = spreadsheet;
     "application/vnd.ms-powerpoint" = slidedeck;
     "application/vnd.ms-word" = writer;
