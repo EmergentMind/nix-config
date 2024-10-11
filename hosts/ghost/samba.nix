@@ -1,3 +1,5 @@
+#FIXME(structure) this needs a proper home but not sure where yet
+
 # Once this service is started for the first time
 # add any required users and passwords
 # `sudo smbpasswd -a <user>` and follow prompts
@@ -21,28 +23,23 @@ in
     package = pkgs.samba4Full;
     openFirewall = true;
     settings = {
+      # config settings https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html
       global = {
+        "invalid users" = [ "root" ];
         "workgroup" = "WORKGROUP";
-        #TODO confirm
-        "server string" = "mediashare";
-        "netbios name" = "mediashare";
         "security" = "user";
-        #"use sendfile" = "yes";
-        #"max protocol" = "smb2";
         "hosts allow" = "${localPrefix} 127.0.0.1 localhost";
         "hosts deny" = "0.0.0.0/0";
         "guest account" = "nobody";
         "map to guest" = "bad user";
       };
-      "private" = {
+      "mediashare" = {
         "path" = "/mnt/extra/mediashare";
         "browseable" = "yes";
         "read only" = "no";
-        "guest ok" = "no";
+        "guest ok" = "yes";
         "create mask" = "0644";
         "directory mask" = "0755";
-        "force user" = "username";
-        "force group" = "groupname";
       };
     };
   };

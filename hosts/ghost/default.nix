@@ -50,6 +50,8 @@
       "hosts/common/optional/hyprland.nix" # window manager
       "hosts/common/optional/wayland.nix" # wayland components and pkgs not avaialble in home-manager
     ])
+    #################### Ghost specific####################
+    ./samba.nix
 
   ];
 
