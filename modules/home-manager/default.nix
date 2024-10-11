@@ -2,6 +2,7 @@
 # These should be stuff you would like to share with others, not your personal configurations.
 
 {
-  yubikey-touch-detector = import ./yubikey-touch-detector.nix;
   copyq = import ./copyq.nix;
+  monitors = import ./monitors.nix;
+  yubikey-touch-detector = import ./yubikey-touch-detector.nix;
 }

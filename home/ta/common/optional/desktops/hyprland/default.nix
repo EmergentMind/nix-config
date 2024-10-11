@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   lib,
   ...
 }:
@@ -36,24 +37,24 @@
         "WLR_RENDERER_ALLOW_SOFTWARE,1"
         "QT_QPA_PLATFORM,wayland"
       ];
+      xwayland.force_zero_scaling = true;
 
-      # Configure your Display resolution, offset, scale and Monitors here, use `hyprctl monitors` to get the info.
-      # https://wiki.hyprland.org/Configuring/Monitors/
-      #           ------
-      #          | DP-3 |
-      #           ------
-      #  ------   ------    ------
-      # | DP-2 | | DP-1 | | HDMI-A-1 |
-      #  ------   ------    ------
-      monitor = [
-        "DP-1, 2560x1440@240, 0x0, 1"
-        "DP-2, 2560x2880@60, -2560x0, 1"
-        "DP-3, 1920x1080@60, 0x-1080, 1, transform, 2"
-        "HDMI-A-1, 2560x2880@60, 2560x0, 1"
-      ];
+      # parse the monitor spec defined in nix-config/home/<user>/<host>.nix
+      monitor = (
+        map (
+          m:
+          "${m.name},${
+            if m.enabled then
+              "${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},1,transform, ${toString m.transform}"
+            else
+              "disable"
+          }"
+        ) (config.monitors)
+      );
 
+      #FIXME adapt this to work with new monitor module
       workspace = [
-        "1, monitor:DP-1, default:true"
+        "1, monitor:DP-1, default:true, persistent:true"
         "2, monitor:DP-1, default:true"
         "3, monitor:DP-1, default:true"
         "4, monitor:DP-1, default:true"
@@ -92,7 +93,6 @@
           size = 5;
           passes = 3;
           new_optimizations = true;
-          ignore_opacity = true;
           popups = true;
         };
         drop_shadow = true;
@@ -118,10 +118,19 @@
       # Autostart applications
       # exec-once = ''${startupScript}/path'';
       exec-once = [
-        ''${pkgs.copyq}/bin/copyq''
-        ''${pkgs.signal-desktop}/bin/signal''
-        ''${pkgs.yubioath-flutter}/bin/yubioath-flutter''
-        ''${pkgs.spotify}/bin/spotify''
+        ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
+        ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal''
+        ''[workspace 9 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
+        ''[workspace 0 silent]${pkgs.spotify}/bin/spotify''
+      ];
+      layer = [
+        #
+        # ========== Layer Rules ==========
+        #
+        #"blur, rofi"
+        #"ignorezero, rofi"
+        #"ignorezero, logout_dialog"
+
       ];
       windowrule = [
         # Dialogs
@@ -136,41 +145,77 @@
 
       windowrulev2 =
         let
-          flameshot = "class:^(flameshot)$,title:^(flameshot)$";
+          #FIXME these aren't working for some reason; higher priority so switched to manual entry for now
+          flameshot = "class:^(flameshot)$, title:^(flameshot)$";
           scratch = "class:^(scratch_term)$";
-          steam = "title:^()$,class:^([Ss]team)$";
-          steamFloat = "title:^((?![Ss]team).*)$,class:^([Ss]team)$";
-          steamGame = "class:^([Ss]team_app_.*)$";
+          #steam = "title:^()$ class:^([Ss]team)$";
+          steam = "title:^(*)$ class:^([Ss]team)$";
+          steamFloat = "title:^((?![Ss]team)*)$, class:^([Ss]team)$";
+          steamGame = "class:^([Ss]team_app_*)$";
         in
         [
           "float, class:^(galculator)$"
           "float, class:^(waypaper)$"
 
+          #
+          # ========== Always opaque ==========
+          #
+          #FIXME This isn't working... probably have the wrong option
+          "opaque, class:^([Gg]imp)$"
+          "opaque, class:^([Ff]lameshot)$"
+          "opaque, class:^([Ii]nkscape)$"
+          "opaque, class:^([Bb]lender)$"
+          "opaque, class:^([Oo][Bb][Ss])$"
+          "opaque, class:^(([Ss]team))$"
+          "opaque, class:^(([Ss]team_app_*)$"
+
+          # Remove transparancy from video
+          "opaque, title:^(Netflix)(.*)$"
+          "opaque, title:^(.*YouTube.*)$"
+          "opaque, title:^(Picture-in-Picture)$"
+          #
+          # ========== Scratch rules ==========
+          #
+          "float, class:^(scratch_term)$"
+          "size 80% 85%, class:^(scratch_term)$"
+          "workspace special:scratch_term, class:^(scratch_term)$"
+          "center, class:^(scratch_term)$"
+
+          #
+          # ========== Steam rules ==========
+          #
+          "stayfocused, class:^(([Ss]team))$"
+          "minsize 1 1, class:^(([Ss]team))$"
+          #"workspace 7, class:^(([Ss]team_app_*))$"
+          #"monitor 0, class:^(([Ss]team_app_*))$"
+          "immediate, class:^(([Ss]team_app_*))$"
+          #"float, ${steamFloat}"
+          #"stayfocused, ${steam}"
+          #"minsize 1 1, ${steam}"
+          #"workspace 7, ${steamGame}"
+          #"monitor 0, ${steamGame}"
+          #"immediate, ${steamGame}"
+
+          #
+          # ========== Fameshot rules ==========
+          #
           # flameshot currently doesn't have great wayland support so needs some tweaks
-          #          "monitor DP-1, ${flameshot}"
-          "rounding 0, ${flameshot}"
-          "noborder, ${flameshot}"
-          "float, ${flameshot}"
-          "move 0 0, ${flameshot}"
-          "suppressevent fullscreen, ${flameshot}"
+          #"rounding 0, class:^([Ff]lameshot)$"
+          #"noborder, class:^([Ff]lameshot)$"
+          #"float, class:^([Ff]lameshot)$"
+          #"move 0 0, class:^([Ff]lameshot)$"
+          #"suppressevent fullscreen, class:^([Ff]lameshot)$"
+          # "monitor:DP-1, ${flameshot}"
 
-          "float, ${scratch}"
-          "size 80% 85%, ${scratch}"
-          "workspace special:scratch_term, ${scratch}"
-          "center, ${scratch}"
+          #
+          # ========== Workspace Assignments ==========
+          #
+          "workspace 8, class:^(virt-manager)$"
+          "workspace 8, class:^(obsidian)$"
+          "workspace 9, class:^(signal-desktop)$"
+          "workspace 9, class:^(yubioath-flutter)$"
+          "workspace 0, class:^(spotify)$"
 
-          "float, ${steamFloat}"
-          "stayfocused, ${steam}"
-          "minsize 1 1, ${steam}"
-          "workspace 7, ${steamGame}"
-          "immediate, ${steamGame}"
-
-          # WORKSPACE ASSIGNMENTS
-          "workspace 8, class:^(virt-manager)"
-          "workspace 8, class:^(obsidian)"
-          "workspace 9, class:^(signal-desktop)"
-          "workspace 9, class:^(yubioath-flutter)"
-          "workspace 0, class:^(spotify)"
         ];
 
       # load at the end of the hyperland set
