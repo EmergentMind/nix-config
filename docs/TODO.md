@@ -4,25 +4,17 @@
 
 ## Short Term
 
-- next video - yubikey
-    - ~~write article/script~~
-    - ~~record camera/audio~~
-    - ~~record screencaptures~~
-    - ~~preproduction assets~~
-    - ~~edit~~
-    - final render and publish
-
-- printer
+- enable backup
+    - ~~access to oops~~
+    - add modules
+    - run scripts
+    - test
 
 - neovim
     - sort out lsp deficiencies
 
-- enable backup
-    - ~~access to oops~~
-
 - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 - symlink home stuff with /mnt/extra/foo
-- enable mediashare
 - investigate
     - hyprcursor
     - hyprlock
@@ -153,7 +145,7 @@ DEFERRED:
 - ~~verify drives~~
 - ~~verify critical apps and services functionality~~
 - enable backup
-- enable mediashare
+- ~~enable mediashare~~
 
 ##### 4.3 Get comfortable
 
