@@ -65,7 +65,7 @@ in
       identifiers = lib.mkOption {
         default = { };
         type = lib.types.attrsOf lib.types.int;
-        description = "Attrset of Yubikey IDs";
+        description = "Attrset of Yubikey serial numbers";
         example = lib.literalExample ''
           {
             foo = 12345678;
