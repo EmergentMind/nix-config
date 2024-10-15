@@ -147,7 +147,7 @@
         let
           #FIXME these aren't working for some reason; higher priority so switched to manual entry for now
           flameshot = "class:^(flameshot)$, title:^(flameshot)$";
-          scratch = "class:^(scratch_term)$";
+          scratch = "workspace:^(special:special)$";
           #steam = "title:^()$ class:^([Ss]team)$";
           steam = "title:^(*)$ class:^([Ss]team)$";
           steamFloat = "title:^((?![Ss]team)*)$, class:^([Ss]team)$";
@@ -176,16 +176,14 @@
           #
           # ========== Scratch rules ==========
           #
-          "float, class:^(scratch_term)$"
-          "size 80% 85%, class:^(scratch_term)$"
-          "workspace special:scratch_term, class:^(scratch_term)$"
-          "center, class:^(scratch_term)$"
+          #"size 80% 85%, workspace:^(special:special)$"
+          #"center, workspace:^(special:special)$"
 
           #
           # ========== Steam rules ==========
           #
-          "stayfocused, class:^(([Ss]team))$"
-          "minsize 1 1, class:^(([Ss]team))$"
+          "stayfocused, title:^()$,class:^(([Ss]team))$"
+          "minsize 1 1, title:^()$,class:^(([Ss]team))$"
           #"workspace 7, class:^(([Ss]team_app_*))$"
           #"monitor 0, class:^(([Ss]team_app_*))$"
           "immediate, class:^(([Ss]team_app_*))$"
@@ -212,10 +210,12 @@
           #
           "workspace 8, class:^(virt-manager)$"
           "workspace 8, class:^(obsidian)$"
-          "workspace 9, class:^(signal-desktop)$"
+          "workspace 9, class:^(brave-browser)$"
+          "workspace 9, class:^(signal)$"
+          "workspace 9, class:^(org.telegram.desktop)$"
+          "workspace 9, class:^(discord)$"
           "workspace 9, class:^(yubioath-flutter)$"
           "workspace 0, class:^(spotify)$"
-
         ];
 
       # load at the end of the hyperland set

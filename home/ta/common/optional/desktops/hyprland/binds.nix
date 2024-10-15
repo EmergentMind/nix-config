@@ -62,7 +62,7 @@
         };
         pactl = lib.getExe' pkgs.pulseaudio "pactl"; # installed via /hosts/common/optional/audio.nix
       in
-      #        playerctl = lib.getExe pkgs.playerctl; # installed via /home/common/optional/desktops/playerctl.nix
+      #playerctl = lib.getExe pkgs.playerctl; # installed via /home/common/optional/desktops/playerctl.nix
       #swaylock = "lib.getExe pkgs.swaylock;
       #makoctl = "${config.services.mako.package}/bin/makoctl";
       #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
@@ -86,6 +86,7 @@
         # so resorting to grimblast in the meantime
         #"CTRL_ALT,8,exec,flameshot gui"
         "CTRL_ALT,8,exec,grimblast --notify --freeze copy area"
+        "CTRL_ALT,p,exec,grimblast --notify --freeze copy area"
         ",Print,exec,grimblast --notify --freeze copy area"
 
         #################### Basic Bindings ####################
@@ -102,18 +103,19 @@
         "SHIFTALT,space,togglefloating"
         "SHIFTALT, p, pin" # pins a floating window (i.e. show it on all workspaces)
 
-        "SHIFALT, r, resizeactive"
+        #FIXME this works differently in hyprland
+        #"SHIFALT, r, resizeactive"
 
-        #        "SHIFTALT,minus,splitratio,-0.25"
-        #        "SHIFTALT,equal,splitratio,0.25"
+        #"SHIFTALT,minus,splitratio,-0.25"
+        #"SHIFTALT,equal,splitratio,0.25"
 
         "ALT,g,togglegroup"
         "ALT,t,lockactivegroup,toggle"
         "ALT,apostrophe,changegroupactive,f"
         "SHIFTALT,apostrophe,changegroupactive,b"
 
-        "ALT,-,togglespecialworkspace"
-        "SHIFTALT,-,movetoworkspacesilent,special"
+        "ALT,y, togglespecialworkspace"
+        "SHIFTALT,y,movetoworkspace,special"
 
         #################### Media Controls ####################
         # Output
