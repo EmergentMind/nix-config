@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    # custom key binds
     ./binds.nix
   ];
 
@@ -28,6 +27,9 @@
     # plugins = [];
 
     settings = {
+      #
+      # ========== Environment Vars ==========
+      #
       env = [
         "NIXOS_OZONE_WL, 1" # for ozone-based and electron apps to run on wayland
         "MOZ_ENABLE_WAYLAND, 1" # for firefox to run on wayland
@@ -37,8 +39,13 @@
         "WLR_RENDERER_ALLOW_SOFTWARE,1"
         "QT_QPA_PLATFORM,wayland"
       ];
+
+      #FIXME(games) this may be left over from trying stuff
       xwayland.force_zero_scaling = true;
 
+      #
+      # ========== Monitor ==========
+      #
       # parse the monitor spec defined in nix-config/home/<user>/<host>.nix
       monitor = (
         map (
@@ -66,6 +73,35 @@
         "0, monitor:HDMI-A-1, default:true, persistent:true"
       ];
 
+      #
+      # ========== Behavior ==========
+      #
+      binds = {
+        workspace_center_on = 1; # Whether switching workspaces should center the cursor on the workspace (0) or on the last active window for that workspace (1)
+        movefocus_cycles_fullscreen = false; # If enabled, when on a fullscreen window, movefocus will cycle fullscreen, if not, it will move the focus in a direction.
+      };
+      input = {
+        follow_mouse = 2;
+        # follow_mouse options:
+        # 0 - Cursor movement will not change focus.
+        # 1 - Cursor movement will always change focus to the window under the cursor.
+        # 2 - Cursor focus will be detached from keyboard focus. Clicking on a window will move keyboard focus to that window.
+        # 3 - Cursor focus will be completely separate from keyboard focus. Clicking on a window will not change keyboard focus.
+        mouse_refocus = false;
+      };
+      cursor.inactive_timeout = 10;
+      misc = {
+        disable_hyprland_logo = true;
+        animate_manual_resizes = true;
+        animate_mouse_windowdragging = true;
+        #disable_autoreload = true;
+        new_window_takes_over_fullscreen = 2; # 0 - behind, 1 - takes over, 2 - unfullscreen/unmaxize
+        middle_click_paste = false;
+      };
+
+      #
+      # ========== Appearance ==========
+      #
       #FIXME-rice colors conflict with stylix
       general = {
         gaps_in = 6;
@@ -77,12 +113,6 @@
         hover_icon_on_border = true;
         allow_tearing = true; # used to reduce latency and/or jitter in games
       };
-      #general bindings. for keybinds see ./binds.nix
-      binds = {
-        workspace_center_on = 1; # Whether switching workspaces should center the cursor on the workspace (0) or on the last active window for that workspace (1)
-        movefocus_cycles_fullscreen = false; # If enabled, when on a fullscreen window, movefocus will cycle fullscreen, if not, it will move the focus in a direction.
-      };
-      cursor.inactive_timeout = 10;
       decoration = {
         active_opacity = 1.0;
         inactive_opacity = 0.85;
@@ -102,36 +132,34 @@
         #        "col.shadow_inactive" = "0x66000000";
       };
       # group = {
-
       #groupbar = {
       #          };
       #};
-      misc = {
-        #  disable_hyprland_logo = true;
-        animate_manual_resizes = true;
-        animate_mouse_windowdragging = true;
-        #  disable_autoreload = true;
-        new_window_takes_over_fullscreen = 2; # 0 - behind, 1 - takes over, 2 - unfullscreen/unmaxize [0/1/2]
-        middle_click_paste = false;
-      };
 
-      # Autostart applications
+      #
+      # ========== Auto Launch ==========
+      #
       # exec-once = ''${startupScript}/path'';
+      # To determine path, run `which foo`
       exec-once = [
+        ''${pkgs.waypaper}/bin/waypaper''
         ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
-        ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal''
+        ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
         ''[workspace 9 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
         ''[workspace 0 silent]${pkgs.spotify}/bin/spotify''
       ];
+      #
+      # ========== Layer Rules ==========
+      #
       layer = [
-        #
-        # ========== Layer Rules ==========
-        #
         #"blur, rofi"
         #"ignorezero, rofi"
         #"ignorezero, logout_dialog"
 
       ];
+      #
+      # ========== Window Rules ==========
+      #
       windowrule = [
         # Dialogs
         "float, title:^(Open File)(.*)$"
@@ -142,7 +170,6 @@
         "float, title:^(Library)(.*)$"
         "float, title:^(Accounts)(.*)$"
       ];
-
       windowrulev2 =
         let
           #FIXME these aren't working for some reason; higher priority so switched to manual entry for now
