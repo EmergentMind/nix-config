@@ -74,14 +74,18 @@
       #browser = defaultApp "x-scheme-handler/https";
 
       lib.flatten [
-        #################### Program Launch ####################
+        #
+        # ========== Program Launch ==========
+        #
         "ALT,Return,exec,kitty"
         "CTRL_ALT,v,exec,kitty nvim"
         "SUPER,space,exec,rofi -show run"
         "ALT,tab,exec,rofi -show window"
         "CTRL_ALT,f,exec,thunar"
 
-        # screenshots
+        #
+        # ========== Screenshotting ==========
+        #
         # TODO check on status of flameshot and multimonitor wayland. as of Oct 2024, it's a clusterfuck
         # so resorting to grimblast in the meantime
         #"CTRL_ALT,8,exec,flameshot gui"
@@ -89,7 +93,9 @@
         "CTRL_ALT,p,exec,grimblast --notify --freeze copy area"
         ",Print,exec,grimblast --notify --freeze copy area"
 
-        #################### Basic Bindings ####################
+        #
+        # ========== Basic Binds ==========
+        #
         #reload the configuration file
         "SHIFTALT,r,exec,hyprctl reload"
 
@@ -117,7 +123,9 @@
         "ALT,y, togglespecialworkspace"
         "SHIFTALT,y,movetoworkspace,special"
 
-        #################### Media Controls ####################
+        #
+        # ========== Media Controls ==========
+        #
         # Output
         ", XF86AudioMute, exec, ${pactl} set-sink-mute @DEFAULT_SINK@ toggle"
         ", XF86AudioRaiseVolume, exec, ${pactl} set-sink-volume @DEFAULT_SINK@ +1%"
@@ -126,12 +134,15 @@
         ", XF86AudioMute, exec, ${pactl} set-source-mute @DEFAULT_SOURCE@ toggle"
         ", XF86AudioRaiseVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ +1%"
         ", XF86AudioLowerVolume, exec, ${pactl} set-source-volume @DEFAULT_SOURCE@ -1%"
-        # Player controls
+        # Player
         #FIXME For some reason these key pressings aren't firing from Moonlander. Nothing shows when running wev
         ", XF86AudioPlay, exec, 'playerctl --ignore-player=firefox,chromium,brave play-pause'"
         ", XF86AudioNext, exec, 'playerctl --ignore-player=firefox,chromium,brave next'"
         ", XF86AudioPrev, exec, 'playerctl --ignore-player=firefox,chromium,brave previous'"
 
+        #
+        # ========== Workspace ==========
+        #
         # Change workspace
         (map (n: "ALT,${n},workspace,name:${n}") workspaces)
 
