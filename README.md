@@ -116,7 +116,7 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
 
 Secrets for this config are stored in a private repository called nix-secrets that is pulled in as a flake input and managed using the sops-nix tool.
 
-For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/technology/2024/03/22/secrets-management.html) available on my website.
+For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/posts/secrets-management/) available on my website.
 
 ## Support
 
