@@ -70,6 +70,8 @@
         "ALT,Return,exec,kitty"
         "CTRL_ALT,v,exec,kitty nvim"
         "SUPER,space,exec,rofi -show run"
+        "SUPER_SHIFT,space,exec,rofi -show drun"
+        "SUPER,s,exec,rofi -show ssh"
         "ALT,tab,exec,rofi -show window"
         "CTRL_ALT,f,exec,thunar"
 
