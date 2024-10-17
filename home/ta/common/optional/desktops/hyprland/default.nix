@@ -248,7 +248,7 @@
       # ========== hy3 config ==========
       #
       #TODO enable this and config
-      #general.layout = "hy3";
+      general.layout = "hy3";
       plugin = {
         hy3 = {
 

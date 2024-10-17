@@ -1,17 +1,30 @@
+#NOTE actions prepended with `hy3;` are specific to the hy3 hyprland plugin
 {
+  config,
   lib,
   pkgs,
   ...
 }:
 {
   wayland.windowManager.hyprland.settings = {
+    #
+    # ========== Mouse Bindings==========
+    #
+
     bindm = [
-      # alt + leftlclick
+      # hold alt + leftlclick  to move/drag active window
       "ALT,mouse:272,movewindow"
-      # alt + rightclick
+      # hold alt + rightclick to resize active window
       "ALT,mouse:273,resizewindow"
     ];
+    bindn = [
+      # allow tab selection using mouse
+      ", mouse:272, hy3:focustab, mouse"
+    ];
 
+    #
+    # ========== Key Bindings==========
+    #
     bind =
       let
         workspaces = [
@@ -50,28 +63,31 @@
           j = down;
         };
         pactl = lib.getExe' pkgs.pulseaudio "pactl"; # installed via /hosts/common/optional/audio.nix
-      in
-      #playerctl = lib.getExe pkgs.playerctl; # installed via /home/common/optional/desktops/playerctl.nix
-      #swaylock = "lib.getExe pkgs.swaylock;
-      #makoctl = "${config.services.mako.package}/bin/makoctl";
-      #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
-      #notify-send = "${pkgs.libnotify}/bin/notify-send";
-      #gtk-launch = "${pkgs.gtk3}/bin/gtk-launch";
-      #xdg-mime = "${pkgs.xdg-utils}/bin/xdg-mime";
-      #defaultApp = type: "${gtk-launch} $(${xdg-mime} query default ${type})";
-      #terminal = config.home.sessionVariables.TERM;
-      #browser = defaultApp "x-scheme-handler/https";
+        terminal = config.home.sessionVariables.TERM;
+        editor = config.home.sessionVariables.EDITOR;
+        #playerctl = lib.getExe pkgs.playerctl; # installed via /home/common/optional/desktops/playerctl.nix
+        #swaylock = "lib.getExe pkgs.swaylock;
+        #makoctl = "${config.services.mako.package}/bin/makoctl";
+        #gtk-play = "${pkgs.libcanberra-gtk3}/bin/canberra-gtk-play";
+        #notify-send = "${pkgs.libnotify}/bin/notify-send";
+        #gtk-launch = "${pkgs.gtk3}/bin/gtk-launch";
+        #xdg-mime = "${pkgs.xdg-utils}/bin/xdg-mime";
+        #defaultApp = type: "${gtk-launch} $(${xdg-mime} query default ${type})";
+        #browser = defaultApp "x-scheme-handler/https";
 
+      in
       lib.flatten [
+
         #
-        # ========== Program Launch ==========
+        # ========== Quick Launch ==========
         #
-        "ALT,Return,exec,kitty"
-        "CTRL_ALT,v,exec,kitty nvim"
         "SUPER,space,exec,rofi -show run"
         "SUPER_SHIFT,space,exec,rofi -show drun"
         "SUPER,s,exec,rofi -show ssh"
         "ALT,tab,exec,rofi -show window"
+
+        "ALT,Return,exec,${terminal}"
+        "CTRL_ALT,v,exec,${terminal} ${editor}"
         "CTRL_ALT,f,exec,thunar"
 
         #
@@ -79,40 +95,9 @@
         #
         # TODO check on status of flameshot and multimonitor wayland. as of Oct 2024, it's a clusterfuck
         # so resorting to grimblast in the meantime
-        #"CTRL_ALT,8,exec,flameshot gui"
-        "CTRL_ALT,8,exec,grimblast --notify --freeze copy area"
+        #"CTRL_ALT,p,exec,flameshot gui"
         "CTRL_ALT,p,exec,grimblast --notify --freeze copy area"
         ",Print,exec,grimblast --notify --freeze copy area"
-
-        #
-        # ========== Basic Binds ==========
-        #
-        #reload the configuration file
-        "SHIFTALT,r,exec,hyprctl reload"
-
-        "SHIFTALT,q,killactive"
-        #"SHIFTALT,e,exit"
-
-        "ALT,s,togglesplit"
-        "ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
-        #FIXME play around with fullscreenstate to get a setting that works with maximizing sec cams in window
-        #",,fullscreenstate,0"
-        "SHIFTALT,space,togglefloating"
-        "SHIFTALT, p, pin" # pins a floating window (i.e. show it on all workspaces)
-
-        #FIXME this works differently in hyprland
-        #"SHIFALT, r, resizeactive"
-
-        #"SHIFTALT,minus,splitratio,-0.25"
-        #"SHIFTALT,equal,splitratio,0.25"
-
-        "ALT,g,togglegroup"
-        "ALT,t,lockactivegroup,toggle"
-        "ALT,apostrophe,changegroupactive,f"
-        "SHIFTALT,apostrophe,changegroupactive,b"
-
-        "ALT,y, togglespecialworkspace"
-        "SHIFTALT,y,movetoworkspace,special"
 
         #
         # ========== Media Controls ==========
@@ -132,31 +117,65 @@
         ", XF86AudioPrev, exec, 'playerctl --ignore-player=firefox,chromium,brave previous'"
 
         #
-        # ========== Workspace ==========
+        # ========== Windows and Groups ==========
+        #
+        # Close the focused/active window
+        "SHIFTALT,q,hy3:killactive"
+
+        #FIXME play around with fullscreenstate to get a setting that works with maximizing sec cams in window
+        # Fullscreen
+        "ALT,f,fullscreen,0" # 0 - fullscreen (takes your entire screen), 1 - maximize (keeps gaps and bar(s))
+
+        # Float and pin
+        "SHIFTALT,space,togglefloating"
+        "SHIFTALT, p, pin, active" # pins a floating window (i.e. show it on all workspaces)
+
+        # Resize active window 5 pixels in direction
+        "Control_L&Shift_L&Alt_L, h, resizeactive, -5 0"
+        "Control_L&Shift_L&Alt_L, j, resizeactive, 0 5"
+        "Control_L&Shift_L&Alt_L, k, resizeactive, 0 -5"
+        "Control_L&Shift_L&Alt_L, l, resizeactive, 5 0"
+
+        # Splits groups
+        "ALT,v,hy3:makegroup,v" # make a vertical split
+        "SHIFTALT,v,hy3:makegroup,h" # make a horiztonal split
+        "ALT,x,hy3:changegroup,opposite" # toggle btwn splits if untabbed
+        "ALT,s,togglesplit"
+
+        # Tab groups
+        "ALT,g,hy3:changegroup,toggletab" # tab or untab the group
+        #"ALT,t,lockactivegroup,toggle"
+        "ALT,apostrophe,changegroupactive,f"
+        "SHIFTALT,apostrophe,changegroupactive,b"
+
+        #
+        # ========== Workspaces ==========
         #
         # Change workspace
         (map (n: "ALT,${n},workspace,name:${n}") workspaces)
 
+        # Special/scratch
+        "ALT,y, togglespecialworkspace"
+        "SHIFTALT,y,movetoworkspace,special"
+
         # Move window to workspace
-        (map (n: "SHIFTALT,${n},movetoworkspace,name:${n},follow") workspaces)
+        (map (n: "SHIFTALT,${n},hy3:movetoworkspace,name:${n}") workspaces)
 
-        # Move focus
-        (lib.mapAttrsToList (key: direction: "ALT,${key},movefocus,${direction}") directions)
-
-        # Swap windows
-        #   (lib.mapAttrsToList
-        #      (key: direction: "SHIFTALT,${key},swapwindow,${direction}") directions)
+        # Move focus from active window to window in specified direction
+        (lib.mapAttrsToList (key: direction: "ALT,${key},hy3:movefocus,${direction},warp") directions)
 
         # Move windows
-        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindow,${direction}") directions)
+        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},hy3:movewindow,${direction}") directions)
 
-        # Move workspace to other monitor
+        # Move workspace to monitor in specified direction
         (lib.mapAttrsToList (
           key: direction: "CTRLSHIFT,${key},movecurrentworkspacetomonitor,${direction}"
         ) directions)
-        # Move monitor focus
-        #(lib.mapAttrsToList
-        #      (key: direction: "ALTALT,${key},focusmonitor,${direction}") directions)
+
+        #
+        # ========== Misc ==========
+        #
+        "SHIFTALT,r,exec,hyprctl reload" # reload the configuration file
       ];
   };
 }

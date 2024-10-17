@@ -14,6 +14,7 @@ Hyprland stuff:
     - Startup things to sort out:
         - not all hyprland workspace assignments working
         - workspace 9 group rules
+    - hy3 config
     - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
     - investigate
         - hyprcursor
