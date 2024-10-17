@@ -53,9 +53,7 @@ let
         #"steam://open/bigpicture"
       ];
     in
-    #FIXME This is created in the nixstore and symlinked to  ~/.nix-profile/share/...  Need a way to drun that from rofi
-    #  in the interim run gamescope from terminal with the above args
-    pkgs.writeTextDir "share/wayland-sessions/steam-session.desktop" ''
+    pkgs.writeTextDir "share/applications/steam-session.desktop" ''
       [Desktop Entry]
       Name=Steam Session
       Exec=${gamescope} -- ${steam}
