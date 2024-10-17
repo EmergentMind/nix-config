@@ -4,28 +4,21 @@
 
 ## Short Term
 
+- enable backup
+    - ~~access to oops~~
+    - add modules
+    - run scripts
+    - test
+
 Hyprland stuff:
-    - scratch term
     - Startup things to sort out:
-        - waypaper not launching on start
         - not all hyprland workspace assignments working
-        - signal not autostarting
         - workspace 9 group rules
     - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
     - investigate
         - hyprcursor
         - hyprlock
         - wlogout
-
-- check out this guys repo re: impermanence since he based it on mine and enabled
-    - also had a question about getting overlays for pkgs.stable and pkgs.unstable working correctly and wanted me to have a poke
-    - sigboe/nixos-config
-
-- enable backup
-    - ~~access to oops~~
-    - add modules
-    - run scripts
-    - test
 
 - neovim
     - sort out lsp deficiencies

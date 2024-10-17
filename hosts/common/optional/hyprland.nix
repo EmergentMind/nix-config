@@ -2,6 +2,9 @@
 {
   programs.hyprland = {
     enable = true;
-    portalPackage = pkgs.xdg-desktop-portal-hyprland; # default
   };
+
+  environment.systemPackages = [
+    pkgs.hyprlandPlugins.hy3
+  ];
 }

@@ -9,22 +9,22 @@
     ./binds.nix
   ];
 
-  # NOTE: xdg portal package is currently set in /hosts/common/optional/hyprland.nix
-
   wayland.windowManager.hyprland = {
     enable = true;
     systemd = {
       enable = true;
       variables = [ "--all" ]; # fix for https://wiki.hyprland.org/Nix/Hyprland-on-Home-Manager/#programs-dont-work-in-systemd-services-but-do-on-the-terminal
-      #   # TODO: experiment with whether this is required.
-      #   # Same as default, but stop the graphical session too
+      # TODO: experiment with whether this is required.
+      # Same as default, but stop the graphical session too
       extraCommands = lib.mkBefore [
         "systemctl --user stop graphical-session.target"
         "systemctl --user start hyprland-session.target"
       ];
     };
 
-    # plugins = [];
+    plugins = [
+      pkgs.hyprlandPlugins.hy3
+    ];
 
     settings = {
       #
@@ -39,9 +39,6 @@
         "WLR_RENDERER_ALLOW_SOFTWARE,1"
         "QT_QPA_PLATFORM,wayland"
       ];
-
-      #FIXME(games) this may be left over from trying stuff
-      xwayland.force_zero_scaling = true;
 
       #
       # ========== Monitor ==========
@@ -142,7 +139,7 @@
       # exec-once = ''${startupScript}/path'';
       # To determine path, run `which foo`
       exec-once = [
-        ''${pkgs.waypaper}/bin/waypaper''
+        ''${pkgs.waypaper}/bin/waypaper --restore''
         ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
         ''[workspace 9 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
@@ -187,7 +184,6 @@
           #
           # ========== Always opaque ==========
           #
-          #FIXME This isn't working... probably have the wrong option
           "opaque, class:^([Gg]imp)$"
           "opaque, class:^([Ff]lameshot)$"
           "opaque, class:^([Ii]nkscape)$"
@@ -247,6 +243,17 @@
 
       # load at the end of the hyperland set
       # extraConfig = '''';
+
+      #
+      # ========== hy3 config ==========
+      #
+      #TODO enable this and config
+      #general.layout = "hy3";
+      plugin = {
+        hy3 = {
+
+        };
+      };
     };
   };
 }

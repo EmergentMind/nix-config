@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  config,
   ...
 }:
 {
@@ -139,7 +138,7 @@
         (map (n: "ALT,${n},workspace,name:${n}") workspaces)
 
         # Move window to workspace
-        (map (n: "SHIFTALT,${n},movetoworkspacesilent,name:${n}") workspaces)
+        (map (n: "SHIFTALT,${n},movetoworkspace,name:${n},follow") workspaces)
 
         # Move focus
         (lib.mapAttrsToList (key: direction: "ALT,${key},movefocus,${direction}") directions)
@@ -149,7 +148,7 @@
         #      (key: direction: "SHIFTALT,${key},swapwindow,${direction}") directions)
 
         # Move windows
-        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindoworgroup,${direction}") directions)
+        (lib.mapAttrsToList (key: direction: "SHIFTALT,${key},movewindow,${direction}") directions)
 
         # Move workspace to other monitor
         (lib.mapAttrsToList (
