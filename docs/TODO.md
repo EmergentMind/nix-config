@@ -6,15 +6,17 @@
 
 - enable backup
     - ~~access to oops~~
-    - add modules
-    - run scripts
+    - ~~add modules~~
+    - ~~run scripts~~
     - test
 
 Hyprland stuff:
     - Startup things to sort out:
         - not all hyprland workspace assignments working
         - workspace 9 group rules
-    - hy3 config
+    - hy3
+        - ~~general config~~
+        - bash hack as workaround to https://github.com/outfoxxed/hy3/issues/2
     - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
     - investigate
         - hyprcursor
@@ -187,27 +189,10 @@ DEFERRED:
 
 #### 5. Squeaky clean
 
-##### 5.x impermanence
+##### 5.x reduce duplication and modularize
 
-- declare what needs to persist
-- enable impermanence
-    - make sure to include `/luks-secondary-unlock.key`
-
-  Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
-
-##### 5.x remote luks decryption
-
-The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
-
-- Remote LUKS decrypt over ssh for headless hosts
-  - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
-  - add initrd-ssh module that will spawn an ssh service for use during boot
-
-##### 5.x automate config deployment
-
-- Per host branch scheme
-- Automated machine update on branch release
-- Handle general auto updates as well
+- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
+- Re-implement modules to make use of options for enablement
 
 ##### 5.x script cleaning
 
@@ -217,10 +202,19 @@ The following has to happen on bare metal because I can't seem to get the yubike
   - add {{just.executable()}} to just entries
   - explore direnv
 
-##### 5.x reduce duplication and modularize
+##### 5.x impermanence
 
-- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
-- Re-implement modules to make use of options for enablement
+- declare what needs to persist
+- enable impermanence
+    - make sure to include `/luks-secondary-unlock.key`
+
+  Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
+
+##### 5.x automate config deployment
+
+- Per host branch scheme
+- Automated machine update on branch release
+- Handle general auto updates as well
 
 ##### 5.x secure boot
 
@@ -230,6 +224,15 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 
 - https://github.com/ElvishJerricco/stage1-tpm-tailscale
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
+
+
+##### 5.x remote luks decryption
+
+The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
+
+- Remote LUKS decrypt over ssh for headless hosts
+  - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
+  - add initrd-ssh module that will spawn an ssh service for use during boot
 
 ##### 5.x Extras
 
@@ -281,7 +284,7 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 - fonts - https://old.reddit.com/r/vim/comments/fonzfi/what_is_your_favorite_font_for_coding_in_vim/
 - centralize color palette
 - dunst
-- airline
+- lualine
 
 #### 8. tbd
 
