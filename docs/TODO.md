@@ -4,12 +4,7 @@
 
 ## Short Term
 
-- enable backup
-    - ~~access to oops~~
-    - ~~add modules~~
-    - ~~run scripts~~
-    - test
-
+### Current roadmap focus items
 Hyprland stuff:
     - Startup things to sort out:
         - not all hyprland workspace assignments working
@@ -19,19 +14,21 @@ Hyprland stuff:
         - bash hack as workaround to https://github.com/outfoxxed/hy3/issues/2
     - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
     - investigate
-        - hyprcursor
+        - hyprcursor - maybe wait until rice... although current cursor looks like shit
         - hyprlock
         - wlogout
 
 - neovim
     - sort out lsp deficiencies
 
-- symlink home stuff with /mnt/extra/foo
 - update docs in nix-secrets
+
+#### General workflow improvements
+- dig into better kitty, fzf, telescope, and zsh usage
+- look at https://github.com/dandavison/delta
 
 - New tools to integrate
   - atuin - https://github.com/atuinsh/atuin
-  - du-dust
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
 
 - New tools to try
@@ -39,6 +36,8 @@ Hyprland stuff:
   - tmux or zellij
 
 - NeoVim stuff to look at and integrate (so much to do and learn)
+    - refine linting and fixing in nvim
+
     - hardtime # training tool to stop bad vim habits # https://github.com/m4xshen/hardtime.nvim
     - lint # not sure if this is redundant with all the other language stuff
     - conform # meant to make lsp less disruptive to the buffer #https://github.com/stevearc/conform.nvim
@@ -151,7 +150,7 @@ DEFERRED:
 - ~~install nixos on Ghost~~
 - ~~verify drives~~
 - ~~verify critical apps and services functionality~~
-- enable backup
+- ~~enable backup~~
 - ~~enable mediashare~~
 
 ##### 4.3 Get comfortable
@@ -172,15 +171,8 @@ DEFERRED:
   - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
   - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
 - ~~basic themeing via stylix or nix-colors~~
-- dig into fzf and telescope
-- hotkey for sleeping monitors (all or game mode)
-- disk usage notifier
-- check out ananicy - hold over todo from arch but there is a nixos pkg here https://search.nixos.org/packages?channel=23.11&from=0&size=50&sort=relevance&type=packages&query=ananicy
-- more desktop utils and customization
-  - ~~set up copyq clipboard mgr~~
-  - dig into better kitty and zsh usage
-  - better linting and fixing in vscode and nvim
-  - look at https://github.com/dandavison/delta
+- ~~hotkey for sleeping monitors (all or non-primary)~~
+- ~~set up copyq clipboard mgr~~
 
 ##### Stage 4 References
 
@@ -192,6 +184,7 @@ DEFERRED:
 ##### 5.x reduce duplication and modularize
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
+- Refactor from configVars to modularized hostSpec
 - Re-implement modules to make use of options for enablement
 
 ##### 5.x script cleaning
@@ -240,6 +233,7 @@ The following has to happen on bare metal because I can't seem to get the yubike
 - Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputting the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
 - move Gusto to disko
 - revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
+- disk usage notifier
 
 ##### Stage 5 references
 
@@ -271,6 +265,7 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 
 - gui dev
   - host specific colours via stylix or nix-colors
+  - centralize color palette
 
 - eww as a potential replacement to waybar
 
@@ -282,7 +277,6 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 - greetd
 - p10k - consider config so that line glyphs don't interfere with yanking
 - fonts - https://old.reddit.com/r/vim/comments/fonzfi/what_is_your_favorite_font_for_coding_in_vim/
-- centralize color palette
 - dunst
 - lualine
 

@@ -50,6 +50,7 @@ Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emer
   - Core configs for hosts and users
   - Modular, optional configs for user and host-specific needs
 - Secrets management via sops-nix and a _private_ nix-secrets repo which is included as a flake input
+- Declarative LUKS encrypted btrfs partitions via disko
 - Automated remote-bootstrapping of NixOS, nix-config, and _private_ nix-secrets
 - Multiple YubiKey device handling and agent forwarding for touch-based/passwordless authentication during:
 
@@ -59,6 +60,7 @@ Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emer
     - git commit signing
     - LUKS2 decryption
 
+- Automated borg backups
 - NixOS and Home-Manager automation recipes
 
 The roadmap of additional features is laid across functionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
@@ -128,7 +130,7 @@ If you find what I do helpful, please consider supporting my work.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P6VO0HV)
 
-I intentionally keep all of my content ad-free.
+I intentionally keep all of my content ad-free. YouTube puts ads on my videos outside of my control.
 
 ## Guidance and Resources
 
