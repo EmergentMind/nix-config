@@ -173,6 +173,12 @@
         ) directions)
 
         #
+        # ========== Monitors==========
+        #
+        "SUPER, m, exec, toggleMonitors"
+        "SUPER, n, exec, toggleMonitorsNonPrimary"
+
+        #
         # ========== Misc ==========
         #
         "SHIFTALT,r,exec,hyprctl reload" # reload the configuration file

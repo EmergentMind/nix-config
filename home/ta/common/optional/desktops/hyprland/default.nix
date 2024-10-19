@@ -4,9 +4,11 @@
   lib,
   ...
 }:
+
 {
   imports = [
     ./binds.nix
+    ./scripts.nix
   ];
 
   wayland.windowManager.hyprland = {
@@ -59,7 +61,7 @@
       #FIXME adapt this to work with new monitor module
       workspace = [
         "1, monitor:DP-1, default:true, persistent:true"
-        "2, monitor:DP-1, default:true"
+        "10, monitor:DP-1, default:true" # HACK to workaround finicky bs
         "3, monitor:DP-1, default:true"
         "4, monitor:DP-1, default:true"
         "5, monitor:DP-1, default:true"
