@@ -59,12 +59,12 @@
     inherit (pkgs)
 
       # Packages that don't have custom configs go here
-      #borgbackup # backups
       btop # resource monitor
       copyq # clipboard manager
       coreutils # basic gnu utils
       # curl
       eza # ls replacement
+      dust # disk usage
       fd # tree style ls
       findutils # find
       fzf # fuzzy search
