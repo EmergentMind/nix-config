@@ -35,6 +35,20 @@ in
         Extra arguments to pass to the tool. The arguments are not escaped.
       '';
     };
+    notificationSound = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = ''
+        Play sounds when the YubiKey is waiting for a touch.
+      '';
+    };
+    notificationSoundFile = lib.mkOption {
+      type = lib.types.str;
+      default = "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/window-attention.oga";
+      description = ''
+        Path to the sound file to play when the YubiKey is waiting for a touch.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -68,5 +82,45 @@ in
       Install.Also = optionals cfg.socket.enable [ "yubikey-touch-detector.socket" ];
       Install.WantedBy = [ "default.target" ];
     };
+    # Play sound when the YubiKey is waiting for a touch
+    systemd.user.services.yubikey-touch-detector-sound =
+      let
+        file = cfg.notificationSoundFile;
+        yubikey-play-sound = pkgs.writeShellScriptBin "yubikey-play-sound" ''
+          socket="''${XDG_RUNTIME_DIR:-/run/user/$UID}/yubikey-touch-detector.socket"
+
+          while true; do
+
+              if [ ! -e "$socket" ]; then
+                  printf '{"text": "Waiting for YubiKey socket"}\n'
+                  while [ ! -e "$socket" ]; do sleep 1; done
+              fi
+              printf '{"text": ""}\n'
+
+              nc -U "$socket" | while read -n5 cmd; do
+                if [ "''${cmd:4:1}" = "1" ]; then
+                  printf "Playing ${file}\n"
+                  ${pkgs.mpv}/bin/mpv --volume=100 ${file} > /dev/null
+                else
+                  printf "Ignored yubikey command: $cmd\n"
+                fi
+              done
+
+              sleep 1
+          done
+        '';
+      in
+      lib.mkIf cfg.notificationSound {
+        Unit = {
+          Description = "Play sound when the YubiKey is waiting for a touch";
+          Requires = [ "yubikey-touch-detector.service" ];
+        };
+        Service = {
+          ExecStart = "${lib.getBin yubikey-play-sound}/bin/yubikey-play-sound";
+          Restart = "on-failure";
+          RestartSec = "1sec";
+        };
+        Install.WantedBy = [ "yubikey-touch-detector.service" ];
+      };
   };
 }

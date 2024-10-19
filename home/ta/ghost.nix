@@ -18,6 +18,7 @@
   ];
 
   services.yubikey-touch-detector.enable = true;
+  services.yubikey-touch-detector.notificationSound = true;
 
   home = {
     username = configVars.username;
