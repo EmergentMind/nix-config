@@ -1,3 +1,5 @@
+# This module just provides a customized .desktop file with gamescope args dynamically created based on the
+# host's monitors configuration
 {
   pkgs,
   config,
@@ -6,33 +8,6 @@
 }:
 
 let
-  steam-with-pkgs = pkgs.steam.override {
-    extraPkgs =
-      pkgs:
-      (builtins.attrValues {
-        inherit (pkgs.xorg)
-          libXcursor
-          libXi
-          libXinerama
-          libXScrnSaver
-          ;
-
-        inherit (pkgs.stdenv.cc.cc)
-          lib
-          ;
-
-        inherit (pkgs)
-          libpng
-          libpulseaudio
-          libvorbis
-          libkrb5
-          keyutils
-          gperftools
-          ;
-
-      });
-  };
-
   monitor = lib.head (lib.filter (m: m.primary) config.monitors);
 
   steam-session =
@@ -63,9 +38,6 @@ let
 in
 {
   home.packages = [
-    steam-with-pkgs
     steam-session
-    pkgs.gamescope
-    pkgs.protontricks
   ];
 }
