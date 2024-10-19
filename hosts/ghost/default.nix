@@ -69,7 +69,8 @@
     borgUser = "${configVars.username}";
     borgPort = "${builtins.toString configVars.networking.subnets.oops.port}";
     borgBackupPath = "/var/services/homes/${configVars.username}/backups";
-
+    borgNotifyFrom = "${configVars.email.notifier}";
+    borgNotifyTo = "${configVars.email.backup}";
   };
 
   boot.loader = {

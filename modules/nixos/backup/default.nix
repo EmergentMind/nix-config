@@ -15,7 +15,6 @@ let
   hostName = config.networking.hostName;
   homeBase = if pkgs.stdenv.isLinux then "/home" else "/Users";
   homeDirectory = "${homeBase}/${configVars.username}";
-  #homeDirectory = config.hostSpec.home;
   rootHome = if pkgs.stdenv.isLinux then config.users.users.root.home else "/var/root";
   excludes = lib.flatten [
     "**/.direnv"
@@ -106,6 +105,16 @@ in
       type = lib.types.str;
       default = "${rootHome}/.ssh/id_borg";
       description = "The ssh key to use for borg";
+    };
+    borgNotifyFrom = lib.mkOption {
+      type = lib.types.str;
+      default = "box@${config.hostSpec.domian}";
+      description = "The email address that msmtp notificaitons will be sent from";
+    };
+    borgNotifyTo = lib.mkOption {
+      type = lib.types.str;
+      default = "admin@${config.hostSpec.domian}";
+      description = "The email address that msmtp notificaitons will be sent to";
     };
     borgRemotePath = lib.mkOption {
       type = lib.types.str;
@@ -223,12 +232,12 @@ in
         function email_results() {
           TMPDIR=$(mktemp -d)
           cat >"$TMPDIR"/backup-mail.txt <<-EOF
-        From:${configVars.email.notifier}
+        From:${cfg.borgNotifyFrom}
         Subject: [${config.networking.hostName}] $(date) Backup
 
         $(cat "$LOGFILE")
         EOF
-          msmtp -t ${configVars.email.backup} <"$TMPDIR"/backup-mail.txt
+          msmtp -t ${cfg.borgNotifyTo} <"$TMPDIR"/backup-mail.txt
         }
       '';
       #TODO ask about this
