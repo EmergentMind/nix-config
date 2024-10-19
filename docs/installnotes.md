@@ -706,10 +706,10 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
         manu: <private key data>
     yubico:
         u2f_keys: <key data>
-    ta-password: <password>
-    media-password: <password>
-    msmtp-password: <password>
-
+    passwords:
+        ta: <password>
+        media: <password>
+        msmtp: <password>
     ```
 
 24. Copy the new `secrets.yaml` from `nix-config` to `nix-secrets`

@@ -11,7 +11,7 @@ let
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
   sopsHashedPasswordFile =
     lib.optionalString (lib.hasAttr "sops-nix" inputs)
-      config.sops.secrets."${configVars.username}/password".path;
+      config.sops.secrets."passwords/${configVars.username}".path;
   pubKeys = lib.filesystem.listFilesRecursive ./keys;
 
   # these are values we don't want to set if the environment is minimal. E.g. ISO or nixos-installer

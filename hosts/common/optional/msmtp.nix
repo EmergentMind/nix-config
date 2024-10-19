@@ -1,7 +1,7 @@
 { config, configVars, ... }:
 {
   sops.secrets = {
-    "msmtp-password" = {
+    "passwords/msmtp" = {
       owner = config.users.users.${configVars.username}.name;
       inherit (config.users.users.${configVars.username}) group;
     };
@@ -20,7 +20,7 @@
         tls_starttls = true;
         from = "${configVars.email.notifier}";
         user = "${configVars.email.notifier}";
-        passwordeval = "cat ${config.sops.secrets."msmtp-password".path}";
+        passwordeval = "cat ${config.sops.secrets."passwords/msmtp".path}";
         logfile = "~/.msmtp.log";
       };
     };

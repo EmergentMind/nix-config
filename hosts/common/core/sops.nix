@@ -44,10 +44,6 @@ in
         # We need to ensure the entire directory structure is that of the user...
         path = "${homeDirectory}/.config/sops/age/keys.txt";
       };
-
-      # extract username/password to /run/secrets-for-users/ so it can be used to create the user
-      "${configVars.username}/password".neededForUsers = true;
-
       # extract to default pam-u2f authfile location for passwordless sudo. see modules/common/yubikey
       "yubico/u2f_keys" = {
         owner = config.users.users.${configVars.username}.name;
@@ -55,8 +51,16 @@ in
         path = "${homeDirectory}/.config/Yubico/u2f_keys";
       };
 
-      #FIXME move to mstmp.nix and also have host and address being assigned to configVars as per fidgetingbits
-      msmtp-password = { };
+      # extract password/username to /run/secrets-for-users/ so it can be used to create the user
+      "passwords/${configVars.username}".neededForUsers = true;
+      "passwords/msmtp" = { };
+      # borg password required by nix-config/modules/nixos/backup
+      "passwords/borg" = {
+        owner = "root";
+        group = if pkgs.stdenv.isLinux then "root" else "wheel";
+        mode = "0600";
+        path = "/etc/borg/passphrase";
+      };
 
     };
   };
