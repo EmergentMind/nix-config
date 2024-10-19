@@ -55,13 +55,29 @@ in
           shell = pkgs.zsh; # default shell
         };
 
-        # Proper root use required for borg and some other specific operations
+        # Proper root user required for borg and some other specific operations
         users.users.root = {
+          shell = pkgs.zsh;
           hashedPasswordFile = config.users.users.${configVars.username}.hashedPasswordFile;
           password = lib.mkForce config.users.users.${configVars.username}.password;
           # root's ssh keys are mainly used for remote deployment.
           openssh.authorizedKeys.keys = config.users.users.${configVars.username}.openssh.authorizedKeys.keys;
         };
+        # Setup p10k.zsh for root
+        home-manager.users.root = lib.optionalAttrs (!configVars.isMinimal) {
+          home.stateVersion = "23.05"; # Avoid error
+          programs.zsh = {
+            enable = true;
+            plugins = [
+              {
+                name = "powerlevel10k-config";
+                src = configLib.relativeToRoot "home/${configVars.username}/common/core/zsh/p10k";
+                file = "p10k.zsh";
+              }
+            ];
+          };
+        };
+
         # create ssh sockets directory for controlpaths when homemanager not loaded (i.e. isminimal)
         systemd.tmpfiles.rules =
           let

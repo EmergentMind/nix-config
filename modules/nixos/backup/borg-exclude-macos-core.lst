@@ -1,0 +1,175 @@
+# These are exclusions for borg backup which are particular to macOS
+# Use: borg create --patterns-from="/path/to/borg-exclude.lst"
+
+# N.B. --patterns-from uses the shell style of patterns by default NOT the fn
+# Shell style counts ** as any character (including path separators)
+
+# A directory exclusion pattern can end either with or without a slash (‘/’).
+# If it ends with a slash, such as some/path/, the directory will be included but not its content.
+# If it does not end with a slash, such as some/path, both the directory and content will be excluded.
+# A minus sign will exclude, but still recurse into the directory to find inclusions (slow)
+# A bang/exclamation point will _not_ recurse into a directory, and thus no inclusion rules will kick in (dangerous)
+
+# N.B. Other directories will be ignored if a file '.nobackup' is present and '--exclude-if-present .nobackup' is used
+
+# Cache items that will be rebuilt by the machine
+! **/.build/
+! **/.cache/
+! **/.Cache/
+! **/.caches/
+! **/.Caches/
+! **/.hotfiles.btree
+! **/.Spotlight-V100/
+! **/cache/
+! **/Cache/
+! **/caches/
+! **/Caches/
+! **/private/var/folders
+! **/System/Library/Caches/
+! **/System/Volumes/VM
+
+# Specific cache items
+## Volume-specific cache files
+! /private/var/db/dyld/dyld_*
+! /System/Library/Caches/com.apple.bootstamps/
+! /System/Library/Caches/com.apple.corestorage/
+
+## These are thumbnails and resized images which will be rebuilt if missing
+! **/iTunes/Album Artwork/
+! **/Library/Safari/Favicon Cache/
+! **/Users/*/Pictures/Photos Library.photoslibrary/resources
+
+## These seem to be related to macOS ML caching
+! **/Library/Trial
+
+## Bluetooth
+! **/Library/com.apple.bluetooth.services.cloud/CachedRecords/
+
+## Calendar
+! **/Library/Calendars/Calendar Cache/
+
+## Notes
+! **/Library/Group Containers/group.com.apple.notes/Accounts/*/Previews/
+
+# Metadata
+! **/.DS_Store
+! **/Library/Metadata
+! **/Library/Metadata/CoreSpotlight/index.spotlightV3/
+
+# Volume specific preferences
+! **/.metadata_never_index
+! **/.metadata_never_index_unless_rootfs
+! /.com.apple.timemachine.donotpresent
+! **/.VolumeIcon.icns
+! /System/Library/CoreServices/.disk_label*
+! /TheVolumeSettingsFolder
+! /private/var/db/dslocal/nodes/Default/secureaccesstoken.plist
+
+# Versioning
+! **/.DocumentRevisions-V100/
+
+# Dynamically-generated devices
+! /Volumes/
+! /dev/
+! /automount
+! /Network
+! /.vol/
+! /net
+
+# Large datastores that are (or should be) erased on startup
+! /private/var/vm/
+! /private/tmp/
+! /cores
+! /macOS Install Data
+
+# Time Machine backups
+! /Backups.backupdb
+! /.MobileBackups
+! /.MobileBackups.trash
+! /private/var/db/com.apple.backupd.backupVerification
+
+# Things deleted by user (these should have been picked up in an earlier backup anyway)
+# N.B. Omitting the trashes will leave you open to creating something, trashing it before a backup is made, and then having a disaster
+! **/.trash/
+! **/.Trash/
+! **/.trashes/
+! **/.Trashes/
+
+# Logs and Monitoring
+- **/Logs/
+
+# Backup items
+- **/.com.apple.backupd.mvlist.plist
+- **/Backups.backupdb
+
+# Temporary items
+! **/.TemporaryItems
+! **/tmp/
+! /var/tmp/
+
+# macOS installation files
+## These are large and don't need to be restored
+! **/Applications/Install macOS**
+
+# Siri
+! **/Library/Assistant/SiriAnalytics.db
+! **/Library/Assistant/SiriSyncItems.db
+! **/Library/Assistant/SiriVocabulary/sv.db
+
+# Apple-proprietary data stores
+! **/.DocumentRevisions-V100*
+! **/.Spotlight-V100
+! **/Library/Metadata/CoreSpotlight
+! /.fseventsd
+! /.hotfiles.btree
+! /private/var/db/systemstats
+! /private/var/db/ConfigurationProfiles/Store
+! /private/var/folders/*/*/C
+! /private/var/folders/*/*/T
+! /Users/*/Library/Caches
+! /Users/*/Library/Containers/*/Data/Library/Caches
+
+# Unknown and Misc
+- **/.fseventsd/
+- **/CrashReporter/
+- **/DerivedData/
+- **/iTunes/iTunes Media/Downloads/
+- **/iTunes/iTunes Media/Podcasts/
+- **/iTunes/Previous iTunes Libraries/
+- **/Library/HTTPStorages/
+- **/MobileBackups.trash/
+- **/MobileSync/Backup/
+- /dev/
+- /proc/
+- /run/
+- /sys/
+- /var/backups/
+
+##################################
+# Exclusions up for discussion	 #
+# ! **/*~			 #
+# ! **/.*.swp			 #
+# ! **/._sync_*			 #
+# ! **/.vol			 #
+# ! **/Library/**/Containers/	 #
+# ! **/Library/**/CrashReporter/ #
+# ! **/Library/**/DerivedData/	 #
+# ! **/Library/**/Developer/	 #
+# ! **/Library/**/Logs/		 #
+# ! **/Library/**/Metadata/	 #
+# ! **/Library/**/MobileSync/	 #
+# ! /bin/			 #
+# ! /cores/			 #
+# ! /dev/			 #
+# ! /etc/			 #
+# ! /home/			 #
+# ! /macOS Install Data/	 #
+# ! /private/			 #
+# ! /sbin/			 #
+# ! /System/			 #
+# ! /tmp/			 #
+# ! /Users/Shared/		 #
+# ! /var/			 #
+# ! /Volumes/			 #
+# ! ~/Library/Containers	 #
+##################################

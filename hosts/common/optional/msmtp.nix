@@ -5,14 +5,6 @@
       owner = config.users.users.${configVars.username}.name;
       inherit (config.users.users.${configVars.username}) group;
     };
-    "msmtp-host" = {
-      owner = config.users.users.${configVars.username}.name;
-      inherit (config.users.users.${configVars.username}) group;
-    };
-    "msmtp-address" = {
-      owner = config.users.users.${configVars.username}.name;
-      inherit (config.users.users.${configVars.username}) group;
-    };
   };
 
   programs.msmtp = {
@@ -21,13 +13,13 @@
 
     accounts = {
       "default" = {
-        host = "cat ${config.sops.secrets."msmtp-host".path}";
+        host = "${configVars.email.msmtp-host}";
         port = 587;
         auth = true;
         tls = true;
         tls_starttls = true;
-        from = "cat ${config.sops.secrets."msmtp-address".path}";
-        user = "cat ${config.sops.secrets."msmtp-address".path}";
+        from = "${configVars.email.notifier}";
+        user = "${configVars.email.notifier}";
         passwordeval = "cat ${config.sops.secrets."msmtp-password".path}";
         logfile = "~/.msmtp.log";
       };

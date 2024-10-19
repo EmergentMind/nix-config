@@ -1,3 +1,5 @@
+# shellcheck disable=SC2148
+
 function red() {
 	echo -e "\x1B[31m[!] $1 \x1B[0m"
 	if [ -n "${2-}" ]; then

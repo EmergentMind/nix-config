@@ -101,6 +101,7 @@ in
         identitiesOnly = true;
         identityFile = [
           "~/.ssh/id_yubikey"
+          "~/.ssh/id_borg"
         ];
       };
       "cakes" = {

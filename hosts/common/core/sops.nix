@@ -56,8 +56,6 @@ in
       };
 
       #FIXME move to mstmp.nix and also have host and address being assigned to configVars as per fidgetingbits
-      msmtp-host = { };
-      msmtp-address = { };
       msmtp-password = { };
 
     };

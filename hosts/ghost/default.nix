@@ -35,6 +35,7 @@
       "hosts/common/optional/services/openssh.nix" # allow remote SSH access
       "hosts/common/optional/services/printing.nix"
       #"hosts/common/optional/services/clamav.nix" # av scanner
+      "hosts/common/optional/msmtp.nix" # for sending email notifications
       "hosts/common/optional/libvirt.nix" # vm tools
       "hosts/common/optional/nvtop.nix" # GPU monitor (not available in home-manager)
       "hosts/common/optional/obsidian.nix" # wiki
@@ -59,6 +60,16 @@
     hostName = "ghost";
     networkmanager.enable = true;
     enableIPv6 = false;
+  };
+
+  services.backup = {
+    enable = true;
+    borgBackupStartTime = "02:00:00";
+    borgServer = "${configVars.networking.subnets.oops.ip}";
+    borgUser = "${configVars.username}";
+    borgPort = "${builtins.toString configVars.networking.subnets.oops.port}";
+    borgBackupPath = "/var/services/homes/${configVars.username}/backups";
+
   };
 
   boot.loader = {

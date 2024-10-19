@@ -1,0 +1,13 @@
+# These are exclusions for borg backup which are common across Linux and Darwin
+# Use: borg create --patterns-from="/path/to/borg-exclude.lst"
+
+# N.B. --patterns-from uses the shell style of patterns by default NOT the fn
+# Shell style counts ** as any character (including path separators)
+
+# A directory exclusion pattern can end either with or without a slash (‘/’).
+# If it ends with a slash, such as some/path/, the directory will be included but not its content.
+# If it does not end with a slash, such as some/path, both the directory and content will be excluded.
+# A minus sign will exclude, but still recurse into the directory to find inclusions (slow)
+# A bang/exclamation point will _not_ recurse into a directory, and thus no inclusion rules will kick in (dangerous)
+
+# N.B. Other directories will be ignored if a file '.nobackup' is present and '--exclude-if-present .nobackup' is used
