@@ -9,10 +9,6 @@ This module provides a service and options for automating the backup of host dat
 
 ## Setup
 
-FIXME add steps for:
-    - add and enable backup module?
-    - configuring the borg server itself
-
 1. First we'll need to create a passphrase that will secure the BORG_KEY that gets generated for our borg repo in  later steps. To do so, create and save a passphrase in your preferred password vault such as Proton Pass.
 2. Now we'll need a way for our backup module on the host to provide the passphrase to the borg server when it runs. To do this we'll add the pasphrase to our `nix-secrets/secrets.yaml` using sops and extract it on to the host at the location the module expects to find it.
 3. Add the passphrase to `nix-secrets/secrets.yaml` using sops. For example, run `sops path/to/nix-secrets/secrets.yaml`
