@@ -1,4 +1,4 @@
-# These are exclusions for borg backup which are particular to macOS
+# These are exclusions for borg backup which are particular to Darwin
 # Use: borg create --patterns-from="/path/to/borg-exclude.lst"
 
 # N.B. --patterns-from uses the shell style of patterns by default NOT the fn

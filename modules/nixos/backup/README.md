@@ -130,8 +130,8 @@ NOTE: Folders containing a .nobackup file will not be backed up!
 
 There are three Exclude Lists:
 
-- `borg-exclude-common.lst` provides a place to exclude files or directories that are common across Linux, Darwin,  and MacOS
-- `borg-exclude-linux-core.lst` provides a place to exclude files or directories that are exclusive to Linux and Darwin
-- `borg-exclude-macos-core.lst` provides a place to exclude files or directories that are exclusive to MacOS
+- `borg-exclude-common.lst` provides a place to exclude files or directories that are common across Linux and Darwin
+- `borg-exclude-linux-core.lst` provides a place to exclude files or directories that are exclusive to Linux
+- `borg-exclude-macos-core.lst` provides a place to exclude files or directories that are exclusive to Darwin
 
 See the comments in each .lst file for instructions on how to add to them.
