@@ -47,6 +47,8 @@ in
               "docker"
               "git"
               "networkmanager"
+              "scanner" # for print/scan"
+              "lp" # for print/scan"
             ];
 
           # These get placed into /etc/ssh/authorized_keys.d/<name> on nixos
