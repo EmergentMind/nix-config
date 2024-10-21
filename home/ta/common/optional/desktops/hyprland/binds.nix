@@ -182,6 +182,8 @@
         # ========== Misc ==========
         #
         "SHIFTALT,r,exec,hyprctl reload" # reload the configuration file
+        "SUPER,l,exec,hyprlock" # lock the wm
+        "SUPER,e,exec,wlogout" # lock the wm
       ];
   };
 }
