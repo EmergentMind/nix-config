@@ -13,10 +13,6 @@ Hyprland stuff:
         - ~~general config~~
         - bash hack as workaround to https://github.com/outfoxxed/hy3/issues/2
     - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
-    - investigate
-        - hyprcursor - maybe wait until rice... although current cursor looks like shit
-        - hyprlock
-        - wlogout
 
 - neovim
     - sort out lsp deficiencies
@@ -155,13 +151,13 @@ DEFERRED:
 
 ##### 4.3 Get comfortable
 
-- setup and enable hyprland basics
-  - hyprlock or similar
-  - logout manager
+- ~~setup and enable hyprland basics~~
+  - ~~hyprlock~~
+  - ~~logout manager~~
   - ~~waypaper~~
   - ~~dunst~~
   - ~~rofi-wayland~~
-- reestablish workflow
+- ~~reestablish workflow~~
 
 ##### 4.3.x Extras
 
@@ -270,6 +266,7 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 - eww as a potential replacement to waybar
 
 - hyprcursor
+    - recreate ascendancy cursor as a hyprcursor... the existing themes out there are really underwhelming
 - plymouth
 - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
 
