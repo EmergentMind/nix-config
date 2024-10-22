@@ -6,8 +6,8 @@
     extraBackends = [
       pkgs.samsung-unified-linux-driver
       pkgs.hplipWithPlugin
+      pkgs.sane-airscan
     ];
-    #extraBackends = [ pkgs.sane-airscan ]; # For network scanners
   };
   services.udev.packages = [ pkgs.sane-airscan ];
   services.ipp-usb.enable = true;
