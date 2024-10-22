@@ -41,6 +41,7 @@
       "hosts/common/optional/msmtp.nix" # for sending email notifications
       "hosts/common/optional/nvtop.nix" # GPU monitor (not available in home-manager)
       "hosts/common/optional/obsidian.nix" # wiki
+      "hosts/common/optional/plymouth.nix" # fancy boot screen
       "hosts/common/optional/scanning.nix" # SANE and simple-scan
       "hosts/common/optional/vlc.nix" # media player
       "hosts/common/optional/yubikey.nix" # yubikey related packages and configs
@@ -75,7 +76,11 @@
   };
 
   boot.loader = {
-    systemd-boot.enable = true;
+    systemd-boot = {
+      enable = true;
+      # When using plymouth, initrd can expand by a lot each time, so limit how many we keep around
+      configurationLimit = lib.mkDefault 10;
+    };
     efi.canTouchEfiVariables = true;
     timeout = 3;
   };
