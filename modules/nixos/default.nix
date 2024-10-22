@@ -3,6 +3,7 @@
 
 {
   backup = import ./backup;
+  semi-active-av = import ./semi-active-av.nix;
   yubikey = import ./yubikey;
   zsa-udev-rules = import ./zsa-udev-rules.nix;
 }

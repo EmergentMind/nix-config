@@ -32,7 +32,6 @@
       "hosts/common/core"
 
       #################### Host-specific Optional Configs ####################
-      #"hosts/common/optional/services/clamav.nix" # av scanner
       "hosts/common/optional/services/openssh.nix" # allow remote SSH access
       "hosts/common/optional/services/printing.nix" # CUPS
       "hosts/common/optional/audio.nix" # pipewire and cli controls
@@ -63,6 +62,8 @@
     networkmanager.enable = true;
     enableIPv6 = false;
   };
+
+  semi-active-av.enable = true;
 
   services.backup = {
     enable = true;
