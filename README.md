@@ -124,13 +124,9 @@ For details on how this is accomplished, how to approach different scenarios, an
 
 Thank you to my generous supporters!
 
-If you find what I do helpful, please consider supporting my work.
+If you find what I do helpful, please consider supporting my work using one of the links under "Sponsor this project" on the right-hand column of this page.
 
-<iframe src="https://github.com/sponsors/EmergentMind/button" title="Sponsor EmergentMind" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P6VO0HV)
-
-I intentionally keep all of my content ad-free. YouTube puts ads on my videos outside of my control.
+I intentionally keep all of my content ad-free but some platforms, such as YouTube, put ads on my videos outside of my control.
 
 ## Guidance and Resources
 
