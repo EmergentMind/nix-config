@@ -97,7 +97,8 @@ in
               fi
               printf '{"text": ""}\n'
 
-              nc -U "$socket" | while read -n5 cmd; do
+              ${lib.getBin pkgs.netcat}/bin/nc -U "$socket" | while read -n5 cmd; do
+
                 if [ "''${cmd:4:1}" = "1" ]; then
                   printf "Playing ${file}\n"
                   ${pkgs.mpv}/bin/mpv --volume=100 ${file} > /dev/null
@@ -106,7 +107,7 @@ in
                 fi
               done
 
-              sleep 1
+              ${lib.getBin pkgs.coreutils}/bin/sleep 1
           done
         '';
       in
