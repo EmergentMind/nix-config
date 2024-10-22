@@ -5,12 +5,11 @@
 ## Short Term
 
 ### Current roadmap focus items
+
 Hyprland stuff:
     - Startup things to sort out:
         - not all hyprland workspace assignments working
-        - workspace 9 group rules
     - hy3
-        - ~~general config~~
         - bash hack as workaround to https://github.com/outfoxxed/hy3/issues/2
     - waybar - fix workspace issue. right monitor displays workspace '10' on reboot but should be '0'
 
@@ -33,7 +32,6 @@ Hyprland stuff:
 
 - NeoVim stuff to look at and integrate (so much to do and learn)
     - refine linting and fixing in nvim
-
     - hardtime # training tool to stop bad vim habits # https://github.com/m4xshen/hardtime.nvim
     - lint # not sure if this is redundant with all the other language stuff
     - conform # meant to make lsp less disruptive to the buffer #https://github.com/stevearc/conform.nvim
@@ -127,11 +125,11 @@ DEFERRED:
 - ~~Investigate outstanding yubikey FIXMEs~~
 - ~~Potentially yubiauth and u2f for passwordless sudo~~
   ~~FidgetingBits still encounter significant issues with this when remoting~~
-- Confirm clamav scan notification
-  - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
-  - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+- ~~Confirm clamav scan notification~~
+  - ~~check email for clamavd notification on ~/clamav-testfile. If yes, remove the file~~
+  - ~~check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.~~
 
-#### 4. Ghost
+#### 4. Ghost - completed: 2024.10.21
 
 ##### 4.1 Prep
 
@@ -163,9 +161,9 @@ DEFERRED:
 
 - ~~Investigate outstanding yubikey FIXMEs~~
 - ~~yubiauth and u2f for passwordless sudo~~
-- Confirm clamav scan notification
-  - check email for clamavd notification on ~/clamav-testfile. If yes, remove the file
-  - check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.
+- ~~Confirm clamav scan notification~~
+  - ~~check email for clamavd notification on ~/clamav-testfile. If yes, remove the file~~
+  - ~~check if the two commented out options in hosts/common/options/services/clamav.nix are in stable yet.~~
 - ~~basic themeing via stylix or nix-colors~~
 - ~~hotkey for sleeping monitors (all or non-primary)~~
 - ~~set up copyq clipboard mgr~~
@@ -177,13 +175,13 @@ DEFERRED:
 
 #### 5. Squeaky clean
 
-##### 5.x reduce duplication and modularize
+##### 5.1 reduce duplication and modularize
 
 - Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
 - Refactor from configVars to modularized hostSpec
 - Re-implement modules to make use of options for enablement
 
-##### 5.x script cleaning
+##### 5.2 script cleaning
 
 - Consider nixifying bash scripts (see refs below)
 - Overhaul just file
@@ -191,7 +189,7 @@ DEFERRED:
   - add {{just.executable()}} to just entries
   - explore direnv
 
-##### 5.x impermanence
+##### 5.3 impermanence
 
 - declare what needs to persist
 - enable impermanence
@@ -199,13 +197,13 @@ DEFERRED:
 
   Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
-##### 5.x automate config deployment
+##### 5.4 automate config deployment
 
 - Per host branch scheme
 - Automated machine update on branch release
 - Handle general auto updates as well
 
-##### 5.x secure boot
+##### 5.5 secure boot
 
 - lanzaboote https://github.com/nix-community/lanzaboote
 
@@ -215,7 +213,7 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
 
 
-##### 5.x remote luks decryption
+##### 5.6 remote luks decryption
 
 The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
 

@@ -84,7 +84,7 @@ For details about design concepts, constraints, and how structural elements inte
 For a large screenshot of the concept diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
 
 <div align="center">
-<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v3.png" /></a>
+<a href="docs/anatomy.md"><img width="400" src="[docs/diagrams/anatomy_v4.png](docs/diagrams/anatomy_v4.png)" /></a>
 </div>
 
 - `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for  manual bootstrapping tasks (`nix develop` or `nix-shell`).
@@ -95,10 +95,10 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
         - `<user>/keys` - Public keys for the user that are symlinked to ~/.ssh
-  - `genoa` - stage 5
+  - `genoa` - stage 6
   - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (12 core), 64MB RAM, Radeon RX5600XT
   - `grief` - Lab - Qemu VM
-  - `gooey` - stage 5
+  - `gooey` - stage x
   - `guppy` - Remote Install Lab - Qemu VM
   - `gusto` - Theatre - Asus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
 - `home/<user>` - Home-manager configurations, built automatically during host rebuilds.
