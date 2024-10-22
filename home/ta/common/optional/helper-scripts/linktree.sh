@@ -33,10 +33,28 @@ get_color_code() {
 	echo "$color_code"
 }
 
+which_symlink=0
+while getopts "w" opt; do
+	case $opt in
+	w)
+		which_symlink=1
+		shift
+		;;
+	*) ;;
+	esac
+done
+
 if [ $# -ne 1 ]; then
-	echo "Usage: $0 <symlink>"
+	echo "Usage: linktree [-w] <symlink>"
+	exit
 fi
-current_link=$1
+
+target=$1
+if [[ $which_symlink == 1 ]]; then
+	target=$(which "$1")
+fi
+
+current_link=$target
 
 while [ -L "$current_link" ]; do
 	# Get the color code for symbolic links from LS_COLORS
@@ -58,3 +76,4 @@ done
 file_type=$(get_file_type "$current_link")
 final_path_color_code=$(get_color_code "${file_type}")
 echo -e "Final path: \e[${final_path_color_code}m$current_link\e[0m"
+cho -e "Final path: \e[${final_path_color_code}m$current_link\e[0m"
