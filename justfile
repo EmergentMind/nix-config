@@ -16,7 +16,7 @@ check:
 
 check-trace:
   nix flake check --impure --show-trace
-  cd nixos-installer && nix flake check --impure --show trace
+  cd nixos-installer && nix flake check --impure --show-trace
 
 # Add --option eval-cache false if you end up caching a failure you can't get around
 rebuild: rebuild-pre
