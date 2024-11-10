@@ -5,4 +5,5 @@
   backup = import ./backup;
   semi-active-av = import ./semi-active-av.nix;
   yubikey = import ./yubikey;
+  warnings = import ./warnings.nix;
 }
