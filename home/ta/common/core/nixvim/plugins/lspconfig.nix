@@ -57,8 +57,7 @@ in
                   };
                   home_manager = {
                     expr = ''
-                      let configs = (builtins.getFlake ${flakeRoot}).homeConfigurations;
-                      in (builtins.head (builtins.attrValues configs)).options
+                      (builtins.getFlake "${flakeRoot}").nixosConfigurations.${config.hostSpec.hostName}.options.home-manager.users.value.${config.hostSpec.username}
                     '';
                   };
                   darwin = {
