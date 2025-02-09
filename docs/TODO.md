@@ -4,31 +4,34 @@
 
 ## Short Term
 
-- get flameshot working, grimshot isn't adequate
-- issue 14
-- /home/ta/.config/mimeapps.list causes a collisions when rebuilding home-manager
+- start using issues more than fixmes
+- consider tagging with version numbers that match roadmap
 
-### Current roadmap focus items
+### Current roadmap focus items - 5.3
 
-- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
-- ~~Refactor from configVars to modularized hostSpec~~
-    - add check for useYubikey flag in sops.nix
-- Re-implement modules to make use of options for enablement
+- update to installer blog post
 
-- update docs in nix-secrets
+### Current roadmap focus items - 5.4
+- tests
+    - setup a gitlab token for nix-secrets to grant access to github runner
+    - setup a mock nix-secrets folder in tests/ that will be used by the tests
+    - refactor bootstrap script to use an overridable folder for nix-secrets
+    - change helpers.sh to use the overridable folder for nix-secrets
+    - setup .bats file in tests/ to run tests and have a new flake check that runs bats
+    - setup github workflow to run nix flake check
 
 #### General workflow improvements
 
-- New tools to integrate
+- Tools to integrate
+  - ignoreBoy - https://github.com/Ookiiboy/ignoreBoy
   - syncthing - refer to https://nitinpassa.com/running-syncthing-as-a-system-user-on-nixos/
 
-- New tools to try
+- Tools to try
   - wezterm
   - tmux or zellij
+  - https://github.com/dandavison/delta
 
-- look at https://github.com/dandavison/delta
-
-- NeoVim stuff to look at and integrate (so much to do and learn)
+- NeoVim stuff to look at and integrate
     - go through existing plugins, a few are enabled but binds are disabled etc
     - refine linting and fixing in nvim
     - hardtime # training tool to stop bad vim habits # https://github.com/m4xshen/hardtime.nvim
@@ -169,28 +172,53 @@ Migrate primary box to NixOS
 - ~~hotkey for sleeping monitors (all or non-primary)~~
 - ~~set up copyq clipboard mgr~~
 
-##### Stage 4 References
+#### 5. Refactoring
+Some of the original parts of this stage have been split off to later stages because they are more Nice to Have at the moment.
 
-- [stylix](https://github.com/danth/stylix)
-- [nix-colors](https://github.com/Misterio77/nix-colors)
+##### 5.1 Reduce duplication and modularize
 
-#### 5. Squeaky clean
-
-##### 5.1 reduce duplication and modularize
-
-- Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings
+- ~~Refactor nix-config to use more extensive specialArgs and extraSpecial Args for common user and host settings~~
 - ~~Refactor from configVars to modularized hostSpec~~
-- Re-implement modules to make use of options for enablement
+- ~~Re-implement modules to make use of options for enablement~~ deferred, nice to have
 
-##### 5.2 script cleaning
+##### 5.2 Refactor secrets
 
-- Consider nixifying bash scripts (see refs below)
-- Overhaul just file
-  - clean up
-  - add {{just.executable()}} to just entries
-  - explore direnv
+- ~~separate soft and hard secrets~~
+- ~~per-host sops secrets~~
+- ~~create example, public repo for nix-secrets~~
 
-##### 5.3 impermanence
+##### 5.3 Bootstrap fix
+
+- ~~Revise bootstrap script and roll in granular secrets hierarchy~~
+- ~~Rewrite install steps~~
+
+##### 5.4 Tests
+
+- Re-enable CI pipeline.
+- Write bats tests for helpers.sh
+
+##### 5.5 Starter repo
+
+Set up separate, stripped-down and simplified nix-config for new comers
+
+##### 5.x Extras
+
+- ~~move Gusto to disko~~~
+
+#### 6. Laptops and improved network handling
+
+Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
+
+##### 6.1 Laptops
+- nixify genoa
+- add laptop utils
+
+##### 6.2 Improved network handling
+- complete firewall and services.per-network-services branch
+
+#### 7. Squeaky clean
+
+##### 7.1 Impermanence
 
 - declare what needs to persist
 - enable impermanence
@@ -198,13 +226,7 @@ Migrate primary box to NixOS
 
   Need to sort out how to maintain /etc/ssh/ssh_host_ed25519_key and /etc/ssh/ssh_host_ed25519_key.pub
 
-##### 5.4 automate config deployment
-
-- Per host branch scheme
-- Automated machine update on branch release
-- Handle general auto updates as well
-
-##### 5.5 secure boot
+##### 7.2 Secure boot
 
 - lanzaboote https://github.com/nix-community/lanzaboote
 
@@ -213,24 +235,15 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 - https://github.com/ElvishJerricco/stage1-tpm-tailscale
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
 
+##### 7.3 Cleaning - Nice to Have
 
-##### 5.6 remote luks decryption
-
-The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
-
-- Remote LUKS decrypt over ssh for headless hosts
-  - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
-  - add initrd-ssh module that will spawn an ssh service for use during boot
-
-##### 5.x Extras
-
-- automatic scheduled sops rotate
-- Look at re-enabling CI pipelines. These were disabled during stage 2 because I moved to inputting the private nix-secrets repo in flake.nix. Running nix flake check in a gitlab pipeline now requires figuring out access tokens. There were higher priorities considering the check can be run locally prior to pushing.
-- move Gusto to disko
+- Consider nixifying bash scripts (see refs below)
+- Overhaul just file
+  - clean up
+  - add {{just.executable()}} to just entries
 - revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
-- disk usage notifier
 
-##### Stage 5 references
+##### Stage 7 references
 
 Impermanence - These two are the references to follow and integrate. The primer list below is good review before diving into this:
 
@@ -250,16 +263,32 @@ Migrating bash scripts to nix
 - https://www.youtube.com/watch?v=diIh0P12arA and https://www.youtube.com/watch?v=qRE6kf30u4g
 - Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
 
-#### 6. Laptops
+#### 8. Improving remote
 
-Add laptop support to the mix to handle stuff like power, lid state, wifi, and the like.
+##### 8.1 Automate config deployment
 
-- laptop utils
+- Per host branch scheme
+- Automated machine update on branch release
+- Handle general auto updates as well
 
-#### 7. Ricing
+##### 8.2 Remote luks decryption
+
+The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
+
+- Remote LUKS decrypt over ssh for headless hosts
+  - need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
+  - add initrd-ssh module that will spawn an ssh service for use during boot
+
+##### 8.x Extras
+
+- Automatic scheduled sops rotate
+- Disk usage notifier
+
+
+#### 9. Ricing
 
 - gui dev
-  - host specific colours via stylix or nix-colors
+  - host specific colours (terminal in particular) via stylix or nix-colors
   - centralize color palette
 
 - eww as a potential replacement to waybar
@@ -270,13 +299,24 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 - grub - https://www.gnome-look.org/browse?cat=109&ord=latest
 
 - maybe rEFInd
-- greetd
+- greetd - Have considered just auto logging in after luks unlock but if/when wayland or X inevitably shit the bed again, it's convenient to have a stop point after unlock
 - p10k - consider config so that line glyphs don't interfere with yanking
 - fonts - https://old.reddit.com/r/vim/comments/fonzfi/what_is_your_favorite_font_for_coding_in_vim/
 - dunst
 - lualine
 
+Inspirational sets:
+- see FF bookmarks > Nix > Rice >
+
+##### Stage 9 References
+
+- [stylix](https://github.com/danth/stylix)
+- [nix-colors](https://github.com/Misterio77/nix-colors)
+
+
 #### 8. tbd
+
+- Re-implement modules to make use of options for enablement
 
 ---
 

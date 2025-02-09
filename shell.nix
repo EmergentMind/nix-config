@@ -16,6 +16,9 @@
 {
   default = pkgs.mkShell {
     NIX_CONFIG = "extra-experimental-features = nix-command flakes";
+    BOOTSTRAP_USER = "ta";
+    BOOTSTRAP_SSH_PORT = "22";
+    BOOTSTRAP_SSH_KEY = "~/.ssh/id_yubikey";
 
     inherit (checks.pre-commit-check) shellHook;
     buildInputs = checks.pre-commit-check.enabledPackages;
@@ -25,8 +28,13 @@
 
         nix
         home-manager
+        nh
         git
         just
+        pre-commit
+        deadnix
+        yq-go # jq for yaml, used for build scripts
+        bats # bash testing
 
         age
         ssh-to-age

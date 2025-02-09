@@ -2,7 +2,6 @@
   pkgs,
   lib,
   config,
-  inputs,
   ...
 }:
 let
@@ -33,7 +32,7 @@ let
     # Rust
     "**/.cargo"
     "**/.rustup"
-    "**/target" # FIXME:(borg) This might be too aggressive
+    "**/target" # FIXME(borg): This might be too aggressive
     # Nix
     "**/result"
     # Lua
@@ -49,7 +48,7 @@ let
       # Go
       "*/go/pkg"
     ])
-    # FIXME:(borg) These can just maybe go into a .lst file with the other macos ones
+    # FIXME(borg): These can just maybe go into a .lst file with the other macos ones
 
     # Root folders, these only matter on non-impermanence systems
     "/dev"
@@ -60,7 +59,7 @@ let
     "/lost+found"
     "/mnt"
 
-    # FIXME:(borg) To double check
+    # FIXME(borg): To double check
     "/var/lib/lxcfs"
 
     # System cache files/directories
@@ -73,7 +72,7 @@ let
   borgExcludesFile = pkgs.writeText "borg-excludes.lst" (
     lib.concatMapStrings (s: s + "\n") (excludes ++ cfg.borgExcludes)
   );
-  # FIXME:(borg) This should be a list of various exclude files eventually
+  # FIXME(borg): This should be a list of various exclude files eventually
   darwinExcludesFile = pkgs.writeText "borg-exclude-macos-core.list" (
     builtins.readFile ./borg-exclude-macos-core.list
   );
@@ -92,7 +91,7 @@ in
       description = "The borg server to backup to";
     };
     borgPort = lib.mkOption {
-      type = lib.types.str; # FIXME:(borg) int?
+      type = lib.types.str; # FIXME(borg): int?
       default = "${builtins.toString config.hostSpec.networking.ports.tcp.ssh}";
       description = "The ssh port to use for the borg server";
     };
@@ -150,7 +149,7 @@ in
       default = "/dev/mapper/encrypted-nixos";
       description = "The btrfs volume containing the subvolume backup";
     };
-    # FIXME:(borg) This should be a list of subvolumes to backup
+    # FIXME(borg): This should be a list of subvolumes to backup
     borgBtrfsSubvolume = lib.mkOption {
       type = lib.types.str;
       default = "@persist";
@@ -197,7 +196,7 @@ in
   config = lib.mkIf cfg.enable (
     let
       shellScriptHelpers = builtins.readFile ./backup-helpers.sh;
-      # FIXME:(borg) - Should create a help script to actually dump and explain all of these from cli
+      # FIXME(borg): - Should create a help script to actually dump and explain all of these from cli
       shellScriptOptionHandling = ''
         BORG_USER="''${BORG_USER:-${cfg.borgUser}}"
         BORG_SERVER="''${BORG_SERVER:-${cfg.borgServer}}"
@@ -308,7 +307,7 @@ in
           ${shellScriptHelpers}
           ${shellScriptEmail}
           parse_args "0" "$@"
-          # FIXME:(borg) Would be nice if this part could just be generic
+          # FIXME(borg): Would be nice if this part could just be generic
           LOGFILE="${cfg.borgBackupLogPath}"
           function borg_backup() {
               # samba mounts that we want to exclude from the backup
@@ -316,7 +315,7 @@ in
               for MOUNT in $(mount | grep -i cifs | cut -d" " -f3); do
                   MOUNT_EXCLUDES+=("--exclude $MOUNT")
               done
-              # FIXME:(borg) Add a check to see if we need to run borg init
+              # FIXME(borg): Add a check to see if we need to run borg init
               #shellcheck disable=SC2096,SC2068,SC2086
               if borg create $BORG_REMOTE_PATH -v --stats --exclude-caches "$BORG_REMOTE_REPO::$BORG_BACKUP_NAME" \
                 $BORG_BACKUP_PATHS \
@@ -486,10 +485,9 @@ in
           borg-backup-restore
         ] ++ lib.optional isImpermanent borg-backup-btrfs-subvolume;
         sops.secrets = {
-          #FIXME:(borg) make this an optional path
-          #"keys/ssh/borg" = {
-          "ssh_keys/borg" = {
-            # FIXME:(borg) ATM this is required by nix-darwin PR I'm using
+          #FIXME(borg): make this an optional path
+          "keys/ssh/borg" = {
+            # FIXME(borg): ATM this is required by nix-darwin PR I'm using
             owner = "root";
             group = if pkgs.stdenv.isLinux then "root" else "wheel";
             path = "${rootHome}/.ssh/id_borg";

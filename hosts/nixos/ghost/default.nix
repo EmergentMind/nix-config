@@ -89,15 +89,15 @@
     enableIPv6 = false;
   };
 
-  #FIXME:(clamav) something not working. disabled to reduce log spam
+  #FIXME(clamav): something not working. disabled to reduce log spam
   semi-active-av.enable = false;
 
   services.backup = {
     enable = true;
     borgBackupStartTime = "02:00:00";
-    borgServer = "${config.hostSpec.networking.subnets.oops.ip}";
+    borgServer = "${config.hostSpec.networking.subnets.grove.hosts.oops.ip}";
     borgUser = "${config.hostSpec.username}";
-    borgPort = "${builtins.toString config.hostSpec.networking.subnets.oops.port}";
+    borgPort = "${builtins.toString config.hostSpec.networking.ports.tcp.oops}";
     borgBackupPath = "/var/services/homes/${config.hostSpec.username}/backups";
     borgNotifyFrom = "${config.hostSpec.email.notifier}";
     borgNotifyTo = "${config.hostSpec.email.backup}";
@@ -125,7 +125,7 @@
     cryptvms UUID=ce5f47f8-d5df-4c96-b2a8-766384780a91 /luks-secondary-unlock.key
   '';
 
-  #TODO:(stylix) move this stuff to separate file but define theme itself per host
+  #TODO(stylix): move this stuff to separate file but define theme itself per host
   # host-wide styling
   stylix = {
     enable = true;

@@ -11,6 +11,7 @@
     #
     common/optional/browsers
     common/optional/desktops # default is hyprland
+    common/optional/development
     common/optional/comms
     common/optional/helper-scripts
     common/optional/gaming

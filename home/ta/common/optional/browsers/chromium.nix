@@ -3,7 +3,7 @@
     enable = true;
     commandLineArgs = [
       "--no-default-browser-check"
-      "--restore-last-sesion"
+      "--restore-last-session"
     ];
   };
 }

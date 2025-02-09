@@ -18,7 +18,7 @@
     systemd = {
       enable = true;
       variables = [ "--all" ]; # fix for https://wiki.hyprland.org/Nix/Hyprland-on-Home-Manager/#programs-dont-work-in-systemd-services-but-do-on-the-terminal
-      # TODO:(hyprland) experiment with whether this is required.
+      # TODO(hyprland): experiment with whether this is required.
       # Same as default, but stop the graphical session too
       extraCommands = lib.mkBefore [
         "systemctl --user stop graphical-session.target"
@@ -61,10 +61,11 @@
         ) (config.monitors)
       );
 
-      #FIXME:(hyprland) adapt this to work with new monitor module
-      #FIXME:(hyprland) ws1 still appears on both DP-1 and DP-3 on reboot
+      #FIXME(hyprland): adapt this to work with new monitor module
+      #FIXME(hyprland): ws1 still appears on both DP-1 and DP-3 on reboot
       workspace = [
         "1, monitor:DP-1, default:true, persistent:true"
+        "2, monitor:DP-1, default:true"
         "3, monitor:DP-1, default:true"
         "4, monitor:DP-1, default:true"
         "5, monitor:DP-1, default:true"
@@ -150,9 +151,9 @@
         ''[workspace 8 silent]${pkgs.virt-manager}/bin/virt-manager''
         ''[workspace 8 silent]${pkgs.obsidian}/bin/obsidian''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
-        ''[workspace 0 silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
         ''[workspace 0 silent]${pkgs.copyq}/bin/copyq''
         ''[workspace 0 silent]${pkgs.spotify}/bin/spotify''
+        ''[workspace special silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
         ''[workspace special silent]${pkgs.keymapp}/bin/keymapp''
       ];
       #
@@ -210,8 +211,8 @@
         "stayfocused, title:^()$,class:^([Ss]team)$"
         "minsize 1 1, title:^()$,class:^([Ss]team)$"
         "immediate, class:^([Ss]team_app_*)$"
-        #"workspace 7, class:^([Ss]team_app_*)$"
-        #"monitor 0, class:^([Ss]team_app_*)$"
+        "workspace 7, class:^([Ss]team_app_*)$"
+        "monitor 0, class:^([Ss]team_app_*)$"
 
         #
         # ========== Fameshot rules ==========
@@ -233,8 +234,8 @@
         "workspace 9, class:^(signal)$"
         "workspace 9, class:^(org.telegram.desktop)$"
         "workspace 9, class:^(discord)$"
-        "workspace 0, class:^(yubioath-flutter)$"
         "workspace 0, title:^([Ss]potify*)$"
+        "workspace special, class:^(yubioath-flutter)$"
       ];
 
       # load at the end of the hyperland set

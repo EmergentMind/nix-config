@@ -1,37 +1,93 @@
-{ pkgs, config, ... }:
-# FIXME:(qemu) Should we merge all virtualization stuff, like podman?
 {
-  # FIXME:(qemu) Revisit if required
+  inputs,
+  lib,
+  pkgs,
+  config,
+  ...
+}:
+let
+  virtLib = inputs.nixvirt.lib;
+in
+{
+  imports = [
+    inputs.nixvirt.nixosModules.default
+  ];
   boot.kernelModules = [ "vfio-pci" ];
 
-  # This allows yubikey direction into a QEMU image https://github.com/NixOS/nixpkgs/issues/39618
+  # Enable yubikey direction into a QEMU image https://github.com/NixOS/nixpkgs/issues/39618
   virtualisation.spiceUSBRedirection.enable = true;
+
   virtualisation.libvirtd = {
     enable = true;
     qemu = {
-      # FIXME:(qemu) Is this necessary?
       package = pkgs.qemu_kvm;
       runAsRoot = true;
-      # FIXME:(qemu) What is this?
-      swtpm.enable = true;
-      #      ovmf = {
-      #        enable = true;
-      #        # FIXME:(qemu) This is from nixos.wiki but is super slow as it manually builds. Should see if it's required
-      #        # It's mostly for allowing secure boot, but qemu may already do it
-      #        packages = [
-      #          (pkgs.OVMF.override {
-      #            secureBoot = true;
-      #            tpmSupport = true;
-      #          }).fd
-      #        ];
-      #      };
+      # HW TPM Emulation (need to check what systems I have already have hw TPM that could be used)
+      #swtpm.enable = true;
+      ovmf = {
+        enable = true;
+        # Re-enable if needing to test secure boot inside a VM
+        #        packages = [
+        #          (pkgs.OVMF.override {
+        #            secureBoot = true;
+        #            tpmSupport = true;
+        #          }).fd
+        #        ];
+      };
+    };
+  };
+  virtualisation.libvirt = {
+    enable = true;
+    connections."qemu:///system" = {
+
+      networks = [
+        {
+          active = true;
+          definition = virtLib.network.writeXML {
+            uuid = "8e91d351-e902-4fce-99b6-e5ea88ac9b80";
+            name = "vm-lan";
+            forward = {
+              mode = "nat";
+              nat = {
+                nat = {
+                  port = {
+                    start = 1024;
+                    end = 65535;
+                  };
+                };
+                ipv6 = false;
+              };
+            };
+            bridge = {
+              name = "virbr0";
+              stp = true;
+              delay = 0;
+            };
+            ipv6 = false;
+            ip =
+              let
+                subnet = inputs.nix-secrets.networking.subnets.vm-lan;
+              in
+              {
+                address = subnet.gateway;
+                netmask = "255.255.255.0";
+                dhcp = {
+                  range = {
+                    start = "${subnet.triplet}.100";
+                    end = "${subnet.triplet}.254";
+                  };
+                };
+                hosts = lib.attrValues subnet.hosts;
+              };
+          };
+        }
+      ];
     };
   };
 
   # Need to add [File (in the menu bar) -> Add connection] when start for the first time
   programs.virt-manager.enable = true;
 
-  # FIXME:(qemu) Comments from ryan4yin, revisit
   environment.systemPackages = [
     # QEMU/KVM(HostCpuOnly), provides:
     #   qemu-storage-daemon qemu-edid qemu-ga

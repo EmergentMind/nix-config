@@ -9,7 +9,7 @@ in
   # - https://github.com/lucidph3nx/nixos-config/blob/2e42a40cc8d93c25e01dcbe0dacd8de01f4f0c16/modules/home-manager/firefox/default.nix
   # - https://github.com/Kreyren/nixos-config/blob/bd4765eb802a0371de7291980ce999ccff59d619/nixos/users/kreyren/home/modules/web-browsers/firefox/firefox.nix#L116-L148
   #
-  # TODO:(firefox)
+  # TODO(firefox):
   # - How to set DDG as default?
   # - Tons of settings above I haven't looked into
   # - Go over existing profiles to add settings
@@ -88,7 +88,7 @@ in
           ]
         )
         // {
-          # FIXME:(firefox) Check into how this works
+          # FIXME(firefox): Check into how this works
           #"*" = {
           #  installation_mode = "blocked";
           #  blocked_install_message = "blocked extension install";
@@ -104,7 +104,7 @@ in
       name = "EmergentMind";
       isDefault = true;
 
-      # FIXME:(firefox) These should probably be in a let .. in block so I can re-use if I setup
+      # FIXME(firefox): These should probably be in a let .. in block so I can re-use if I setup
       # additional profiles
       # Should check ~/.mozilla/firefox/PROFILE_NAME/prefs.js | user.js
       # from your old profiles too

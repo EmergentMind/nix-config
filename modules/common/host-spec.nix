@@ -19,7 +19,7 @@
       type = lib.types.attrsOf lib.types.str;
       description = "The email of the user";
     };
-    # FIXME: Set an assert to make sure this is set if isWork is true
+    # FIXME(hostSpec): Set an assert to make sure this is set if isWork is true
     work = lib.mkOption {
       default = { };
       type = lib.types.attrsOf lib.types.anything;
@@ -51,7 +51,7 @@
         in
         if pkgs.stdenv.isLinux then "/home/${user}" else "/Users/${user}";
     };
-    # FIXME: This should probably just switch to an impermenance option?
+    # FIXME(hostSpec): This should probably just switch to an impermenance option?
     persistFolder = lib.mkOption {
       type = lib.types.str;
       description = "The folder to persist data if impermenance is enabled";
@@ -94,7 +94,7 @@
       description = "Used to indicate a host that uses voice coding";
     };
 
-    # FIXME: Maybe make this display sub options or something later
+    # FIXME(hostSpec): Maybe make this display sub options or something later
     hdr = lib.mkOption {
       type = lib.types.bool;
       default = false;

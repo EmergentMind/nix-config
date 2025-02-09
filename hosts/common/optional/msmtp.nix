@@ -1,7 +1,11 @@
-{ config, ... }:
+{ inputs, config, ... }:
+let
+  sopsFolder = (builtins.toString inputs.nix-secrets) + "/sops";
+in
 {
   sops.secrets = {
     "passwords/msmtp" = {
+      sopsFile = "${sopsFolder}/shared.yaml";
       owner = config.users.users.${config.hostSpec.username}.name;
       inherit (config.users.users.${config.hostSpec.username}) group;
     };

@@ -1,253 +1,217 @@
-#FIXME:(docs) this needs cleanup and correction to a few things
+# NixOS Installer for Nix-Config
 
-# Nix Environment Setup for an existing host
+This flake is separate from the main nix-config flake and prepares a Nix environment for bootstrapping a nix-config host on a new machine. Most of the process is automated with the [`nixos-bootstrap.sh`](../scripts/nixos-bootstraph.sh) script that is run on a "source" host to install NixOS on a "target" machine. There are a couple of small manual steps that are typical of any OS installation procedure, such defining information about the target host and adding host-specific secrets to the relevant sops secrets file. This document explains some of the reasoning behind the use of a separate flake and then provides installation steps. For a more indepth look at some of the concepts, reasoning, and automation process, see the blog post [Remotely Installing NixOS and nix-config with Secrets](https://unmovedcentre.com/posts/remote-install-nixos-config/) on my website. Note that the blog post was written during the first iteration of the bootstrap script and there have been significant enhancements to the code since that time. The general idea and flow still stand and may provide useful insight to understanding the script itself, for those who want to learn more about what it does.
 
-This flake prepares a Nix environment for setting my systems up on a new machine, which allows easier testing and early
-configuration tweaks.
-
-- [Nix Environment Setup for an existing host](#nix-environment-setup-for-an-existing-host)
-  - [Why an extra flake?](#why-an-extra-flake)
-  - [Brand new host](#brand-new-host)
-  - [Steps to Deploying this flake](#steps-to-deploying-this-flake)
-    - [0. VM setup (optional)](#0-vm-setup-optional)
-    - [1a. Automated With nixos-anywhere](#1a-automated-with-nixos-anywhere)
-    - [1b. Manual Setup (Host/VM)](#1b-manual-setup-hostvm)
-      - [1b.0 Encrypting with LUKS(everything except ESP)](#1b0-encrypting-with-lukseverything-except-esp)
-      - [1b.1 Generating the NixOS Configuration and Installing NixOS](#1b1-generating-the-nixos-configuration-and-installing-nixos)
-    - [1c. Manual Setup (Cloud)](#1c-manual-setup-cloud)
-  - [2. Deploying the main flake's NixOS configuration](#2-deploying-the-main-flakes-nixos-configuration)
-  - [3. Change LUKS2's passphrase and enroll yubikeys](#3-change-luks2s-passphrase-and-enroll-yubikeys)
-  - [4. Everything else](#4-everything-else)
+- [Why an extra flake?](#why-an-extra-flake)
+- [Assumptions](#assumptions)
+- [Generating a custom NixOS ISO](#generating-a-custom-nixos-iso)
+- [Requirements for Installing a New Host](#requirements-for-installing-a-new-host)
+- [Requirements for installing an existing nix-config host on a new machine](requirements-for-installing-an-existing-nix-config-host-on-a-new-machine)
+- [Installation Steps](#installation-steps)
+- [Troubleshooting](#Troubleshooting)
 
 ## Why an extra flake?
 
-The configuration of the main flake, [/flake.nix](/flake.nix), is heavy, and it takes time to debug
-& deploy. This simplified flake is tiny and can be deployed very quickly, it helps to:
+The main flake, `nix-config/flake.nix`, takes longer to build, debug, and deploy because even the core modules are focused on a broad set of functional requirements. In contrast, this simplified flake is focused only on providing an environment with which to accomplish the following:
 
-1. Adjust & verify my `hardware-configuration.nix` modification quickly before deploying the main
-   flake.
-2. Test some new filesystem related features on a NixOS virtual machine, such as impermanence,
-   Secure Boot, TPM2, Encryption, etc.
+- Prepare the machine to successfully authenticate with our private nix-secrets repo _and_ decrypt the required secrets when the main flake is built.
+- Adjust and verify the new host's `hardware-configuration.nix` and potentially modify it prior to building the main flake.
+- We also have the option of testing new filesystem related features such as impermanence, Secure Boot, TPM2, Encryption, etc in a light weight environment prior to finalizing the main flake.
 
-## Brand new host
+## Assumptions
 
-- Add `hosts/<hostname>/` files
-- Find disk name from livecd with `lsblk`
-- Find RAM amount form livcde with `free -m`
-- Add `nixos-installer/flake.nix` entry, and pass disk name and swap
-- Add an age key to age_keys entry in nix-secrets (FIXME:(docs) This can be automated)
-- If you'll be using backup, add a borg passphrase to nix-secrets
+The installer and instructions here assume that a _private_ nix-secrets repository is in use in conjunction with the nix-config _and_ the nix-secrets repo is structured to use shared secrets as well as host-specific secrets. Reference the _complex_ branch of the [nix-secrets-reference](https://github.com/EmergentMind/nix-secrets-reference) repository for an example of the expected structure as well as the article on [NixOS Secrets Management](https://unmovedcentre.com/posts/secrets-management/) to learn more.
 
-## Steps to Deploying this flake
+For users new to Nix and NixOS it may be worth noting that because this script is installing NixOS, the usual [NixOS requirements](https://nixos.org/download/#nixos-iso) apply.
 
-- Run `just iso` to generate the iso file and use the `result/iso/*.iso` file to boot into it on the target machine/vm
-- Run `just iso-install <disk>` to generate the iso file automatically copy it to a USB drive
+## Generating a custom NixOS ISO
+
+We recommend using a custom ISO similar to what is defined in `nix-config/hosts/nixos/iso`. The official minimal NixOS iso has historical omitted some basic tty utilities that are expected by the installer scripts. The config for the ISO used in nix-config are similarly light-weight to [`nixos-installer/flake.nix`](flake.nix).
+
+To generate the ISO, simply run `just iso` from the root of your `nix-config` directory. The resulting .iso file will be saved to `nix-config/result/iso/foo.iso`. A symlink to the file is also created at `nix-config/latest.iso`. The filename is time stamped for convenient reference when frequently trying out different ISOs in VMs. For example, `nixos-24.11.20250123.035f8c0-x86_64-linux.iso`.
+
+If you are installing the host to a VM or remote infrastructure, configure the machine to boot into the .iso file.
+
+If you are installing on a bare metal machine, write the .iso to a USB device. You can generate the iso and write it to a device in one command, using `just iso /path/to/usb/device`.
+
+## Requirements for installing a new host
+
+### Pre-installation steps:
+
+1. Add `nix-config/hosts/nixos/[hostname]/` and `nix-config/home/[user]/[hostname].nix` files. You must declare the configuration settings for the target host as usual in your nix-config.
+   Be sure to specify the device name (e.g. sda, nvme0n1, vda, etc) you want to install to along with the desired `nix-config/hosts/common/disks` disko spec.
+
+   If needed, you can find the device name on the target machine itself by booting it into the iso environment and running `lsblk` to see a list of the devices. Virtual Machines often using a device called `vda`.
+2. Add a `newConfig` entry for the target host in `nix-config/nixos-installer/flake.nix`, passing in the required arguments as noted in the file comments.
+3. If you are planning to use the `yubikey` and/or `backup` modules on the target host, you _must_ temporarily disable them in the target host's config options until bootstrapping is complete. Failure to disable these two modules, will cause nix-config to look for the associated secrets in the new `[hostname].yaml` secrets file where they have not yet been added, causing sops-nix to fail to start during the build process. After rebuilding, we'll add the required keys to secrets and re-enable these modules.
+    For example:
+    ```nix
+    # nix-config/hosts/nixos/guppy/default.nix
+    #--------------------
+
+    # ...
+        hostSpec = {
+            hostName = "guppy";
+            # The yubikey module is enabled via a hostSpec option. Set it to false.
+            useYubikey = lib.mkForce false;
+        };
+        # The back module is enabled via a services option. Set it to false.
+        services.backup = {
+            enable = false;
+            # ...
+        };
+       #...
+    ```
+
+#### A note about secrets
+
+There are different ways to set up secrets for a new target host. Some are more involved than others but they _all_ require some level of manual entry.
+The installer script automates many of the required steps and therefore we will only describe the process of relying on that automation and making required manual entries near the end of the installation process.
+
+In brief, the script will:
+
+- create a host-specific age key pair
+- create a host-specific user age key pair for the primary user
+- create a `nix-secrets/sops/[hostname].yaml` secrets file with the user age private key (the host age private key is always derived from the host ssh key and therefore does not need to be stored in secrets)
+- update the `.sops.yaml` file with:
+    - public age keys entries for both the host and user
+    - update the `creation_rules` for `shared.yaml` with the host and user age keys for the target host.
+    - create a new `creation_rules` entry for `[hostname].yaml` specifying that the secrets file can be encrypted and decrypted by the primary user and host of both the target host _AND_ the host from which the installation script is being executed. This is important because until the target host has been fully bootstrapped, its `[hostname].yaml` must be accessible by something.
+
+        For example, a host `ghost` running the installer script on target host `guppy` will result in the following sops `creation_rules` entry in `.sops.yaml`:
+
+        ```yaml
+            - path_regex: guppy\.yaml$
+              key_groups:
+                 - age:
+                    - *ta_guppy
+                    - *guppy
+                    - *ta_ghost
+                    - *ghost
+        ```
+
+As mentioned, the time for manual steps will be noted below.
+
+## Requirements for installing an existing nix-config host on a new machine
+
+Prior to installing an existing host config onto a new machine you likely only need to ensure that the `nix-config//hosts/nixos/[hostname]/default.nix`specific the correct disk device for disko.
+
+Your existing config should already have a `hardware-configuration.nix` and a functioning compliment of sops secrets and sops creation rules. Therefore, many of the steps presented by the script can be safely skipped. The applicable steps will be noted below.
+
+If you haven't already, add a `newConfig` entry for the target host in `nix-config/nixos-installer/flake.nix`, passing in the required arguments as noted in the file comments.
+
+## Installation Steps
 
 ### 0. VM setup (optional)
 
-This is only relevant if you are not using a physical system.
+This is only relevant if you are _not_ installing the target host on bare metal.
 
-- If you are using swap, remember a lot of space will be used for swap from your main disk (maybe 16GB) so setup a 40GB
-  if you want a 20GB disk, or pass `withSwap = false;` to the disko module in `nixos-installer/flake.nix`
-- Setup UEFI
-- Add the DVD-rom pointing to the iso
-- Add the yubikey device
-- Record the ip address after initial boot
+- Disk size: a decent _minimum_ disk size without swap is 25GB to accommodate for multiple generations on a testing machine.
+     If you are using swap, remember that the space will come from the main disk you allocated for the VM so be sure to allocate enough _additional_ main disk space to accommodate your swap size needs.
+     For example, if you need 50GB of storage for you machine and you also specified a swapsize of 8GB in nix-config, then allocate 48GB for the VMs disk size.
+- You _must_ set up the hypervisor firmware to use UEFI instead of BIOS or the VM will fail to boot into the minimal-configuration.
+    When creating the VM using virtmanager, you must select "Customize configuration before install" during step 5 of 5, and then change BIOS to UEFI on the next screen.
+- For the CD/DVD-ROM source path select the custom iso file.
+- Ensure the boot order is sane for automated reboots. For example, on VirtManager, set `VirtIO Disk 1` ahead of `SATA CDROM`, ensure both are checked, and also check `Enable boot menu` so that you can easily override the boot order on reboot if need be.
 
-### 1a. Automated With nixos-anywhere
+NOTE: If you encounter installation problems during reboot into the minimal-configuration, refer to [Troubleshooting](#troubleshooting) as there are a couple of different causes.
 
-This will automatically setup the disks and install the nixos-installer flake using nixos-anywhere.
+### 1. Initial boot
 
-If you plan to use sops home-manager module on the target, you should first generate an age key for the target (if one
-doesn't already exist) and put the contents of the key.text file into the nix-secrets secrets.yaml file, under
-`age_keys`. Generate the age key using the following command:
+Boot the target machine into the NixOS ISO environment.
+
+If necessary, note the IP address of the machine by running `ip a`.
+
+### 2. Run the bootstrap script
+
+On the source machine where nix-config already resides, run the following command from the root of `nix-confg`.
 
 ```bash
-nix-shell -p age.out --run 'age-keygen'
+./scripts/bootstrap-nixos.sh -n [hostname] -d [destination]
 ```
 
+Replace `[hostname]` with the name of the target host you are installing.
+Replace `[destination]` with the location of the target machine.
 Be sure to specify `--impermanence` if necessary. Use `--debug` if something goes wrong...
 
-Change the boot order so DVD-ROM is second and the installation disk is first. This is because nixos-anywhere will reboot this system and expect it to boot into the new system.
-
-This is an example of running it from `nix-config` base folder installing on a VM (`okra`):
+This is an example of running the script from `nix-config` base folder installing on a VM (`guppy`) with the `--debug` flag enabled:
 
 ```bash
-scripts/bootstrap-nixos.sh -n=okra -d=192.168.122.29 -k=~/.ssh/id_dade -u=root --impermanence
+./scripts/bootstrap-nixos.sh -n guppy -d=192.168.122.29 --debug
 ```
 
-This will give you of few yes/no questions, but if everything works you should end up with a fully functional system
-running the main flake (even though it first transitions through nixos-installer flake first).
-
-You should test the passwords work as expected.
+The script will give you several yes/no or no/yes questions. The questions are fairly self explanatory but we'll go through them here and make some notes that will be valuable depending on whether you are bootstrapping a new or existing host.
 
 
+1. "Run nixos-anywhere installation?" default yes - This initiates installation of the minimal-config environment.
+    1. "Manually set luks encryption passphrase?" default no - if you are using LUKS, say "y" and enter a temporary password when prompted. Disko will use for setting up LUKS and you can change it when installation is complete.
+    2. "Generate a new hardware config for this host? Yes if your nix-config doesn't have an entry for this host." default no - Say yes only for new hosts that don't have a premade `hardware-configuration.nix`
+    3. "Has your system restarted and are you ready to continue? (no exits)" - This is important. Nixosanywhere, will report the target host as available prior to it being fully rebooted. Wait until the target host prints a log in prompt before saying yes.
+2. "Generate host (ssh-based) age key?" default yes - usually only needed for new hosts
+3. "Generate user age key?" default yes - usually only needed for new hosts
+4. "Add ssh host fingerprints for git{lab,hub}?" default yes - this will setup the full nix-config accessing nix-secrets as an input during the next steps
+5. "Do you want to copy your full nix-config and nix-secrets to $target_hostname?" default yes - copies the source of both repos from the source machine to the target machine, faster than cloning from github/lab
+    1. "Do you want to rebuild immediately?" default yes - builds the full config
+6. "Do you want to commit and push the generated hardware-configuration.nix for $target_hostname to nix-config?" default yes - This will _only_ be presented if you said yes to question 1.2 and will push the file to your repo with an appropriate commit message.
+
+Note: these questions are largely in place to allow subsequent running of the script when errors are encountered without being required to start from the very beginning again. For example, if you get all the way to step 5.1 and there was a problem with your final config for the target host that causes a build failure, you can fix the issue on your source host, rerun the script, skip through all of the questions until 5, and then pick up where you left off.
 
 
+On completion, the script should end with a "Success!" message.
 
-### 1b. Manual Setup (Host/VM)
+Depending on your host, the following post-install steps may not be required.
 
-If you end up needing to manually test steps, this explains the various things you need todo or that you may run into.
+### 3. Add u2f key to secrets and enable the yubikey module (optional)
 
-#### 1b.0 Encrypting with LUKS(everything except ESP)
+If you plan to enable the yubikey module and use the u2f for passwordless sudo, you will have to first generate a u2f key on the host and add it to your secrets file prior to enabling the module and rebuilding.
 
-ssh into the target system using your public key if using the custom iso.
+For a thorough explanation, see the article on [Improving QoL on NixOS with Yubikey](https://unmovedcentre.com/posts/improving-qol-on-nixos-with-yubikey/).
 
-Check the current disk layout:
+If you've already configured the module for other hosts and just need to get it stood up on the newly installed host, then perform the following steps:
 
-```bash
-❯ lsblk
-NAME  MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
-loop0   7:0    0  3.2G  1 loop /nix/.ro-store
-sr0    11:0    1  3.2G  0 rom  /iso
-vda   253:0    0   20G  0 disk
-```
+1. Log in to the target host (direct or remote)
+2. To generate U2F keys we will use the `pamu2fcfg` tool. If this is not installed on the host, you can temporarily install it using `nix shell pkgs#pamu2fcfg`.
+3. With one of your YubiKeys plugged in, run `pamu2fcfg -u <username> > ~/u2f_keys` Replace `<username>` with your username.
+   You will be prompted to touch your YubiKey
+   After touching the YubiKey, the key registration data for PAM will be written to the `~/u2f_keys` file.
+4. For every additional YubiKey we'll use a slightly different command.
+   With only the next YubiKey you want to add plugged in, run `pamu2fcfg -n >> ~/u2f_keys`
+   You will be prompted to touch your YubiKey
+   After touching the YubiKey, the key registration data for PAM will be appended to the `u2f_keys` file.
 
-Record the disk identifier `vda`, as we will use it later.
+   The -n flag will instruct pamu2fcg to output the registration data as an append to the data for the first key, thus skipping the prefix information.
+5. Repeat the step 4 to add any additional YubiKeys you have.
+6. Copy the `u2f_keys` data by running `cat ~/u2f_keys` and copying the printed data.
+7. Navigate to your `nix-secrets` directory and decrypt the host's secrtes file by running `sops ./sops/[hostname].yaml`, replacing `[hostname]` with the actual hostname.
+8. In the `[hostname].yaml` file, add a `u2f:` anchor underneath the `age:` key entry that was created by the bootstrap script and paste your `u2f_keys` data.
+   For example:
+   ```yaml
+   keys:
+       age: <KEY DATA>
+       u2f: <KEY DATA>
+   ```
+9. Save and exit `[hostname].yaml`
+10. Commit and push the changes to `nix-secrets`
+11. Navigate to your `nix-config` and enable the `yubikey` module in your `hosts/nixos/<host>/default.nix` file or wherever you choose to enable it.
+    For example:
+    ```nix
+    # nix-config/hosts/nixos/guppy/default.nix
+    #--------------------
 
-Copy the repo from your host to the target:
+    # ...
+        hostSpec = {
+            hostName = "guppy";
+            # The yubikey module is enabled via a hostSpec option. Set it to false.
+            useYubikey = lib.mkForce false;
+        };
+    #...
+    ```
+12. You will need to rebuild for these changes to take effect but may want to continue through the following steps and do a single rebuild at the end.
 
-```bash
-just sync <user> <host>
-```
+### 4. Post install steps for LUKS (optional)
 
-For example, syncing to an ISO vm:
 
-```bash
-just sync nixos 192.168.129.29
-```
-
-Run disko:
-
-```bash
-cd nix-config/nixos-installer
-just disko "/dev/vda" "passphrase"
-```
-
-Now, the disk status should be:
-
-```bash
-lsblk
-NAME          MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINTS
-loop0           7:0    0  3.2G  1 loop  /nix/.ro-store
-sr0            11:0    1  3.2G  0 rom   /iso
-vda           253:0    0   20G  0 disk
-├─vda1        253:1    0  512M  0 part  /mnt/boot
-└─vda2        253:2    0 19.5G  0 part
-  └─cryptroot 254:0    0 19.5G  0 crypt /mnt/persist
-                                        /mnt/nix
-                                        /mnt/.swapvol
-                                        /mnt
-```
-
-You can also confirm the naming of the volumes by running:
-
-```bash
-sudo btrfs subvolume list /mnt
-ID 256 gen 7 top level 5 path @nix
-ID 257 gen 9 top level 5 path @persist
-ID 258 gen 18 top level 5 path @root
-ID 259 gen 17 top level 5 path @swap
-```
-
-Turn swap on:
-
-```bash
-sudo swapon /mnt/.swapvol/swapfile
-```
-
-Check the status
-
-```bash
-$ sudo swapon -s /mnt/.swapvol/swapfile
-Filename                                Type            Size            Used            Priority
-/mnt/.swapvol/swapfile                  file            16777212        0               -2
-```
-
-#### 1b.1 Generating the NixOS Configuration and Installing NixOS
-
-Then, generate the NixOS configuration:
-
-```bash
-# nixos configurations
-sudo nixos-generate-config --root /mnt
-```
-
-From your installer host:
-
-```
-# we need to update our filesystem configs in old hardware-configuration.nix according to the generated one.
-scp user@host:/mnt/etc/nixos/hardware-configuration.nix /hosts/<hostname>/hardware-configuration-new.nix
-just sync <user> <host>
-```
-
-If you haven't already got a copy of this locally, you may want to scp it on to your host.
-
-Then, install NixOS:
-
-```bash
-cd ~/nix-config/hosts/<host>/nixos-installer
-
-# run this command if you're retrying to run nixos-install
-rm -rf /mnt/etc
-
-# install nixos
-# NOTE: the root password you set here will be discarded when reboot
-sudo nixos-install --root /mnt --flake .#okra --no-root-password --show-trace --verbose
-
-# enter into the installed system, check password & users
-# `su aa` => `sudo -i` => enter aa's password => successfully login
-# if login failed, check the password you set and try again
-
-# NOTE: DO NOT skip this step!!!
-# copy the essential files into /persistent
-# otherwise the / will be cleared and data will lost
-mkdir /mnt/persist/etc
-
-nixos-enter
-mv /etc/machine-id /persist/etc/
-mv /etc/ssh /persist/etc/
-```
-
-After finishing up, exit the nixos env.
-
-```
-# delete the generated configuration after editing
-rm -f /mnt/etc/nixos
-rm ~/nix-config/hosts/<host>/hardware-configuration-new.nix
-
-# copy our configuration to the installed file system
-cp -r ../nix-config /mnt/etc/nixos
-
-# sync the disk, unmount the partitions, and close the encrypted device
-sync
-swapoff /mnt/.swapvol/swapfile
-umount -R /mnt
-cryptsetup close /dev/mapper/encrypted-nixos
-reboot
-```
-
-And then reboot.
-
-### 1c. Manual Setup (Cloud)
-
-## 2. Deploying the main flake's NixOS configuration
-
-For all systems we will use yubikey. For remote hosts, we will use yubikey-agent and for local we will end up plugging in the yubikey.
-
-After all these steps, we can finally deploy the main flake's NixOS configuration by:
-
-```bash
-cd ~/nix-config
-just rebuild
-```
-
-Finally, to enable secure boot, follow the instructions in
-[lanzaboote - Quick Start](https://github.com/nix-community/lanzaboote/blob/master/docs/QUICK_START.md)
-and
-[nix-config/ai/secure-boot.nix](https://github.com/ryan4yin/nix-config/blob/main/hosts/idols_ai/secureboot.nix)
-
-## 3. Change LUKS2's passphrase and enroll yubikeys
+#### Change LUKS2's passphrase if you entered a temporary passphrase during bootstrap
 
 ```bash
 # when entering /path/to/dev/ you must specify the partition (e.g. /dev/nvmeon1p2)
@@ -261,6 +225,7 @@ sudo cryptsetup luksChangeKey /path/to/dev/
 sudo cryptsetup --verbose open --test-passphrase /path/to/dev/
 ```
 
+#### Enroll yubikeys for touch-based unlock
 Enable yubikey support:
 
 NOTE: This requires LUKS2 (use cryptsetup luksDump /path/to/dev/ to check)
@@ -271,7 +236,16 @@ sudo systemd-cryptenroll --fido2-device=auto /path/to/dev/
 
 You will need to do it for each yubikey you want to use.
 
-### Unlocking secondary drives after boot using crypttab and a keyfile
+#### Update the unlock passphrase for secondary drive unlock
+If you passed the `--luks-secondary-drive-labels` arg when running the bootstrap script, it automatically created a `/luks-seocndary-unlock.key` file for you using the passphrase you specified during bootstrap.
+If you used a temporary passphrase during bootstrap, you can update the secondary unlock key by running the following command and following the prompts.
+
+```bash
+cryptsetup luksChangeKey /luks-secondary-unlock.key
+```
+
+#### If you forgot to use the `--luks-secondary-drive-labels` arg during bootstrap but need to set it up
+
 From - https://wiki.nixos.org/wiki/Full_Disk_Encryption#Unlocking_secondary_drives :
 
 1. Create a keyfile for your secondary drive(s), store it safely and add it as a LUKS key:
@@ -300,7 +274,7 @@ You need the UUID of the partition that the volume exists on, not the uuid of th
   ''
 }
 ```
-exmaple:
+example:
 ```nix
 {
    environment.etc.crypttab.text = ''
@@ -312,16 +286,63 @@ exmaple:
 With this approach, the secondary drive is unlocked just before the boot process completes, without the need to enter its password.
 The secondary drive will be unlocked and made available under /dev/mapper/cryptstorage for mounting.
 
-## 4. Everything else
+### 5. Enable `backup` module (optional)
 
-Here you should have a fully working system, but some stuff you still need to do:
+Enable the backup module in the target host's config file. For example:
 
-- login to proton
-- Add new u2f_keys to nix-secrets if a totally new host
+    ```nix
+    # nix-config/hosts/nixos/guppy/default.nix
+    #--------------------
+
+    # ...
+        services.backup = {
+            enable = true;
+            # ...
+        };
+       #...
+    ```
+
+You will, of course, need to declare additional backup options for the module to function correctly.
+
+### 6. Rebuild (optional)
+
+If you did any of the steps from 3 through 5, you will need to rebuild for the changes to take effect. Run `just rebuild` from the `nix-config` directory on the new host.
+
+### 7. Everything else (optional)
+
+Here you should have a fully working system, but here are some common tasks you may need to do for a "daily-driver" machine:
+
 - Recover any backup files needed
   - .mozilla
   - syncthing
-- Log into firefox
-- Re-link signal
 - Manually set syncthing username/password
-- login to spotify
+- Run any commonly used apps and perform
+    - firefox and initiate sync
+    - protonvpn
+    - Re-link signal-desktop
+- Login to spotify
+
+## Troubleshooting
+
+### Rebooting a VM into the minimal-config environment hangs indefinitely on "booting in to hard disk..."
+
+There are two know causes for this issue:
+
+1. The VM __must__ be created with the hypervisor firmware set to UEFI instead of BIOS. You will likely have to re-create the VM as this can't be changed after the fact.
+
+2. The `hardware-configuration.nix` file may not have the required virtual I/O kernel module. Depending on the VM device type you will need to add either `virtio_pci` or `virtio_scsi` to the list of `availableKernelModules` in the host's `hardware-configuration.nix`
+   For example:
+   ```nix
+   # nix-config/hosts/nixos/guppy/hardware-configuration.nix
+   # -------------------
+
+    # ...
+       boot.initrd.availableKernelModules = [
+      "ahci"
+      "xhci_pci"
+      "virtio_pci"
+      "sr_mod"
+      "virtio_blk"
+    ];
+    # ...
+   ```

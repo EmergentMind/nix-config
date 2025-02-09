@@ -1,10 +1,10 @@
 { pkgs, ... }:
 let
-  # FIXME:(xdg) That should use config options and just reference whatever is configured as the default
+  # FIXME(xdg): That should use config options and just reference whatever is configured as the default
   browser = [ "firefox.desktop" ];
   editor = [ "nvim.desktop" ];
   media = [ "vlc.desktop" ];
-  writer = [ "libreoffic-writer.desktop" ];
+  writer = [ "libreoffice-writer.desktop" ];
   spreadsheet = [ "libreoffice-calc.desktop" ];
   slidedeck = [ "libreoffice-impress.desktop" ];
   # Extensive list of associations here:
@@ -26,7 +26,6 @@ let
     "application/x-extension-xhtml" = browser;
     "application/x-extension-xht" = browser;
     "application/pdf" = browser;
-
     "application/mxf" = media;
     "application/sdp" = media;
     "application/smil" = media;
@@ -63,6 +62,12 @@ let
     "application/x-synology-drive-doc" = "synology-drive-open-file.desktop";
     "application/x-synology-drive-sheet" = "synology-drive-open-file.desktop";
     "application/x-synology-drive-slides" = "synology-drive-open-file.desktop";
+
+    #
+    # Drawio
+    #
+    "application/vnd.jgraph.mxfile" = [ "drawio.desktop" ];
+    "application/vnd.jgraph.mxfile.realtime" = [ "drawio.desktop" ];
 
     #
     # Office Stuff
@@ -106,12 +111,22 @@ let
     "application/vnd.sun.xml.writer.global" = writer;
     "application/vnd.sun.xml.writer.template" = writer;
     "application/vnd.wordperfect" = writer;
+
+  };
+  removals = {
+    # Calibre steals odt association from libreoffic so need to remove
+    "application/vnd.oasis.opendocument.text" = [
+      "calibre-ebook-viewer.desktop"
+      "calibre-ebook-edit.desktop"
+      "calibre-gui.desktop"
+    ];
   };
 in
 {
   xdg.mime.enable = true;
   xdg.mimeApps.enable = true;
   xdg.mimeApps.defaultApplications = associations;
+  xdg.mimeApps.associations.removed = removals;
   xdg.mimeApps.associations.added = associations;
 
   home.packages = builtins.attrValues {

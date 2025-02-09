@@ -21,7 +21,7 @@
             ];
           };
         };
-        #FIXME decide: move these to binds area or have plugin specific binds in the plugin module?
+        # FIXME decide: move these to binds area or have plugin specific binds in the plugin module?
         #    keymaps = [
         #      {
         #        mode = "n";

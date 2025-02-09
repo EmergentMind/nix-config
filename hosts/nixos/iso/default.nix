@@ -1,5 +1,4 @@
-#NOTE: This ISO is NOT minimal. It uses the `hostSpec.isMinimal = false` value because we don't want a minimal
-# environment when using the iso for recovery purposes.
+#NOTE: This ISO is NOT minimal. We don't want a minimal environment when using the iso for recovery purposes.
 {
   inputs,
   pkgs,
@@ -16,8 +15,10 @@
     inputs.home-manager.nixosModules.home-manager
     (map lib.custom.relativeToRoot [
       "modules/common/host-spec.nix"
-      "hosts/common/users/primary/default.nix"
-      "hosts/common/users/primary/nixos.nix"
+      # We want primary default so we get ssh authorized keys, zsh, and some basic tty tools. It also pulls in the hm spec for iso.
+      # Note that we are not pulling in "hosts/common/users/primary/nixos.nix" for the iso as it's not needed.
+      "hosts/common/users/primary/"
+      "hosts/common/optional/minimal-user.nix"
     ])
   ];
 
@@ -26,19 +27,44 @@
     username = "ta";
     isProduction = lib.mkForce false;
 
-    # Needed because we don't use host/common/core for iso
-    networking = inputs.nix-secrets.networking;
-    domain = inputs.nix-secrets.domain;
+    # Needed because we don't use hosts/common/core for iso
+    inherit (inputs.nix-secrets)
+      domain
+      networking
+      ;
 
-    #TODO: This is stuff for home/ta/common/core/git.nix. should create home/ta/common/optional/development.nix so core git.nix doesn't use it.
+    #TODO(git): This is stuff for home/ta/common/core/git.nix. should create home/ta/common/optional/development.nix so core git.nix doesn't use it.
     handle = "emergentmind";
     email.gitHub = inputs.nix-secrets.email.gitHub;
   };
 
+  # root's ssh key are mainly used for remote deployment
+  users.extraUsers.root = {
+    inherit (config.users.users.${config.hostSpec.username}) hashedPassword;
+    openssh.authorizedKeys.keys =
+      config.users.users.${config.hostSpec.username}.openssh.authorizedKeys.keys;
+  };
+
+  environment.etc = {
+    isoBuildTime = {
+      #
+      text = lib.readFile (
+        "${pkgs.runCommand "timestamp" {
+          # builtins.currentTime requires --impure
+          env.when = builtins.currentTime;
+        } "echo -n `date -d @$when  +%Y-%m-%d_%H-%M-%S` > $out"}"
+      );
+    };
+  };
+
+  # Add the build time to the prompt so it's easier to know the ISO age
+  programs.bash.promptInit = ''
+    export PS1="\\[\\033[01;32m\\]\\u@\\h-$(cat /etc/isoBuildTime)\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\$ "
+  '';
+
   # The default compression-level is (6) and takes too long on some machines (>30m). 3 takes <2m
   isoImage.squashfsCompression = "zstd -Xcompression-level 3";
 
-  # Needed because we don't use host/common/core for iso
   nixpkgs = {
     hostPlatform = lib.mkDefault "x86_64-linux";
     config.allowUnfree = true;
@@ -49,6 +75,7 @@
       "nix-command"
       "flakes"
     ];
+    extraOptions = "experimental-features = nix-command flakes";
   };
 
   services = {

@@ -90,7 +90,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        import ./checks { inherit inputs system pkgs; }
+        import ./checks.nix { inherit inputs system pkgs; }
       );
       #
       # ========= DevShell =========
@@ -141,6 +141,11 @@
     # Secrets management. See ./docs/secretsmgmt.md
     sops-nix = {
       url = "github:mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # Declarative vms using libvirt
+    nixvirt = {
+      url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # vim4LMFQR!

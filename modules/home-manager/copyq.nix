@@ -16,7 +16,7 @@ let
   cfg = config.programs.copyq;
   configDir =
     if (pkgs.stdenv.isDarwin && !config.xdg.enable) then
-      # TODO:(darwin) Someone on Darwin can confirm this
+      # TODO(darwin): Someone on Darwin can confirm this
       "Library/Preferences/copyq"
     else
       "${config.xdg.configHome}/copyq";

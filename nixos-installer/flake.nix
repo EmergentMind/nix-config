@@ -22,34 +22,40 @@
 
       # This mkHost is way better: https://github.com/linyinfeng/dotfiles/blob/8785bdb188504cfda3daae9c3f70a6935e35c4df/flake/hosts.nix#L358
       newConfig =
-        name: disk: withSwap: swapSize:
-        (nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = minimalSpecialArgs;
-          modules = [
-            inputs.disko.nixosModules.disko
-            ../hosts/common/disks/standard-disk-config.nix
-            {
-              _module.args = {
-                inherit disk withSwap swapSize;
-              };
-            }
-            ./minimal-configuration.nix
-            ../hosts/nixos/${name}/hardware-configuration.nix
+        name: disk: swapSize: useLuks:
+        (
+          let
+            diskSpecPath =
+              if useLuks then ../hosts/common/disks/btrfs-luks-disk.nix else ../hosts/common/disks/btrfs-disk.nix;
+          in
+          nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = minimalSpecialArgs;
+            modules = [
+              inputs.disko.nixosModules.disko
+              diskSpecPath
+              {
+                _module.args = {
+                  inherit disk;
+                  withSwap = swapSize > 0;
+                  swapSize = builtins.toString swapSize;
+                };
+              }
+              ./minimal-configuration.nix
+              ../hosts/nixos/${name}/hardware-configuration.nix
 
-            { networking.hostName = name; }
-          ];
-        });
+              { networking.hostName = name; }
+            ];
+          }
+        );
     in
     {
       nixosConfigurations = {
-        # host = newConfig "name" disk" "withSwap" "swapSize"
+        # host = newConfig "name" disk" "swapSize" "useLuks"
         # Swap size is in GiB
-        grief = newConfig "grief" "/dev/vda" false "0";
-        guppy = newConfig "guppy" "/dev/vda" false "0";
-
-        #TODO:(gusto) uncomment when gusto gets moved to disko, until then flake check errors on this because gustos current hw config doesn't match the disko spec that installer uses
-        #gusto = newConfig "gusto" "/dev/sda" true "8";
+        grief = newConfig "grief" "/dev/vda" 0 false;
+        guppy = newConfig "guppy" "/dev/vda" 0 false;
+        gusto = newConfig "gusto" "/dev/nvme0n1" 8 false;
 
         ghost = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";

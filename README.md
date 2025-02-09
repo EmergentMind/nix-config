@@ -52,7 +52,7 @@ Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emer
   - Optional configs for user and host-specific needs
   - Facilitation for custom modules, overlays, packages, and library
 
-- Secrets management via sops-nix and a _private_ nix-secrets repo which is included as a flake input
+- Secrets management via sops-nix and a _private_ nix-secrets repo that is included as a flake input
 - Declarative, LUKS-encrypted btrfs partitions via disko
 - Automated remote-bootstrapping of NixOS, nix-config, and _private_ nix-secrets
 - Handles multiple YubiKey devices and agent forwarding for touch-based/passwordless authentication during:
@@ -102,14 +102,14 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
       - Currently not using any darwin hosts
   - `nixos` - machine specific configurations for NixOS-based hosts
       - `genoa` - stage 6
-      - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64MB RAM, Radeon RX5600XT
+      - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64GB RAM, Radeon RX5600XT
       - `grief` - Lab - Qemu VM
       - `gooey` - stage x
       - `guppy` - Remote Install Lab - Qemu VM
-      - `gusto` - Theatre - Asus VivoPC - 1.5GHz Celeron 1007U, 4GB RAM, onboard Intel graphics
-      - `iso` - custom NixOS ISO that incorporates some quality of life configuration for use during installations and recovery
+      - `gusto` - Theatre mini pc - 3.4GHz N95 (4C/4T), 16GB RAM
+      - `iso` - Custom NixOS ISO that incorporates some quality of life configuration for use during installations and recovery
 - `home/<user>` - Home-manager configurations, built automatically during host rebuilds.
-  - `common` - shared home-manager configurations consumed the user's machine specific ones.
+  - `common` - Shared home-manager configurations consumed the user's machine specific ones.
     - `core` - Home-manager configurations present for user across all machines. This is a hard rule! If something isn't core, it is optional.
     - `optional` - Optional home-manager configurations that can be added for specific machines. These can be added by category (e.g. options/media) or individually (e.g. options/media/vlc.nix) as needed.
       The home-manager core and options are defined in host-specific .nix files housed in `home/<user>`.
@@ -129,9 +129,9 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
 
 ## Secrets Management
 
-Secrets for this config are stored in a private repository called nix-secrets that is pulled in as a flake input and managed using the sops-nix tool.
+Secrets for this config are stored in a private repository called `nix-secrets` that is pulled in as a flake input and managed using the sops-nix tool.
 
-For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/posts/secrets-management/) available on my website.
+For details on how this is accomplished, how to approach different scenarios, and troubleshooting for some common hurdles, please see my article and accompanying YouTube video [NixOS Secrets Management](https://unmovedcentre.com/posts/secrets-management/) available on my website. There is also a [nix-secrets-reference](https://github.com/EmergentMind/nix-secrets-reference) repository that can be used in conjunction with the article.
 
 ## Support
 
@@ -143,10 +143,14 @@ I intentionally keep all of my content ad-free but some platforms, such as YouTu
 
 ## Guidance and Resources
 
+- [NixOS.org Manuals](https://nixos.org/learn/)
 - [Official Nix Documentation](https://nix.dev)
   - [Best practices](https://nix.dev/guides/best-practices)
 - [Noogle](https://noogle.dev/) - Nix API reference documentation.
 - [Official NixOS Wiki](https://wiki.nixos.org/)
+- [NixOS Package Search](https://search.nixos.org/packages)
+- [NixOS Options Search](https://search.nixos.org/options?)
+- [Home Manager Option Search](https://home-manager-options.extranix.com/)
 - [NixOS & Flakes Book](https://nixos-and-flakes.thiscute.world/) - an excellent introductory book by Ryan Yin
 - [Impermanence](https://github.com/nix-community/impermanence)
 - Yubikey

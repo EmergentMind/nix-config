@@ -51,19 +51,18 @@ in
                 options = {
                   nixos = {
                     expr = ''
-                      let configs = (builtins.getFlake ${flakeRoot}).nixosConfigurations;
+                      let configs = (builtins.getFlake "${flakeRoot}").nixosConfigurations;
                       in (builtins.head (builtins.attrValues configs)).options
                     '';
                   };
                   home_manager = {
                     expr = ''
-                      let configs = (builtins.getFlake ${flakeRoot}).homeConfigurations;
-                      in (builtins.head (builtins.attrValues configs)).options
+                      (builtins.getFlake "${flakeRoot}").nixosConfigurations.${config.hostSpec.hostName}.options.home-manager.users.value.${config.hostSpec.username}
                     '';
                   };
                   darwin = {
                     expr = ''
-                      let configs = (builtins.getFlake ${flakeRoot}).darwinConfigurations;
+                      let configs = (builtins.getFlake "${flakeRoot}").darwinConfigurations;
                       in (builtins.head (builtins.attrValues configs)).options
                     '';
                   };

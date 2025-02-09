@@ -10,7 +10,7 @@
   ...
 }:
 let
-  #TODO:(gusto) make use of hostSpec for media user
+  #TODO(gusto): make use of hostSpec for media user
   hostSpec = config.hostSpec;
   secretsSubPath = "passwords/media";
 in

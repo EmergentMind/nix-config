@@ -2,66 +2,73 @@
 
 {
   pkgs,
+  lib,
   inputs,
   config,
   ...
 }:
 let
-  secretsDirectory = builtins.toString inputs.nix-secrets;
-  secretsFile = "${secretsDirectory}/secrets.yaml";
+  # FIXME(starter-repo):
+  #  sopsFolder = builtins.toString inputs.nix-secrets;
+  #  secretsFile = "${sopsFolder}/secrets.yaml";
+  sopsFolder = builtins.toString inputs.nix-secrets + "/sops";
 in
 {
   #the import for inputs.sops-nix.nixosModules.sops is handled in hosts/common/core/default.nix so that it can be dynamically input according to the platform
 
   sops = {
-    defaultSopsFile = "${secretsFile}";
+    #    defaultSopsFile = "${secretsFile}";
+    defaultSopsFile = "${sopsFolder}/${config.hostSpec.hostName}.yaml";
     validateSopsFiles = false;
-
     age = {
       # automatically import host SSH keys as age keys
       sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
     };
-
     # secrets will be output to /run/secrets
     # e.g. /run/secrets/msmtp-password
     # secrets required for user creation are handled in respective ./users/<username>.nix files
     # because they will be output to /run/secrets-for-users and only when the user is assigned to a host.
-    secrets = {
-      # For home-manager a separate age key is used to decrypt secrets and must be placed onto the host. This is because
-      # the user doesn't have read permission for the ssh service private key. However, we can bootstrap the age key from
-      # the secrets decrypted by the host key, which allows home-manager secrets to work without manually copying over
-      # the age key.
+  };
+
+  # For home-manager a separate age key is used to decrypt secrets and must be placed onto the host. This is because
+  # the user doesn't have read permission for the ssh service private key. However, we can bootstrap the age key from
+  # the secrets decrypted by the host key, which allows home-manager secrets to work without manually copying over
+  # the age key.
+  sops.secrets = lib.mkMerge [
+    {
       # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived
       # from an ssh key).
-      "user_age_keys/${config.hostSpec.username}_${config.networking.hostName}" = {
+
+      # FIXME(starter-repo):
+      #    "keys/age/${config.hostSpec.username}_${config.networking.hostName}" = {
+      "keys/age" = {
         owner = config.users.users.${config.hostSpec.username}.name;
         inherit (config.users.users.${config.hostSpec.username}) group;
         # We need to ensure the entire directory structure is that of the user...
         path = "${config.hostSpec.home}/.config/sops/age/keys.txt";
       };
-      # extract to default pam-u2f authfile location for passwordless sudo. see modules/common/yubikey
-      "yubico/u2f_keys" = {
-        owner = config.users.users.${config.hostSpec.username}.name;
-        inherit (config.users.users.${config.hostSpec.username}) group;
-        path = "${config.hostSpec.home}/.config/Yubico/u2f_keys";
-      };
-
       # extract password/username to /run/secrets-for-users/ so it can be used to create the user
-      "passwords/${config.hostSpec.username}".neededForUsers = true;
-      "passwords/msmtp" = { };
-      # borg password required by nix-config/modules/nixos/backup
+      "passwords/${config.hostSpec.username}" = {
+        sopsFile = "${sopsFolder}/shared.yaml";
+        neededForUsers = true;
+      };
+      "passwords/msmtp" = {
+        sopsFile = "${sopsFolder}/shared.yaml";
+      };
+    }
+    # only reference borg password if host is using backup
+    (lib.mkIf config.services.backup.enable {
       "passwords/borg" = {
         owner = "root";
         group = if pkgs.stdenv.isLinux then "root" else "wheel";
         mode = "0600";
         path = "/etc/borg/passphrase";
       };
-
-    };
-  };
+    })
+  ];
   # The containing folders are created as root and if this is the first ~/.config/ entry,
   # the ownership is busted and home-manager can't target because it can't write into .config...
-  # FIXME:(sops) We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
+  # FIXME(sops): We might not need this depending on how https://github.com/Mic92/sops-nix/issues/381 is fixed
   system.activationScripts.sopsSetAgeKeyOwnership =
     let
       ageFolder = "${config.hostSpec.home}/.config/sops/age";

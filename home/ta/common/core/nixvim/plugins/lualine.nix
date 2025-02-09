@@ -9,7 +9,7 @@
       enable = true;
       settings.options = {
         icons_enabled = true;
-        #FIXME vim - determine if this is controlled elsewher... colorscheme, stylix, etc?
+        #FIXME(vim): determine if this is controlled elsewher... colorscheme, stylix, etc?
         #       theme = "dracula";
       };
     };

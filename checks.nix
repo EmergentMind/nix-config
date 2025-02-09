@@ -1,9 +1,20 @@
 {
   inputs,
   system,
+  pkgs,
   ...
 }:
 {
+  bats-test =
+    pkgs.runCommand "bats-test"
+      {
+        buildInputs = [ pkgs.bats ];
+      }
+      ''
+        bats tests
+        touch $out
+      '';
+
   pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
     src = ./.;
     default_stages = [ "pre-commit" ];
@@ -39,9 +50,16 @@
 
       # ========== nix ==========
       nixfmt-rfc-style.enable = true;
+      deadnix = {
+        enable = true;
+        settings = {
+          noLambdaArg = true;
+        };
+      };
 
       # ========== shellscripts ==========
       shfmt.enable = true;
+      shellcheck.enable = true;
 
       end-of-file-fixer.enable = true;
     };

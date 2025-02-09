@@ -64,31 +64,33 @@ if [ "$os" == "Darwin" ]; then
 		echo "Installing homebrew"
 		export NONINTERACTIVE=1
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-
 	fi
 
 	green "====== REBUILD ======"
-	# Test if there's no darwin-rebuild, then use nixos-rebuild
+	# Test if there's no darwin-rebuild, then use nix build and then run it
 	if ! which darwin-rebuild &>/dev/null; then
 		nix build --show-trace .#darwinConfigurations."$HOST".system
 		./result/sw/bin/darwin-rebuild $switch_args
 	else
+		echo $switch_args
 		darwin-rebuild $switch_args
 	fi
 else
 	green "====== REBUILD ======"
 	if command -v nh &>/dev/null; then
+		REPO_PATH=$(pwd)
+		export REPO_PATH
 		nh os switch . -- --impure --show-trace
 	else
 		sudo nixos-rebuild $switch_args
 	fi
 fi
 
-green "====== POST-REBUILD ======"
-
 # shellcheck disable=SC2181
 if [ $? -eq 0 ]; then
+	green "====== POST-REBUILD ======"
 	green "Rebuilt successfully"
+
 	# Check if there are any pending changes that would affect the build succeeding.
 	if git diff --exit-code >/dev/null && git diff --staged --exit-code >/dev/null; then
 		# Check if the current commit has a buildable tag

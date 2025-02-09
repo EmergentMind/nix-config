@@ -6,18 +6,21 @@
 
 This is a personalized configuration that has several technical requirements to build successfully. This nix-config will serve you best as a reference, learning resource, and template for crafting your own configuration. I am continuing to provide resources throughout the repository and my website to help but you must also experiment and learn as you go to be successful to create a NixOS environment that will meet your needs.
 
-Assuming you have an adequately configured nix-secrets repository, linked to nix-config in the flake inputs _and_ that you have configured modules in nix-config to suit your hosts and home requirements, you can build the config using a convenient just repo as follows:
+Assuming you have an adequately configured nix-secrets repository, linked to nix-config in the flake inputs _and_ that you have configured modules in nix-config to suit your hosts and home requirements, you can build the config using a convenient script as described in the next section.
 
 ## Automated remote installation
 
-NixOS and this nix-config can be installed remotely from a source machine running nix to a target machine but running `./scripts/bootstrap-nixos.sh -n [hostname] -d [destination] -k [ssh key path]`
+NixOS and this nix-config can be installed remotely from a source machine running nix to a target machine by running `./scripts/bootstrap-nixos.sh -n [hostname] -d [destination]`
 
-Details of this process are described in the article and video [Remotely Installing NixOS and nix-config with Secrets]( https://unmovedcentre.com/posts/remote-install-nixos-config/) available on my site.
+The steps required for remote installation are detailed in [`nix-config/nixos-installer/README.md`](../nixos-installer/README.md).
 
-There are additional install notes for remote installation in the [nixos-installer/README.md](../nixos-installer/README.md).
+Additionally, an in depth look the process is covered in the article and video [Remotely Installing NixOS and nix-config with Secrets]( https://unmovedcentre.com/posts/remote-install-nixos-config/) available on my website.
 
+## Historical Installation Log
 
-## Remote installation using nixos-anywhere and a lightweight ./nixos-installer flake - Feb 27, 2024
+The following log of install steps have been retained for historical reference. While they may provide some insight into troubleshooting manual installation procedures they will not be updated as nix-config evolves.
+
+### Remote installation using nixos-anywhere and a lightweight ./nixos-installer flake - Feb 27, 2024
 
 This process involves remote, unattended installation of nixos on a target machine. As usual the steps here will refined during testing and automated, where applicable. A lightweight flake is used so that I can gradually test out new tools (e.g. nixos-anywhere, disko, declarative-disk encryption, impermanence, etc) overtime without compromising anything in the full nix-config.
 
@@ -26,7 +29,7 @@ The endgoal is to remotely deploy the full nix-config to new hosts with as littl
 I attempted to remotely install the full nix-config from the get go but of course, home-manager needs to be run after the install is complete and the nix-config source isn't loaded to the target so doing a home-manager switch isn't possible.
 The solution then, is to perform the lightweight install first to establish secrets access keys, an ssh key that doesn't require passphrase, and install nixos, then remote into the host, clone the full repo and build from there. The passphrase-free key will then get wiped out.
 
-### Requirements:
+#### Requirements:
 
 - target machine, reachable by ssh, that will boot into a custom generated installer image
     - IMPORTANT: as of Mar 28, 2024 you must still use NixOS version 23.05. NixOS-anywhere relies on rsync which is not included
@@ -240,7 +243,7 @@ From the source machine, copy the ssh pub key you will use for installation and 
    + name=sda
    + type=disk
    + device=/dev/sda
-   + efiGptPartitionFirst=1
+   + efiGptP artitionFirst=1
    + type=gpt
    + sgdisk --align-end --new=1:1M:512M --change-name=1:disk-sda-ESP --typecode=1:EF00 /dev/sda
    Creating new GPT entries in memory.
@@ -464,9 +467,7 @@ From the source machine, copy the ssh pub key you will use for installation and 
 19. homemanager switch
 
 
-
-
-## Rebuild - January 22, 2024
+### Rebuild - January 22, 2024
 
 This covers installation of NixOS on grief (lab box) as a VirtualBox VM after hosing access to my original secrets.yaml and locking myself out of the original grief lab.
 The official manual has some "NixOS in a VirtualBox guest" specific instructions that were used here.
@@ -700,12 +701,12 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 
     secrets.yaml
     -------
-    ssh_keys:
-        maya: <private key data>
-        mara: <private key data>
-        manu: <private key data>
-    yubico:
-        u2f_keys: <key data>
+    keys:
+        ssh:
+            maya: <private key data>
+            mara: <private key data>
+            manu: <private key data>
+        u2f: <key data>
     passwords:
         ta: <password>
         media: <password>
@@ -738,11 +739,11 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 
 27. On successful rebuild `rm ~/.ssh/config.bkp`
 
-## First Install - November 29, 2023
+### First Install - November 29, 2023
 
 Installing on Asus mini-pc. This will replicate functionality of Gusto, which is a simple theatre box with browser and vlc, and is currently running on a Raspberry Pi 4. The project will start a lightweight foundation for building out a multi-host, multi-hardware configuration and doftile repo.
 
-### Install a minimal image via flashed USB device
+#### Install a minimal image via flashed USB device
 
 https://nixos.org/manual/nixos/stable/#sec-installation-booting
 

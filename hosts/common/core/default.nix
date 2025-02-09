@@ -21,7 +21,8 @@ in
       "modules/common"
       "modules/${platform}"
       "hosts/common/core/${platform}.nix"
-      "hosts/common/core/sops.nix"
+      "hosts/common/core/sops.nix" # Core because it's used for backups, mail
+      "hosts/common/core/ssh.nix"
       #"hosts/common/core/services" #not used yet
       "hosts/common/users/primary"
       "hosts/common/users/primary/${platform}.nix"
@@ -43,6 +44,9 @@ in
   };
 
   networking.hostName = config.hostSpec.hostName;
+
+  # System-wide packages, in case we log in as root
+  environment.systemPackages = [ pkgs.openssh ];
 
   # Force home-manager to use global packages
   home-manager.useGlobalPkgs = true;

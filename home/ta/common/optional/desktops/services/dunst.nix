@@ -1,6 +1,6 @@
 #
 # Dunst
-# Notifcation Daemon
+# Notification Daemon
 #
 { pkgs, ... }:
 {
@@ -33,7 +33,7 @@
         #   %I  iconname (without its path)
         #   %p  progress value if set ([  0%] to [100%]) or nothing
         # Markup is allowed
-        format = "%I %s %p\n%b";
+        format = "%I %s %p\\n%b";
 
         #TODO dynamic fonts
         #font = "Droid Sans 12";
@@ -42,7 +42,7 @@
         sort = "yes"; # Sort messages by urgency.
         indicate_hidden = "yes"; # Show how many messages are currently hidden (because of geometry).
 
-        # The frequency with wich text that is longer than the notification
+        # The frequency with which text that is longer than the notification
         # window allows bounces back and forth.
         # This option conflicts with "word_wrap".
         # Set to 0 to disable.
