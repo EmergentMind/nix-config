@@ -122,9 +122,9 @@
         fullscreen_opacity = 1.0;
         rounding = 10;
         blur = {
-          enabled = false;
-          size = 5;
-          passes = 3;
+          enabled = true;
+          size = 4;
+          passes = 2;
           new_optimizations = true;
           popups = true;
         };

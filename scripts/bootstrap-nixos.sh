@@ -12,7 +12,10 @@ target_user=${BOOTSTRAP_USER-$(whoami)} # Set BOOTSTRAP_ defaults in your shell.
 ssh_port=${BOOTSTRAP_SSH_PORT-22}
 ssh_key=${BOOTSTRAP_SSH_KEY-}
 persist_dir=""
+luks_passphrase="passphrase"
 luks_secondary_drive_labels=""
+git_root=$(git rev-parse --show-toplevel)
+nix_secrets_dir=${NIX_SECRETS_DIR:-"${git_root}"/../nix-secrets/}
 
 # Create a temp directory for generated host keys
 temp=$(mktemp -d)
@@ -118,11 +121,12 @@ ssh_cmd="ssh \
         -t $target_user@$target_destination"
 # shellcheck disable=SC2001
 ssh_root_cmd=$(echo "$ssh_cmd" | sed "s|${target_user}@|root@|") # uses @ in the sed switch to avoid it triggering on the $ssh_key value
-scp_cmd="scp -oControlPath=none -oport=${ssh_port} -o StrictHostKeyChecking=no -i $ssh_key"
+scp_cmd="scp -oControlPath=none -oport=${ssh_port} -oStrictHostKeyChecking=no -i $ssh_key"
 
 git_root=$(git rev-parse --show-toplevel)
 
 # Setup minimal environment for nixos-anywhere and run it
+generated_hardware_config=0
 function nixos_anywhere() {
 	# Clear the known keys, since they should be newly generated for the iso
 	green "Wiping known_hosts of $target_destination"
@@ -152,7 +156,6 @@ function nixos_anywhere() {
 	###
 	cd nixos-installer
 	# when using luks, disko expects a passphrase on /tmp/disko-password, so we set it for now and will update the passphrase later
-	luks_passphrase="passphrase"
 	if no_or_yes "Manually set luks encryption passphrase? (Default: \"$luks_passphrase\")"; then
 		blue "Enter your luks encryption passphrase:"
 		read -rs luks_passphrase
@@ -197,7 +200,7 @@ function nixos_anywhere() {
 	cd - >/dev/null
 }
 
-function generate_host_age_key() {
+function sops_generate_host_age_key() {
 	green "Generating an age key based on the new ssh_host_ed25519_key"
 
 	# Get the SSH key
@@ -221,7 +224,7 @@ function generate_host_age_key() {
 
 age_secret_key=""
 # Generate a user age key
-function generate_user_age_key() {
+function sops_generate_user_age_key() {
 	green "Age key does not exist. Generating."
 	user_age_key=$(nix shell nixpkgs#age -c "age-keygen")
 	readarray -t entries <<<"$user_age_key"
@@ -234,26 +237,26 @@ function generate_user_age_key() {
 	sops_add_creation_rules "${target_user}" "${target_hostname}"
 }
 
-function generate_user_age_key_and_file() {
+function sops_setup_user_age_key() {
 	# FIXME(starter-repo): remove old secrets.yaml line once starter repo is completed
 	#secret_file="${git_root}"/../nix-secrets/secrets.yaml
-	secret_file="${git_root}"/../nix-secrets/sops/${target_hostname}.yaml
-	config="${git_root}"/../nix-secrets/.sops.yaml
+	secret_file="${nix_secrets_dir}/sops/${target_hostname}.yaml"
+	config="${nix_secrets_dir}"/.sops.yaml
 	# If the secret file doesn't exist, it means we're generating a new user key as well
 	if [ ! -f "$secret_file" ]; then
 		green "Host secret file does not exist. Creating $secret_file"
-		generate_user_age_key
+		sops_generate_user_age_key
 		echo "{}" >"$secret_file"
 		sops --config "$config" -e "$secret_file" >"$secret_file.enc"
 		mv "$secret_file.enc" "$secret_file"
 		# We need to add the new file before we rekey later
-		cd ../nix-secrets
+		cd "$nix_secrets_dir"
 		git add sops/"${target_hostname}".yaml
 		cd - >/dev/null
 	fi
 	if ! sops --config "$config" -d --extract '["keys]["age"]' "$secret_file" >/dev/null 2>&1; then
 		if [ -z "$age_secret_key" ]; then
-			generate_user_age_key
+			sops_generate_user_age_key
 		fi
 		echo "Secret key $age_secret_key"
 		# shellcheck disable=SC2116,SC2086
@@ -288,14 +291,15 @@ if yes_or_no "Run nixos-anywhere installation?"; then
 	nixos_anywhere
 fi
 
+updated_age_keys=0
 if yes_or_no "Generate host (ssh-based) age key?"; then
-	generate_host_age_key
+	sops_generate_host_age_key
 	updated_age_keys=1
 fi
 
 if yes_or_no "Generate user age key?"; then
 	# This may end up creating the host.yaml file, so add creation rules in advance
-	generate_user_age_key_and_file
+	sops_setup_user_age_key
 	updated_age_keys=1
 fi
 
@@ -316,7 +320,7 @@ if yes_or_no "Add ssh host fingerprints for git{lab,hub}?"; then
 		home_path="/home/$target_user"
 	fi
 	green "Adding ssh host fingerprints for git{lab,hub}"
-	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com 2>/dev/null | grep -v '^#' >>$home_path/.ssh/known_hosts"
+	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com | grep -v '^#' >>$home_path/.ssh/known_hosts"
 fi
 
 if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $target_hostname?"; then
@@ -325,7 +329,7 @@ if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $targe
 	green "Copying full nix-config to $target_hostname"
 	sync "$target_user" "${git_root}"/../nix-config
 	green "Copying full nix-secrets to $target_hostname"
-	sync "$target_user" "${git_root}"/../nix-secrets
+	sync "$target_user" "${nix_secrets_dir}"
 
 	# FIXME(bootstrap): Add some sort of key access from the target to download the config (if it's a cloud system)
 	if yes_or_no "Do you want to rebuild immediately?"; then

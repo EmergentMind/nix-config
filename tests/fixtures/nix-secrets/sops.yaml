@@ -1,0 +1,11 @@
+keys:
+  users:
+    - &alice_testbox USER_KEY_1
+  hosts:
+    - &testbox HOST_KEY_1
+creation_rules:
+  - path_regex: shared\.yaml$
+    key_groups:
+      - age:
+          - *alice_testbox
+          - *testbox

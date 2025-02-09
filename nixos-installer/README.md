@@ -43,19 +43,14 @@ If you are installing on a bare metal machine, write the .iso to a USB device. Y
 
    If needed, you can find the device name on the target machine itself by booting it into the iso environment and running `lsblk` to see a list of the devices. Virtual Machines often using a device called `vda`.
 2. Add a `newConfig` entry for the target host in `nix-config/nixos-installer/flake.nix`, passing in the required arguments as noted in the file comments.
-3. If you are planning to use the `yubikey` and/or `backup` modules on the target host, you _must_ temporarily disable them in the target host's config options until bootstrapping is complete. Failure to disable these two modules, will cause nix-config to look for the associated secrets in the new `[hostname].yaml` secrets file where they have not yet been added, causing sops-nix to fail to start during the build process. After rebuilding, we'll add the required keys to secrets and re-enable these modules.
+3. If you are planning to use the `backup` module on the target host, you _must_ temporarily disable it in the target host's config options until bootstrapping is complete. Failure to disable these two modules, will cause nix-config to look for the associated secrets in the new `[hostname].yaml` secrets file where they have not yet been added, causing sops-nix to fail to start during the build process. After rebuilding, we'll add the required keys to secrets and re-enable these modules.
     For example:
     ```nix
     # nix-config/hosts/nixos/guppy/default.nix
     #--------------------
 
     # ...
-        hostSpec = {
-            hostName = "guppy";
-            # The yubikey module is enabled via a hostSpec option. Set it to false.
-            useYubikey = lib.mkForce false;
-        };
-        # The back module is enabled via a services option. Set it to false.
+       # The back module is enabled via a services option. Set it to false.
         services.backup = {
             enable = false;
             # ...
@@ -161,55 +156,7 @@ On completion, the script should end with a "Success!" message.
 
 Depending on your host, the following post-install steps may not be required.
 
-### 3. Add u2f key to secrets and enable the yubikey module (optional)
-
-If you plan to enable the yubikey module and use the u2f for passwordless sudo, you will have to first generate a u2f key on the host and add it to your secrets file prior to enabling the module and rebuilding.
-
-For a thorough explanation, see the article on [Improving QoL on NixOS with Yubikey](https://unmovedcentre.com/posts/improving-qol-on-nixos-with-yubikey/).
-
-If you've already configured the module for other hosts and just need to get it stood up on the newly installed host, then perform the following steps:
-
-1. Log in to the target host (direct or remote)
-2. To generate U2F keys we will use the `pamu2fcfg` tool. If this is not installed on the host, you can temporarily install it using `nix shell pkgs#pamu2fcfg`.
-3. With one of your YubiKeys plugged in, run `pamu2fcfg -u <username> > ~/u2f_keys` Replace `<username>` with your username.
-   You will be prompted to touch your YubiKey
-   After touching the YubiKey, the key registration data for PAM will be written to the `~/u2f_keys` file.
-4. For every additional YubiKey we'll use a slightly different command.
-   With only the next YubiKey you want to add plugged in, run `pamu2fcfg -n >> ~/u2f_keys`
-   You will be prompted to touch your YubiKey
-   After touching the YubiKey, the key registration data for PAM will be appended to the `u2f_keys` file.
-
-   The -n flag will instruct pamu2fcg to output the registration data as an append to the data for the first key, thus skipping the prefix information.
-5. Repeat the step 4 to add any additional YubiKeys you have.
-6. Copy the `u2f_keys` data by running `cat ~/u2f_keys` and copying the printed data.
-7. Navigate to your `nix-secrets` directory and decrypt the host's secrtes file by running `sops ./sops/[hostname].yaml`, replacing `[hostname]` with the actual hostname.
-8. In the `[hostname].yaml` file, add a `u2f:` anchor underneath the `age:` key entry that was created by the bootstrap script and paste your `u2f_keys` data.
-   For example:
-   ```yaml
-   keys:
-       age: <KEY DATA>
-       u2f: <KEY DATA>
-   ```
-9. Save and exit `[hostname].yaml`
-10. Commit and push the changes to `nix-secrets`
-11. Navigate to your `nix-config` and enable the `yubikey` module in your `hosts/nixos/<host>/default.nix` file or wherever you choose to enable it.
-    For example:
-    ```nix
-    # nix-config/hosts/nixos/guppy/default.nix
-    #--------------------
-
-    # ...
-        hostSpec = {
-            hostName = "guppy";
-            # The yubikey module is enabled via a hostSpec option. Set it to false.
-            useYubikey = lib.mkForce false;
-        };
-    #...
-    ```
-12. You will need to rebuild for these changes to take effect but may want to continue through the following steps and do a single rebuild at the end.
-
-### 4. Post install steps for LUKS (optional)
-
+### 3. Post install steps for LUKS (optional)
 
 #### Change LUKS2's passphrase if you entered a temporary passphrase during bootstrap
 
@@ -237,7 +184,7 @@ sudo systemd-cryptenroll --fido2-device=auto /path/to/dev/
 You will need to do it for each yubikey you want to use.
 
 #### Update the unlock passphrase for secondary drive unlock
-If you passed the `--luks-secondary-drive-labels` arg when running the bootstrap script, it automatically created a `/luks-seocndary-unlock.key` file for you using the passphrase you specified during bootstrap.
+If you passed the `--luks-secondary-drive-labels` arg when running the bootstrap script, it automatically created a `/luks-secondary-unlock.key` file for you using the passphrase you specified during bootstrap.
 If you used a temporary passphrase during bootstrap, you can update the secondary unlock key by running the following command and following the prompts.
 
 ```bash
@@ -286,7 +233,7 @@ example:
 With this approach, the secondary drive is unlocked just before the boot process completes, without the need to enter its password.
 The secondary drive will be unlocked and made available under /dev/mapper/cryptstorage for mounting.
 
-### 5. Enable `backup` module (optional)
+### 4. Enable `backup` module (optional)
 
 Enable the backup module in the target host's config file. For example:
 
@@ -304,11 +251,11 @@ Enable the backup module in the target host's config file. For example:
 
 You will, of course, need to declare additional backup options for the module to function correctly.
 
-### 6. Rebuild (optional)
+### 5. Rebuild (optional)
 
 If you did any of the steps from 3 through 5, you will need to rebuild for the changes to take effect. Run `just rebuild` from the `nix-config` directory on the new host.
 
-### 7. Everything else (optional)
+### 6. Everything else (optional)
 
 Here you should have a fully working system, but here are some common tasks you may need to do for a "daily-driver" machine:
 
@@ -346,3 +293,20 @@ There are two know causes for this issue:
     ];
     # ...
    ```
+
+### Activation script snippet 'setupSecrets' failed - /run/secrets/keys/age: is a directory
+
+This issue may be encountere when running the bootstrap script to update a host that had been previously installed with an older variant of nix-secrets where the age keys for all hosts were stored as "keys: age: [hostname]: [keydata]" where as now, because we're using host-specific secrets, the structure is "keys: age: [keydata]".
+
+The failure will occur will occur near the end of the build output and will not display as an error in red.
+
+```bash
+...
+sops-install-secrets: Imported /etc/ssh/ssh_host_ed25519_key as age key with fingerprint age1ee6shkrhqg0n84n3ksjays6h5klxv2xmhn5uksq9qvsxd079cvdql7tyk8
+/nix/store/chvwxir82c2mf99961qyf9hfqjq76g02-sops-install-secrets-0.0.1/bin/sops-install-secrets: cannot request units to restart: read /run/secrets/keys/age: is a directory
+Activation script snippet 'setupSecrets' failed (1)
+Failed to run activate script
+...
+```
+
+To resolve the issue, run `sudo rm -r /run/secrets/keys/age` on the target host and then rebuild.

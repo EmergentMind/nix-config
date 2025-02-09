@@ -8,9 +8,11 @@
   bats-test =
     pkgs.runCommand "bats-test"
       {
-        buildInputs = [ pkgs.bats ];
+        src = ../.;
+        buildInputs = builtins.attrValues { inherit (pkgs) bats yq-go inetutils; };
       }
       ''
+        cd $src
         bats tests
         touch $out
       '';

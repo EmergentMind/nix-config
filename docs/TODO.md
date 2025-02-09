@@ -4,21 +4,23 @@
 
 ## Short Term
 
+- setup backup for 'extra' drive
 - start using issues more than fixmes
 - consider tagging with version numbers that match roadmap
 
-### Current roadmap focus items - 5.3
+- ticket for refactor yubikey module to include u2f stuff
+- is magicmirror in nixpkgs? Add items to package it and build a host
 
-- update to installer blog post
+### Current roadmap focus items
 
-### Current roadmap focus items - 5.4
-- tests
-    - setup a gitlab token for nix-secrets to grant access to github runner
-    - setup a mock nix-secrets folder in tests/ that will be used by the tests
-    - refactor bootstrap script to use an overridable folder for nix-secrets
-    - change helpers.sh to use the overridable folder for nix-secrets
-    - setup .bats file in tests/ to run tests and have a new flake check that runs bats
-    - setup github workflow to run nix flake check
+5.5
+- Setup starter repo
+
+6.1
+- bootstrap genoa
+- sort out Thinkpad E15 hardware
+- enable backup
+- laptop utils
 
 #### General workflow improvements
 
@@ -172,7 +174,7 @@ Migrate primary box to NixOS
 - ~~hotkey for sleeping monitors (all or non-primary)~~
 - ~~set up copyq clipboard mgr~~
 
-#### 5. Refactoring
+#### 5. Refactoring and Refinement
 Some of the original parts of this stage have been split off to later stages because they are more Nice to Have at the moment.
 
 ##### 5.1 Reduce duplication and modularize
@@ -194,8 +196,8 @@ Some of the original parts of this stage have been split off to later stages bec
 
 ##### 5.4 Tests
 
-- Re-enable CI pipeline.
-- Write bats tests for helpers.sh
+- ~~Re-enable CI pipeline~~ Deferred for now, dealing with nix-secrets is too much hassle
+- ~~Write bats tests for helpers.sh~~
 
 ##### 5.5 Starter repo
 

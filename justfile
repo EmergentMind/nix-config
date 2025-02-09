@@ -17,7 +17,7 @@ rebuild-post: check-sops
 # Run a flake check on the config and installer
 check ARGS="":
 	NIXPKGS_ALLOW_UNFREE=1 REPO_PATH=$(pwd) nix flake check --impure --keep-going --show-trace {{ARGS}}
-	cd nixos-installer && nix flake check --keep-going --show-trace {{ARGS}}
+	cd nixos-installer && NIXPKGS_ALLOW_UNFREE=1 REPO_PATH=$(pwd) nix flake check --impure --keep-going --show-trace {{ARGS}}
 
 # Rebuild the system
 rebuild: rebuild-pre && rebuild-post
@@ -99,18 +99,18 @@ rekey: sops-rekey
     git add -u && (git commit -nm "chore: rekey" || true) && git push
 
 # Update an age key anchor or add a new one
-update-age-key FIELD KEYNAME KEY:
+sops-update-age-key FIELD KEYNAME KEY:
     #!/usr/bin/env bash
     source {{HELPERS_PATH}}
     sops_update_age_key {{FIELD}} {{KEYNAME}} {{KEY}}
 
 # Update an existing user age key anchor or add a new one
-update-user-age-key USER HOST KEY:
-  just update-age-key users {{USER}}_{{HOST}} {{KEY}}
+sops-update-user-age-key USER HOST KEY:
+  just sops-update-age-key users {{USER}}_{{HOST}} {{KEY}}
 
 # Update an existing host age key anchor or add a new one
-update-host-age-key HOST KEY:
-  just update-age-key hosts {{HOST}} {{KEY}}
+sops-update-host-age-key HOST KEY:
+  just sops-update-age-key hosts {{HOST}} {{KEY}}
 
 # Automatically create creation rules entries for a <host>.yaml file for host-specific secrets
 sops-add-host-creation-rules USER HOST:

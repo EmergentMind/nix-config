@@ -24,6 +24,7 @@ let
     # extract to default pam-u2f authfile location for passwordless sudo. see modules/common/yubikey
     lib.optionalAttrs config.hostSpec.useYubikey {
       "keys/u2f" = {
+        sopsFile = "${sopsFolder}/shared.yaml";
         path = "${homeDirectory}/.config/Yubico/u2f_keys";
       };
     }
