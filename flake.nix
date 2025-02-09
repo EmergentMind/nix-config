@@ -1,5 +1,5 @@
 {
-  description = "EmergentMind's Nix-Config";
+  description = "Monaciello's Nix-Config";
   outputs =
     { self, nixpkgs, ... }@inputs:
     let
@@ -11,7 +11,7 @@
       #
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
-        #"aarch64-darwin"
+        # "aarch64-darwin"
       ];
 
       #
@@ -165,7 +165,7 @@
     # Private secrets repo.  See ./docs/secretsmgmt.md
     # Authenticate via ssh and use shallow clone
     nix-secrets = {
-      url = "git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&shallow=1";
+      url = "git+ssh://git@gitlab.com/Monaciello/nix-secrets.git?ref=main&shallow=1";
       inputs = { };
     };
   };

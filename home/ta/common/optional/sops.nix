@@ -34,8 +34,8 @@ in
       "ssh_keys/mila" = {
         path = "${homeDirectory}/.ssh/id_mila";
       };
-      "ssh_keys/meek" = {
-        path = "${homeDirectory}/.ssh/id_meek";
+      "ssh_keys/default" = {
+        path = "${homeDirectory}/.ssh/default_key";
       };
     };
   };
