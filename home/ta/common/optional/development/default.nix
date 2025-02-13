@@ -98,7 +98,6 @@ in
       includeIf."gitdir:${config.home.homeDirectory}/source/".path = privateGitConfig;
       includeIf."gitdir:${config.home.homeDirectory}/work/".path = workGitConfig;
       includeIf."gitdir:${config.home.homeDirectory}/persist/work/".path = workGitConfig;
-      # FIXME: Testing difftastic from https://github.com/thled/nix-config
       diff.tool = "difftastic";
       difftool = {
         prompt = "false";
@@ -107,11 +106,8 @@ in
 
       commit.gpgsign = true;
       gpg.format = "ssh";
-      # FIXME(git): Signing work for non-yubikey hosts. Look into signing over ssh?
-      user = {
-        signByDefault = true;
-        signingkey = "${publicKey}";
-      };
+      # Signing key for non-yubikey hosts
+      user.signingkey = "${publicKey}";
       # Taken from https://github.com/clemak27/homecfg/blob/16b86b04bac539a7c9eaf83e9fef4c813c7dce63/modules/git/ssh_signing.nix#L14
       gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
     };
@@ -119,10 +115,12 @@ in
       signByDefault = true;
       key = publicKey;
     };
+    ignores = [
+      ".direnv"
+      "result"
+    ];
   };
 
-  # NOTE: To verify github.com update commit signatures, you need to manually import
-  # https://github.com/web-flow.gpg... would be nice to do that here
   home.file.".ssh/allowed_signers".text = ''
     ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/primary/keys/id_maya.pub")}
     ${publicGitEmail} ${lib.fileContents (lib.custom.relativeToRoot "hosts/common/users/primary/keys/id_mara.pub")}

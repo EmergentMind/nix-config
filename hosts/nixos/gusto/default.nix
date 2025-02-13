@@ -1,5 +1,5 @@
 #############################################################
-#
+
 #  Gusto - Home Theatre
 #  NixOS running on Intel N95 based mini PC
 #
@@ -8,6 +8,7 @@
 {
   inputs,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -35,7 +36,7 @@
     #
     # ========== Misc Inputs ==========
     #
-    #inputs.stylix.nixosModules.stylix
+    inputs.stylix.nixosModules.stylix
 
     (map lib.custom.relativeToRoot [
       #
@@ -92,6 +93,21 @@
 
   boot.initrd = {
     systemd.enable = true;
+  };
+
+  #TODO(stylix): move this stuff to separate file but define theme itself per host
+  # host-wide styling
+  stylix = {
+    enable = true;
+    image = home/ta/ad-01.jpg;
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
+    opacity = {
+      applications = 1.0;
+      terminal = 1.0;
+      desktop = 1.0;
+      popups = 0.8;
+    };
+    polarity = "dark";
   };
 
   # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion

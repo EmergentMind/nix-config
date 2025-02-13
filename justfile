@@ -55,7 +55,7 @@ check-sops:
 
 # Update nix-secrets flake
 update-nix-secrets:
-  @(cd ~/src/nix/nix-secrets && git fetch && git rebase > /dev/null) || true
+  @(cd ../nix-secrets && git fetch && git rebase > /dev/null) || true
   nix flake update nix-secrets --timeout 5
 
 # Build an iso image for installing new systems and create a symlink for qemu usage

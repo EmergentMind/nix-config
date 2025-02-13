@@ -165,7 +165,7 @@ function nixos_anywhere() {
 		$ssh_root_cmd "/bin/sh -c 'echo $luks_passphrase > /tmp/disko-password'"
 	fi
 	# this will run if luks_secondary_drive_labels cli argument was set, regardless of whether the luks_passphrase is default or not
-	if [ -z "${luks_secondary_drive_labels}" ]; then
+	if [ -n "${luks_secondary_drive_labels}" ]; then
 		luks_setup_secondary_drive_decryption
 	fi
 
@@ -209,7 +209,7 @@ function sops_generate_host_age_key() {
 		exit 1
 	}
 
-	host_age_key=$(nix shell nixpkgs#ssh-to-age.out -c sh -c "echo $target_key | ssh-to-age")
+	host_age_key=$(echo "$target_key" | ssh-to-age)
 
 	if grep -qv '^age1' <<<"$host_age_key"; then
 		red "The result from generated age key does not match the expected format."
@@ -220,50 +220,6 @@ function sops_generate_host_age_key() {
 
 	green "Updating nix-secrets/.sops.yaml"
 	sops_update_age_key "hosts" "$target_hostname" "$host_age_key"
-}
-
-age_secret_key=""
-# Generate a user age key
-function sops_generate_user_age_key() {
-	green "Age key does not exist. Generating."
-	user_age_key=$(nix shell nixpkgs#age -c "age-keygen")
-	readarray -t entries <<<"$user_age_key"
-	age_secret_key=${entries[2]}
-	public_key=$(echo "${entries[1]}" | rg key: | cut -f2 -d: | xargs)
-	key_name="${target_user}_${target_hostname}"
-	green "Generated age key for ${key_name}"
-	# Place the anchors into .sops.yaml so other commands can reference them
-	sops_update_age_key "users" "$key_name" "$public_key"
-	sops_add_creation_rules "${target_user}" "${target_hostname}"
-}
-
-function sops_setup_user_age_key() {
-	# FIXME(starter-repo): remove old secrets.yaml line once starter repo is completed
-	#secret_file="${git_root}"/../nix-secrets/secrets.yaml
-	secret_file="${nix_secrets_dir}/sops/${target_hostname}.yaml"
-	config="${nix_secrets_dir}"/.sops.yaml
-	# If the secret file doesn't exist, it means we're generating a new user key as well
-	if [ ! -f "$secret_file" ]; then
-		green "Host secret file does not exist. Creating $secret_file"
-		sops_generate_user_age_key
-		echo "{}" >"$secret_file"
-		sops --config "$config" -e "$secret_file" >"$secret_file.enc"
-		mv "$secret_file.enc" "$secret_file"
-		# We need to add the new file before we rekey later
-		cd "$nix_secrets_dir"
-		git add sops/"${target_hostname}".yaml
-		cd - >/dev/null
-	fi
-	if ! sops --config "$config" -d --extract '["keys]["age"]' "$secret_file" >/dev/null 2>&1; then
-		if [ -z "$age_secret_key" ]; then
-			sops_generate_user_age_key
-		fi
-		echo "Secret key $age_secret_key"
-		# shellcheck disable=SC2116,SC2086
-		sops --config "$config" --set "$(echo '["keys"]["age"] "'$age_secret_key'"')" "$secret_file"
-	else
-		green "Age key already exists for ${target_hostname}"
-	fi
 }
 
 function luks_setup_secondary_drive_decryption() {
@@ -299,7 +255,11 @@ fi
 
 if yes_or_no "Generate user age key?"; then
 	# This may end up creating the host.yaml file, so add creation rules in advance
-	sops_setup_user_age_key
+	sops_setup_user_age_key "$target_user" "$target_hostname"
+	# We need to add the new file before we rekey later
+	cd "$nix_secrets_dir"
+	git add sops/"${target_hostname}".yaml
+	cd - >/dev/null
 	updated_age_keys=1
 fi
 
@@ -311,16 +271,6 @@ if [[ $updated_age_keys == 1 ]]; then
 	just rekey
 	green "Updating flake input to pick up new .sops.yaml"
 	nix flake update nix-secrets
-fi
-
-if yes_or_no "Add ssh host fingerprints for git{lab,hub}?"; then
-	if [ "$target_user" == "root" ]; then
-		home_path="/root"
-	else
-		home_path="/home/$target_user"
-	fi
-	green "Adding ssh host fingerprints for git{lab,hub}"
-	$ssh_cmd "mkdir -p $home_path/.ssh/; ssh-keyscan -t ssh-ed25519 gitlab.com github.com | grep -v '^#' >>$home_path/.ssh/known_hosts"
 fi
 
 if yes_or_no "Do you want to copy your full nix-config and nix-secrets to $target_hostname?"; then

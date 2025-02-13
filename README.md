@@ -102,7 +102,7 @@ For a large screenshot of the concept diagram, as well as previous iterations, s
       - Currently not using any darwin hosts
   - `nixos` - machine specific configurations for NixOS-based hosts
       - `genoa` - stage 6
-      - `ghost` - Primary box - 4.0GHz Ryzen 5 3600XT (6C/12T), 64GB RAM, Radeon RX5600XT
+      - `ghost` - Primary box - 4.8GHz Ryzen 8 5900XT (16C/32T), 64GB RAM, Radeon RX5600XT
       - `grief` - Lab - Qemu VM
       - `gooey` - stage x
       - `guppy` - Remote Install Lab - Qemu VM

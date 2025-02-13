@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [
     #################### Required Configs ####################
@@ -6,4 +6,10 @@
 
     #################### Host-specific Optional Configs ####################
   ];
+
+  home.packages = builtins.attrValues {
+    inherit (pkgs)
+      mpv
+      ;
+  };
 }

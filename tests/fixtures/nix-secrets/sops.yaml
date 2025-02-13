@@ -2,8 +2,8 @@ keys:
   users:
     - &alice_testbox USER_KEY_1
   hosts:
-    - &testbox HOST_KEY_1
-creation_rules:
+    - &testbox age1v8v79wlsjnwvxaa6eulqx3zft0m5srj7etgk4v3rg80j42uzecxs26gaxz
+  creation_rules:
   - path_regex: shared\.yaml$
     key_groups:
       - age:

@@ -58,9 +58,8 @@ function no_or_yes() {
 }
 
 ### SOPS helpers
-
-nix_secret_dir=${NIX_SECRETS_DIR:-"$(dirname "${BASH_SOURCE[0]}")/../../nix-secrets"}
-SOPS_FILE="${nix_secret_dir}/.sops.yaml"
+nix_secrets_dir=${NIX_SECRETS_DIR:-"$(dirname "${BASH_SOURCE[0]}")/../../nix-secrets"}
+SOPS_FILE="${nix_secrets_dir}/.sops.yaml"
 
 # Updates the .sops.yaml file with a new host or user age key.
 function sops_update_age_key() {
@@ -82,6 +81,7 @@ function sops_update_age_key() {
 	fi
 }
 
+# Adds the user and host to the shared.yaml creation rules
 function sops_add_shared_creation_rules() {
 	u="\"$1_$2\"" # quoted user_host for yaml
 	h="\"$2\""    # quoted hostname for yaml
@@ -102,6 +102,7 @@ function sops_add_shared_creation_rules() {
 	fi
 }
 
+# Adds the user and host to the host.yaml creation rules
 function sops_add_host_creation_rules() {
 	host="$2"                     # hostname for selector
 	h="\"$2\""                    # quoted hostname for yaml
@@ -121,10 +122,58 @@ function sops_add_host_creation_rules() {
 	fi
 }
 
+# Adds the user and host to the shared.yaml and host.yaml creation rules
 function sops_add_creation_rules() {
 	user="$1"
 	host="$2"
 
 	sops_add_shared_creation_rules "$user" "$host"
 	sops_add_host_creation_rules "$user" "$host"
+}
+
+age_secret_key=""
+# Generate a user age key, update the .sops.yaml entries, and return the key in age_secret_key
+# args: user, hostname
+function sops_generate_user_age_key() {
+	target_user="$1"
+	target_hostname="$2"
+	key_name="${target_user}_${target_hostname}"
+	green "Age key does not exist. Generating."
+	user_age_key=$(age-keygen)
+	readarray -t entries <<<"$user_age_key"
+	age_secret_key=${entries[2]}
+	public_key=$(echo "${entries[1]}" | rg key: | cut -f2 -d: | xargs)
+	green "Generated age key for ${key_name}"
+	# Place the anchors into .sops.yaml so other commands can reference them
+	sops_update_age_key "users" "$key_name" "$public_key"
+	sops_add_creation_rules "${target_user}" "${target_hostname}"
+
+	# "return" key so it can be used by caller
+	export age_secret_key
+}
+
+function sops_setup_user_age_key() {
+	target_user="$1"
+	target_hostname="$2"
+
+	secret_file="${nix_secrets_dir}/sops/${target_hostname}.yaml"
+	config="${nix_secrets_dir}/.sops.yaml"
+	# If the secret file doesn't exist, it means we're generating a new user key as well
+	if [ ! -f "$secret_file" ]; then
+		green "Host secret file does not exist. Creating $secret_file"
+		sops_generate_user_age_key "${target_user}" "${target_hostname}"
+		mkdir -p "$(dirname "$secret_file")"
+		echo "{}" >"$secret_file"
+		sops --config "$config" -e "$secret_file" >"$secret_file.enc"
+		mv "$secret_file.enc" "$secret_file"
+	fi
+	if ! sops --config "$config" -d --extract '["keys]["age"]' "$secret_file" >/dev/null 2>&1; then
+		if [ -z "$age_secret_key" ]; then
+			sops_generate_user_age_key "${target_user}" "${target_hostname}"
+		fi
+		# shellcheck disable=SC2116,SC2086
+		sops --config "$config" --set "$(echo '["keys"]["age"] "'$age_secret_key'"')" "$secret_file"
+	else
+		green "Age key already exists for ${target_hostname}"
+	fi
 }
