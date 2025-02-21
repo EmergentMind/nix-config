@@ -22,7 +22,13 @@
     default_stages = [ "pre-commit" ];
     hooks = {
       # ========== General ==========
-      check-added-large-files.enable = true;
+      check-added-large-files = {
+        enable = true;
+        excludes = [
+          "\\.png"
+          "\\.jpg"
+        ];
+      };
       check-case-conflicts.enable = true;
       check-executables-have-shebangs.enable = true;
       check-shebang-scripts-are-executable.enable = false; # many of the scripts in the config aren't executable because they don't need to be.

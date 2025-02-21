@@ -1,8 +1,12 @@
 #Note: ctrl+r to cycle filter modes
 {
+  inputs,
   config,
   ...
 }:
+let
+  sopsFolder = (builtins.toString inputs.nix-secrets) + "/sops";
+in
 {
   # FIXME(atuin): Add the background sync service
   # https://forum.atuin.sh/t/getting-the-daemon-working-on-nixos/334
@@ -44,6 +48,7 @@
   };
   sops.secrets."keys/atuin" = {
     path = "${config.home.homeDirectory}/.local/share/atuin/key";
+    sopsFile = "${sopsFolder}/shared.yaml";
   };
 
   programs.zsh.initExtra = ''

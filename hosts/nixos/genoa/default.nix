@@ -16,14 +16,21 @@
     #
     # ========== Hardware ==========
     #
-    #inputs.nixos-hardware.nixosModules.asus-zenbook-ux371
+    #inputs.nixos-hardware.nixosModules.lenovo-thinkpad-e14
     ./hardware-configuration.nix
 
     #
     # ========== Disk Layout ==========
     #
     inputs.disko.nixosModules.disko
-    (lib.custom.relativeToRoot "hosts/common/disks/btrfs-luks-disk.nix")
+    (lib.custom.relativeToRoot "hosts/common/disks/btrfs-luks-impermanence-disk.nix")
+    {
+      _module.args = {
+        disk = "/dev/nvme0n1";
+        withSwap = true;
+        swapSize = 16;
+      };
+    }
 
     #
     # ========== Misc Inputs ==========
@@ -63,6 +70,7 @@
     useYubikey = lib.mkForce true;
     hdr = lib.mkForce true;
     wifi = lib.mkForce true;
+    persistFolder = "/persist"; # added for "completion" because of the disko spec that was used even though impermanence isn't actually enabled here yet.
   };
 
   # set custom autologin options. see greetd.nix for details
@@ -105,7 +113,7 @@
   # host-wide styling
   stylix = {
     enable = true;
-    image = /home/ta/sync/wallpaper/1126712.png;
+    image = (lib.custom.relativeToRoot "assets/wallpapers/zen-01.png");
     #      base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
     #      cursor = {

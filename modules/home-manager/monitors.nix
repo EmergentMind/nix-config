@@ -1,3 +1,4 @@
+# The options set using this module are intended for use with logic defined in specific workspace management configurations. For example, see nix-config/home/ta/common/optional/hyprland/
 { lib, config, ... }:
 {
   options.monitors = lib.mkOption {
@@ -50,11 +51,12 @@
           };
           workspace = lib.mkOption {
             type = lib.types.nullOr lib.types.str;
+            description = "Defines a workspace that should persist on this monitor.";
             default = null;
           };
           vrr = lib.mkOption {
             type = lib.types.int;
-            description = "Variable Refresh Rate aka Adaptive Sync aka AMD FreeSync./nValues are oriented towards hyprland's vrr values which are:\n0 = off, 1 = on, 2 = fullscreen only\nhttps://wiki.hyprland.org/Configuring/Variables/#misc";
+            description = "Variable Refresh Rate aka Adaptive Sync aka AMD FreeSync.\nValues are oriented towards hyprland's vrr values which are:\n0 = off, 1 = on, 2 = fullscreen only\nhttps://wiki.hyprland.org/Configuring/Variables/#misc";
             default = 0;
           };
 

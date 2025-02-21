@@ -54,27 +54,43 @@
           m:
           "${m.name},${
             if m.enabled then
-              "${toString m.width}x${toString m.height}@${toString m.refreshRate},${toString m.x}x${toString m.y},1,transform,${toString m.transform},vrr,${toString m.vrr}"
+              "${toString m.width}x${toString m.height}@${toString m.refreshRate}"
+              + ",${toString m.x}x${toString m.y},1"
+              + ",transform,${toString m.transform}"
+              + ",vrr,${toString m.vrr}"
             else
               "disable"
           }"
         ) (config.monitors)
       );
 
-      #FIXME(hyprland): adapt this to work with new monitor module
-      #FIXME(hyprland): ws1 still appears on both DP-1 and DP-3 on reboot
-      workspace = [
-        "1, monitor:DP-1, default:true, persistent:true"
-        "2, monitor:DP-1, default:true"
-        "3, monitor:DP-1, default:true"
-        "4, monitor:DP-1, default:true"
-        "5, monitor:DP-1, default:true"
-        "6, monitor:DP-1, default:true"
-        "7, monitor:DP-1, default:true"
-        "8, monitor:DP-2, default:true, persistent:true"
-        "9, monitor:HDMI-A-1, default:true, persistent:true"
-        "0, monitor:DP-3, default:true, persistent:true"
-      ];
+      workspace = (
+        let
+          workspaceIDs = lib.flatten [
+            (lib.range 0 9) # workspaces 0 through 9
+            "special" # add the special/scratchpad ws
+          ];
+        in
+        # workspace structure to build "[workspace], monitor:[name], default:[bool], persistent:[bool]"
+        map (
+          ws:
+          # map over workspace IDs first, then map over monitors to check for entries, and contact the empty
+          # string elements created for ws and m combinations that don't match our actual conditions
+          lib.concatMapStrings (
+            m:
+            # workspaces with a config.monitors assignment
+            if toString ws == m.workspace then
+              "${toString ws}, monitor:${m.name}, default:true, persistent:true"
+            else
+            # workspace 1 is persistent on the primary monitor
+            if (ws == 1 || ws == "special") && m.primary == true then
+              "${toString ws}, monitor:${m.name}, default:true, persistent:true"
+            # FIXME(monitors): need logic to set primary as default monitor for workspaces that don't match above conditions but because we're limited to 'map' it seems to add more complexity than it's worth
+            else
+              ""
+          ) config.monitors
+        ) workspaceIDs
+      );
 
       #
       # ========== Behavior ==========
@@ -181,7 +197,8 @@
       windowrulev2 = [
         "float, class:^(galculator)$"
         "float, class:^(waypaper)$"
-        "float, class:^(keymapp)$"
+        #"float, class:^(keymapp)$"
+        #"float, class:^(yubioath-flutter)$"
 
         #
         # ========== Always opaque ==========
@@ -202,13 +219,14 @@
         #
         # ========== Scratch rules ==========
         #
-        #"size 80% 85%, workspace:^(special:special)$"
-        #"center, workspace:^(special:special)$"
+        #"size 80% 85%, workspace:^(special)$"
+        #"center, workspace:^(special)$"
 
         #
         # ========== Steam rules ==========
         #
-        "stayfocused, title:^()$,class:^([Ss]team)$"
+        #FIXME(steam): testing with stayfocused disabled.
+        #"stayfocused, title:^()$,class:^([Ss]team)$"
         "minsize 1 1, title:^()$,class:^([Ss]team)$"
         "immediate, class:^([Ss]team_app_*)$"
         "workspace 7, class:^([Ss]team_app_*)$"
@@ -235,7 +253,6 @@
         "workspace 9, class:^(org.telegram.desktop)$"
         "workspace 9, class:^(discord)$"
         "workspace 0, title:^([Ss]potify*)$"
-        "workspace special, class:^(yubioath-flutter)$"
       ];
 
       # load at the end of the hyperland set

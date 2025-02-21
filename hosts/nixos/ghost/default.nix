@@ -1,7 +1,7 @@
 #############################################################
 #
 #  Ghost - Main Desktop
-#  NixOS running on Ryzen 5 3600X, Radeon RX 5700 XT, 64GB RAM
+#  NixOS running on Ryzen 9 5900XT, Radeon RX 5700 XT, 64GB RAM
 #
 ###############################################################
 
@@ -76,6 +76,7 @@
     hostName = "ghost";
     useYubikey = lib.mkForce true;
     hdr = lib.mkForce true;
+    persistFolder = "/persist"; # added for "completion" because of the disko spec that was used even though impermanence isn't actually enabled here yet.
   };
 
   # set custom autologin options. see greetd.nix for details
@@ -129,7 +130,7 @@
   # host-wide styling
   stylix = {
     enable = true;
-    image = /home/ta/sync/wallpaper/1126712.png;
+    image = (lib.custom.relativeToRoot "assets/wallpapers/zen-01.png");
     #      base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-dark-medium.yaml";
     #      cursor = {
@@ -169,6 +170,10 @@
   #hyprland border override example
   #  wayland.windowManager.hyprland.settings.general."col.active_border" = lib.mkForce "rgb(${config.stylix.base16Scheme.base0E});
 
+  hardware.graphics = {
+    enable = true;
+    extraPackages = [ pkgs.amdvlk ];
+  };
   # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "24.05";
 }

@@ -7,6 +7,7 @@
 }:
 {
   options.hostSpec = {
+    # Data variables that don't dictate configuration settings
     username = lib.mkOption {
       type = lib.types.str;
       description = "The username of the host";
@@ -19,7 +20,6 @@
       type = lib.types.attrsOf lib.types.str;
       description = "The email of the user";
     };
-    # FIXME(hostSpec): Set an assert to make sure this is set if isWork is true
     work = lib.mkOption {
       default = { };
       type = lib.types.attrsOf lib.types.anything;
@@ -29,6 +29,11 @@
       default = { };
       type = lib.types.attrsOf lib.types.anything;
       description = "An attribute set of networking information";
+    };
+    wifi = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Used to indicate if a host has wifi";
     };
     domain = lib.mkOption {
       type = lib.types.str;
@@ -51,12 +56,13 @@
         in
         if pkgs.stdenv.isLinux then "/home/${user}" else "/Users/${user}";
     };
-    # FIXME(hostSpec): This should probably just switch to an impermenance option?
     persistFolder = lib.mkOption {
       type = lib.types.str;
       description = "The folder to persist data if impermenance is enabled";
-      default = "/persist";
+      default = "";
     };
+
+    # Configuration Settings
     isMinimal = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -93,8 +99,26 @@
       default = false;
       description = "Used to indicate a host that uses voice coding";
     };
-
-    # FIXME(hostSpec): Maybe make this display sub options or something later
+    isAutoStyled = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Used to indicate a host that wants auto styling like stylix";
+    };
+    useNeovimTerminal = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Used to indicate a host that uses neovim for terminals";
+    };
+    useWindowManager = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Used to indicate a host that uses a window manager";
+    };
+    useAtticCache = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Used to indicate a host that uses LAN atticd for caching";
+    };
     hdr = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -105,5 +129,25 @@
       default = "1";
       description = "Used to indicate what scaling to use. Floating point number";
     };
+  };
+
+  config = {
+    assertions =
+      let
+        # We import these options to HM and NixOS, so need to not fail on HM
+        isImpermanent =
+          config ? "system" && config.system ? "impermanence" && config.system.impermanence.enable;
+      in
+      [
+        {
+          assertion =
+            !config.hostSpec.isWork || (config.hostSpec.isWork && !builtins.isNull config.hostSpec.work);
+          message = "isWork is true but no work attribute set is provided";
+        }
+        {
+          assertion = !isImpermanent || (isImpermanent && !("${config.hostSpec.persistFolder}" == ""));
+          message = "config.system.impermanence.enable is true but no persistFolder path is provided";
+        }
+      ];
   };
 }

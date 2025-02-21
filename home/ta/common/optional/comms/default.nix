@@ -6,7 +6,7 @@
     inherit (pkgs)
 
       signal-desktop
-      telegram-desktop
+      #telegram-desktop
       discord
       slack
       ;

@@ -6,9 +6,6 @@
   ...
 }:
 let
-  # FIXME(starter-repo):
-  # sopsFolder = builtins.toString inputs.nix-secrets;
-  # secretsFilePath = "${sopsFolder}/secrets.yaml";
   sopsFolder = (builtins.toString inputs.nix-secrets) + "/sops";
   homeDirectory = config.home.homeDirectory;
   # FIXME(yubikey): move this, u2f sops extraction, and other yubi stuff to be set as yubikey module options
@@ -31,8 +28,6 @@ let
     // lib.attrsets.mergeAttrsList (
       lib.lists.map (name: {
         "keys/ssh/${name}" = {
-          # FIXME(starter-repo):
-          # sopsFile = "${secretsFilePath}";
           sopsFile = "${sopsFolder}/shared.yaml";
           path = "${homeDirectory}/.ssh/id_${name}";
         };
@@ -45,8 +40,6 @@ in
     # This is the location of the host specific age-key for ta and will to have been extracted to this location via hosts/common/core/sops.nix on the host
     age.keyFile = "${homeDirectory}/.config/sops/age/keys.txt";
 
-    # FIXME(starter-repo):
-    #defaultSopsFile = "${secretsFilePath}";
     defaultSopsFile = "${sopsFolder}/${config.hostSpec.hostName}.yaml";
     validateSopsFiles = false;
 
