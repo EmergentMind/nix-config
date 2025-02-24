@@ -22,7 +22,7 @@ in
   users.users.media = {
     isNormalUser = true;
     hashedPasswordFile = config.sops.secrets.${secretsSubPath}.path;
-    shell = pkgs.zsh; # default shell
+    shell = pkgs.fish; # default shell
     extraGroups = [
       "audio"
       "video"
