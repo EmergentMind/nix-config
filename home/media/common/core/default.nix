@@ -18,7 +18,7 @@
     stateVersion = lib.mkDefault "23.05";
     sessionPath = [ "$HOME/.local/bin" ];
     sessionVariables = {
-      SHELL = "zsh";
+      SHELL = "fish";
     };
   };
 
