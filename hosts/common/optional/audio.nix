@@ -1,6 +1,5 @@
 { pkgs, ... }:
 {
-  # sound.enable = true; #deprecated in 24.11 TODO remove this line when 24.11 release
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {

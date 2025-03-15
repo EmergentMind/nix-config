@@ -164,6 +164,7 @@
       # To determine path, run `which foo`
       exec-once = [
         ''${pkgs.waypaper}/bin/waypaper --restore''
+        ''${pkgs.networkmanagerapplet}/bin/nm-applet --indicator''
         ''[workspace 8 silent]${pkgs.virt-manager}/bin/virt-manager''
         ''[workspace 8 silent]${pkgs.obsidian}/bin/obsidian''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
@@ -172,6 +173,7 @@
         ''[workspace special silent]${pkgs.yubioath-flutter}/bin/yubioath-flutter''
         ''[workspace special silent]${pkgs.keymapp}/bin/keymapp''
       ];
+
       #
       # ========== Layer Rules ==========
       #
