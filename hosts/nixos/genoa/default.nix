@@ -47,6 +47,7 @@
       #
       # ========== Optional Configs ==========
       #
+      "hosts/common/optional/services/bluetooth.nix" # bluetooth, blueman and bluez via wireplumber
       "hosts/common/optional/services/greetd.nix" # display manager
       "hosts/common/optional/services/openssh.nix" # allow remote SSH access
       "hosts/common/optional/services/printing.nix" # CUPS

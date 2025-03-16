@@ -96,6 +96,17 @@ in
           "tooltip" = true;
           "tooltip-format" = "Games running: {count}";
         };
+        "bluetooth" = {
+          "format" = "{icon}";
+          "format-disabled" = "";
+          "format-connected" = "{device_battery_percentage}% {icon}";
+          "format-icons" = {
+            "off" = "󰂲";
+            "on" = "󰂯";
+            "connected" = "󰂱";
+          };
+          "on-click" = "blueman-manager";
+        };
         "network" = {
           "format-wifi" = "{essid} ({signalStrength}%) ";
           "format-ethernet" = "{ipaddr} ";
@@ -131,7 +142,7 @@ in
         };
         "backlight" = {
           tooltip = false;
-          format = " {}%";
+          format = "{}% ";
           interval = 5;
           on-scroll-up = mkScript {
             deps = [ pkgs.brightnessctl ];
@@ -148,9 +159,9 @@ in
             warning = 30;
             critical = 20;
           };
-          format = "{icon} {capacity}%";
-          format-charging = " {capacity}%";
-          format-plugged = " {capacity}%";
+          format = "{capacity}% {icon}";
+          format-charging = "{capacity}% ";
+          format-plugged = "{capacity}% ";
           format-alt = "{time} {icon}";
           format-icons = [
             ""

@@ -165,6 +165,7 @@
       exec-once = [
         ''${pkgs.waypaper}/bin/waypaper --restore''
         ''${pkgs.networkmanagerapplet}/bin/nm-applet --indicator''
+        ''${pkgs.blueman}/bin/blueman-applet''
         ''[workspace 8 silent]${pkgs.virt-manager}/bin/virt-manager''
         ''[workspace 8 silent]${pkgs.obsidian}/bin/obsidian''
         ''[workspace 9 silent]${pkgs.signal-desktop}/bin/signal-desktop''
