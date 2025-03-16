@@ -1,4 +1,29 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  commonDeps = with pkgs; [
+    coreutils
+    gnugrep
+    systemd
+  ];
+  mkScript =
+    {
+      name ? "script",
+      deps ? [ ],
+      script ? "",
+    }:
+    lib.getExe (
+      pkgs.writeShellApplication {
+        inherit name;
+        text = script;
+        runtimeInputs = commonDeps ++ deps;
+      }
+    );
+in
 {
   # Let it try to start a few more times
   systemd.user.services.waybar = {
@@ -31,6 +56,8 @@
           #"mpd"
           "tray"
           "network"
+          "battery"
+          "backlight"
           "clock#time"
           "clock#date"
         ];
@@ -38,7 +65,6 @@
         #
         # ========= Modules =========
         #
-
         #TODO
         #"hyprland/window" ={};
 
@@ -71,17 +97,17 @@
           "tooltip-format" = "Games running: {count}";
         };
         "network" = {
-          format-wifi = "{essid} ({signalStrength}%) ";
-          format-ethernet = "{ipaddr} ";
-          tooltip-format = "{ifname} via {gwaddr} ";
-          format-linked = "{ifname} (No IP) ";
-          format-disconnected = "Disconnected ⚠";
-          format-alt = "{ifname}: {ipaddr}/{cidr}";
+          "format-wifi" = "{essid} ({signalStrength}%) ";
+          "format-ethernet" = "{ipaddr} ";
+          "format-disconnected" = "Disconnected ⚠";
+          "tooltip-format" =
+            "{essid} {ipaddr}\n{ifname} via {gwaddr} {essid}\nUP:{bandwidthUpBits}mbps  DOWN:{bandwidthDownBits}mbps {signalStrength}";
+          "on-click" = "nm-connection-editor";
         };
         "pulseaudio" = {
           "format" = "{volume}% {icon}";
-          #              "format-source" = "Mic ON";
-          #              "format-source-muted" = "Mic OFF";
+          "format-source" = "Mic ON";
+          "format-source-muted" = "Mic OFF";
           "format-bluetooth" = "{volume}% {icon}";
           "format-muted" = "";
           "format-icons" = {
@@ -103,7 +129,38 @@
           "on-click" = "pavucontrol";
           "ignored-sinks" = [ "Easy Effects Sink" ];
         };
-        #        "mpd" = {
+        "backlight" = {
+          tooltip = false;
+          format = " {}%";
+          interval = 5;
+          on-scroll-up = mkScript {
+            deps = [ pkgs.brightnessctl ];
+            script = "brightnessctl set 1%+";
+          };
+          on-scroll-down = mkScript {
+            deps = [ pkgs.brightnessctl ];
+            script = "brightnessctl set 1%-";
+          };
+        };
+        "battery" = {
+          states = {
+            good = 95;
+            warning = 30;
+            critical = 20;
+          };
+          format = "{icon} {capacity}%";
+          format-charging = " {capacity}%";
+          format-plugged = " {capacity}%";
+          format-alt = "{time} {icon}";
+          format-icons = [
+            ""
+            ""
+            ""
+            ""
+            ""
+          ];
+        };
+        #"mpd" = {
         #    "format" = "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ";
         #    "format-disconnected" = "Disconnected ";
         #    "format-stopped" = "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}Stopped ";
