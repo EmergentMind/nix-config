@@ -68,6 +68,11 @@
       default = false;
       description = "Used to indicate a minimal host";
     };
+    isMobile = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Used to indicate a mobile host";
+    };
     isProduction = lib.mkOption {
       type = lib.types.bool;
       default = true;
