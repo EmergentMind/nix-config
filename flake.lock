@@ -561,10 +561,10 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1739899765,
-        "narHash": "sha256-i9LmrycBTKFwveWlLmgBFs94zvqkMjxbw/unHEJ8bM0=",
+        "lastModified": 1741914262,
+        "narHash": "sha256-mfMRzNmq8H4B5V122+MnJQEygzi+rDH0k9aHn4d+Aq4=",
         "ref": "main",
-        "rev": "17decb724fdbe236277eb102e873960f6cd8b583",
+        "rev": "bbc4115ef0d44ccacaeb1ee85bd7f3749100fbc0",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
@@ -574,6 +574,21 @@
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
+      }
+    },
+    "nixos-hardware-genoa": {
+      "locked": {
+        "lastModified": 1741021369,
+        "narHash": "sha256-MiN627P71a6X2Oz6YCz+sXGSCYbZIVhMOKj77CGraiQ=",
+        "owner": "emergentmind",
+        "repo": "nixos-hardware",
+        "rev": "1b1e755f4f1c144f7980a1ec2ce3e75d4e5d0112",
+        "type": "github"
+      },
+      "original": {
+        "owner": "emergentmind",
+        "repo": "nixos-hardware",
+        "type": "github"
       }
     },
     "nixpkgs": {
@@ -802,6 +817,7 @@
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nix-secrets": "nix-secrets",
+        "nixos-hardware-genoa": "nixos-hardware-genoa",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-stable": "nixpkgs-stable",
