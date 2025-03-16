@@ -25,7 +25,7 @@
 
       # Media production
       audacity
-      blender
+      blender-hip # -hip variant includes h/w accelrated rendering with AMD RNDA gpus
       gimp
       inkscape
       obs-studio

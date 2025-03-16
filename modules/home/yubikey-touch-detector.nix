@@ -1,4 +1,4 @@
-# See https://github.com/berbiche/dotfiles/blob/4048a1746ccfbf7b96fe734596981d2a1d857930/modules/home-manager/yubikey-touch-detector.nix#L9
+# See https://github.com/berbiche/dotfiles/blob/4048a1746ccfbf7b96fe734596981d2a1d857930/modules/home/yubikey-touch-detector.nix#L9
 # FIXME: Send a PR to HM to add this service
 {
   config,

@@ -15,7 +15,7 @@ This is a significant refactor that involves several breaking changes.
 - Several directory paths now have an additional layer of directories to separate files that are common to both darwin and nixos systems or are specific to one.
 
 	- `nixos` and `darwin` sub-directories were added to `nix-config/hosts/` to delineate between the different each hosts underlying system. E.g. `nix-config/hosts/nixos/<hostname>`
-	- `common` and `darwin` directories have been added to `nix-config/modules`. One of the modules that was previously in `/nix-config/modules/nixos` has been moved to `/nix-config/modules/common`
+	- `common` and `darwin` directories have been added to `nix-config/modules`. One of the modules that was previously in `/nix-config/modules/hosts/nixos` has been moved to `/nix-config/modules/common`
 	- `common`, `darwin`, and `nixos` directories have been added to `nix-config/pkgs`
 
 - `darwin.nix` and `nixos.nix` have been added to several locations to separate out declarations that are specific to either OS. Declarations applicable to both OSes remain in the `default.nix` file for the respective directory. Locations include:

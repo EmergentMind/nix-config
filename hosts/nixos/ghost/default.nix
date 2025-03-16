@@ -53,6 +53,7 @@
       "hosts/common/optional/nvtop.nix" # GPU monitor (not available in home-manager)
       "hosts/common/optional/obsidian.nix" # wiki
       "hosts/common/optional/plymouth.nix" # fancy boot screen
+      "hosts/common/optional/protonvpn.nix" # vpn
       "hosts/common/optional/scanning.nix" # SANE and simple-scan
       "hosts/common/optional/thunar.nix" # file manager
       "hosts/common/optional/vlc.nix" # media player
@@ -76,6 +77,7 @@
     hostName = "ghost";
     useYubikey = lib.mkForce true;
     hdr = lib.mkForce true;
+    persistFolder = "/persist"; # added for "completion" because of the disko spec that was used even though impermanence isn't actually enabled here yet.
   };
 
   # set custom autologin options. see greetd.nix for details

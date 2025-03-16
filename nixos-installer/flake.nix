@@ -22,11 +22,16 @@
 
       # This mkHost is way better: https://github.com/linyinfeng/dotfiles/blob/8785bdb188504cfda3daae9c3f70a6935e35c4df/flake/hosts.nix#L358
       newConfig =
-        name: disk: swapSize: useLuks:
+        name: disk: swapSize: useLuks: isImp:
         (
           let
             diskSpecPath =
-              if useLuks then ../hosts/common/disks/btrfs-luks-disk.nix else ../hosts/common/disks/btrfs-disk.nix;
+              if useLuks && isImp then
+                ../hosts/common/disks/btrfs-luks-impermanence-disk.nix
+              else if !useLuks && isImp then
+                ../hosts/common/disks/btrfs-impermanence-disk.nix
+              else
+                ../hosts/common/disks/btrfs-disk.nix;
           in
           nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
@@ -51,12 +56,12 @@
     in
     {
       nixosConfigurations = {
-        # host = newConfig "name" disk" "swapSize" "useLuks"
+        # host = newConfig "name" disk" "swapSize" "useLuks" "isImp"
         # Swap size is in GiB
-        genoa = newConfig "genoa" "/dev/nvme0n1" 16 true;
-        grief = newConfig "grief" "/dev/vda" 0 false;
-        guppy = newConfig "guppy" "/dev/vda" 0 false;
-        gusto = newConfig "gusto" "/dev/nvme0n1" 8 false;
+        genoa = newConfig "genoa" "/dev/nvme0n1" 16 true true;
+        grief = newConfig "grief" "/dev/vda" 0 false false;
+        guppy = newConfig "guppy" "/dev/vda" 0 false false;
+        gusto = newConfig "gusto" "/dev/nvme0n1" 8 false false;
 
         ghost = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";

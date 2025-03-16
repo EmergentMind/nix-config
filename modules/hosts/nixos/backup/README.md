@@ -39,7 +39,7 @@ hosts/common/core/sops.nix
   ...
 
   secrets = {
-+    # borg password required by nix-config/modules/nixos/backup
++    # borg password required by nix-config/modules/hosts/nixos/backup
 +    "passwords/borg" = {
 +      owner = "root";
 +      group = if pkgs.stdenv.isLinux then "root" else "wheel";

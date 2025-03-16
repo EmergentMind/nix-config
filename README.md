@@ -87,7 +87,7 @@ For details about design concepts, constraints, and how structural elements inte
 For a large screenshot of the concept diagram, as well as previous iterations, see [Anatomy](docs/anatomy.md).
 
 <div align="center">
-<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v5.png" /></a>
+<a href="docs/anatomy.md"><img width="400" src="docs/diagrams/anatomy_v5.1.png" /></a>
 </div>
 
 - `flake.nix` - Entrypoint for hosts and user home configurations. Also exposes a devshell for  manual bootstrapping tasks (`nix develop` or `nix-shell`).

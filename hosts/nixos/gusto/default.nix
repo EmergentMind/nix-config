@@ -24,7 +24,7 @@
     # ========== Disk Layout ==========
     #
     inputs.disko.nixosModules.disko
-    (lib.custom.relativeToRoot "hosts/common/disks/btrfs-disk.nix")
+    (lib.custom.relativeToRoot "hosts/common/disks/btrfs-impermanence-disk.nix")
     {
       _module.args = {
         disk = "/dev/nvme0n1";
@@ -67,6 +67,7 @@
   hostSpec = {
     hostName = "gusto";
     useYubikey = lib.mkForce true;
+    persistFolder = "/persist"; # added for "completion" because of the disko spec that was used even though impermanence isn't actually enabled here yet.
   };
 
   # Enable some basic X server options
@@ -99,7 +100,7 @@
   # host-wide styling
   stylix = {
     enable = true;
-    image = home/ta/ad-01.jpg;
+    image = (lib.custom.relativeToRoot "assets/wallpapers/zen-01.png");
     base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
     opacity = {
       applications = 1.0;

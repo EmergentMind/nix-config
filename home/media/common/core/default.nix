@@ -8,7 +8,7 @@
   imports = lib.flatten [
     (lib.custom.scanPaths ./.)
     (map lib.custom.relativeToRoot [
-      "modules/home-manager"
+      "modules/home"
     ])
   ];
 

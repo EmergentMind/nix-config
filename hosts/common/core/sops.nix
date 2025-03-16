@@ -8,9 +8,6 @@
   ...
 }:
 let
-  # FIXME(starter-repo):
-  #  sopsFolder = builtins.toString inputs.nix-secrets;
-  #  secretsFile = "${sopsFolder}/secrets.yaml";
   sopsFolder = builtins.toString inputs.nix-secrets + "/sops";
 in
 {
@@ -39,8 +36,6 @@ in
       # These age keys are are unique for the user on each host and are generated on their own (i.e. they are not derived
       # from an ssh key).
 
-      # FIXME(starter-repo):
-      #    "keys/age/${config.hostSpec.username}_${config.networking.hostName}" = {
       "keys/age" = {
         owner = config.users.users.${config.hostSpec.username}.name;
         inherit (config.users.users.${config.hostSpec.username}) group;

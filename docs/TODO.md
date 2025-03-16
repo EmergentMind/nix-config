@@ -5,8 +5,8 @@
 ## Short Term
 
 - Content - HostSpec
-    - finish article
-    - record video
+    - ~~finish article~~
+    - ~~record video~~
     - production
     - publish
 
@@ -25,8 +25,10 @@
 - Setup starter repo
 
 6.1
-- bootstrap genoa
+- ~~bootstrap genoa~~
 - sort out Thinkpad E15 hardware
+- issues:
+    - knownhosts not written
 - enable backup
 - laptop utils
 
