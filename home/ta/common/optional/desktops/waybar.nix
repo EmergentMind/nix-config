@@ -50,19 +50,33 @@ in
           "hyprland/workspaces"
         ];
         modules-center = [ "hyprland/window" ];
-        modules-right = [
-          "gamemode"
-          "pulseaudio"
-          #"mpd"
-          "tray"
-          "network"
-          "battery"
-          "backlight"
-          "clock#time"
-          "clock#date"
-        ];
+        modules-right =
+          if config.hostSpec.isMobile then
+            [
+              "gamemode"
+              "pulseaudio"
+              #"mpd"
+              "tray"
+              # TODO: preferring applets for network and bluetooth instead of these
+              # modules. consider removing in future.
+              #"network"
+              #"bluetooth"
+              "battery"
+              "backlight"
+              "clock#time"
+              "clock#date"
+            ]
+          else
+            [
+              "gamemode"
+              "pulseaudio"
+              #"mpd"
+              "tray"
+              #"network"
+              "clock#time"
+              "clock#date"
+            ];
 
-        #
         # ========= Modules =========
         #
         #TODO
@@ -97,9 +111,10 @@ in
           "tooltip-format" = "Games running: {count}";
         };
         "bluetooth" = {
-          "format" = "{icon}";
+          "format" = " {icon} ";
           "format-disabled" = "";
           "format-connected" = "{device_battery_percentage}% {icon}";
+          "icon-size" = 30;
           "format-icons" = {
             "off" = "󰂲";
             "on" = "󰂯";

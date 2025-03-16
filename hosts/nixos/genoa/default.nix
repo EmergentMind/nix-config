@@ -70,6 +70,7 @@
 
   hostSpec = {
     hostName = "genoa";
+    isMobile = lib.mkForce true;
     useYubikey = lib.mkForce true;
     hdr = lib.mkForce true;
     wifi = lib.mkForce true;
