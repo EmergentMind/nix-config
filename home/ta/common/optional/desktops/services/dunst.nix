@@ -10,6 +10,7 @@
 
   services.dunst = {
     enable = true;
+    #    package = pkgs.unstable.dunst;
     #    waylandDisplay = ""; # set the service's WAYLAND_DISPLAY environment variable
     #    configFile = "";
     iconTheme = {

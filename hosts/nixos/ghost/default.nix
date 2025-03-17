@@ -171,10 +171,20 @@
   #hyprland border override example
   #  wayland.windowManager.hyprland.settings.general."col.active_border" = lib.mkForce "rgb(${config.stylix.base16Scheme.base0E});
 
-  hardware.graphics = {
-    enable = true;
-    extraPackages = [ pkgs.amdvlk ];
+  boot.kernelPackages = pkgs.unstable.linuxPackages_latest;
+  hardware.graphics.enable = true;
+  #hardware.graphics.package = lib.mkForce pkgs.unstable.mesa.drivers;
+  hardware.amdgpu.initrd.enable = true; # load amdgpu kernelModules in stage 1.
+  hardware.amdgpu.opencl.enable = true; # OpenCL support - general compute API for gpu
+  hardware.amdgpu.amdvlk.enable = true; # additional, alternative drivers
+
+  environment.systemPackages = builtins.attrValues {
+    inherit (pkgs)
+      clinfo # opencl testing
+      vulkan-tools # vulkaninfo
+      ;
   };
+
   # https://wiki.nixos.org/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "24.05";
 }
