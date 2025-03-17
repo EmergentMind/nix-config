@@ -12,7 +12,7 @@
 - ticket for refactor yubikey module to include u2f stuff
 - is magicmirror in nixpkgs? Add items to package it and build a host
 
-- config audio output device for gusto
+- declarative audio output device for gusto if possible
 
 ### Current roadmap focus items
 
@@ -22,11 +22,11 @@
 6.1
 - ~~bootstrap genoa~~
 - ~~sort out Thinkpad E15 hardware~~
-    - sent PR upstream and using fork for now
+    - ~~sent PR upstream and using fork for now~~
 - issues:
     - knownhosts not written
 - enable backup
-- laptop utils
+- ~~laptop utils~~
 
 #### General workflow improvements
 
@@ -219,10 +219,12 @@ Add laptop support to the mix to handle stuff like power, lid state, wifi, and t
 
 ##### 6.1 Laptops
 - ~~nixify genoa~~
-- add laptop utils
+- ~~add laptop utils~~
+- enable backup
 
-##### 6.2 Improved network handling
-- complete firewall and services.per-network-services branch
+#### 6.2 Improved network handling
+- complete services.per-network-services branch
+- add firewall module
 
 #### 7. Squeaky clean
 
