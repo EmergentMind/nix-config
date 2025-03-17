@@ -2,7 +2,6 @@
 # and may be overwritten by future invocations.  Please make changes
 # to /etc/nixos/configuration.nix instead.
 {
-  inputs,
   config,
   lib,
   modulesPath,
@@ -12,7 +11,6 @@
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
-    inputs.nixos-hardware-genoa.nixosModules.lenovo-thinkpad-e15-intel
   ];
 
   boot.initrd.availableKernelModules = [

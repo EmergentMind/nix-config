@@ -17,7 +17,7 @@
     # ========== Hardware ==========
     #
 
-    #inputs.nixos-hardware.nixosModules.lenovo-thinkpad-e15-intel
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-e15-intel
     ./hardware-configuration.nix
 
     #
