@@ -4,6 +4,8 @@
 
 ## Short Term
 
+- reminder to add `gamescope [other gamescope options] --force-grab-cursor -- %command%` to games where I want cursor trapped to window.
+
 - consider switching back to i3 on X because wayland is still too half-baked
 - setup backup for 'extra' drive
 - start using issues more than fixmes
@@ -22,7 +24,7 @@
 6.1
 - ~~bootstrap genoa~~
 - ~~sort out Thinkpad E15 hardware~~
-    - sent PR upstream and using fork for now
+    - ~~sent PR upstream and using fork for now~~
 - issues:
     - knownhosts not written
 - enable backup
