@@ -43,6 +43,7 @@ The way out, is through.
 ---
 
 Watch NixOS related videos on my [YouTube channel](https://www.youtube.com/@Emergent_Mind).
+Chat with me directly on our [Discord server](https://discord.gg/XTFg57xGxC).
 
 ## Feature Highlights
 
