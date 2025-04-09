@@ -28,7 +28,7 @@
       #
       # ========= Overlays =========
       #
-      # Custom modifications/overrides to upstream packages.
+      # Custom modifications/overrides to upstream packages
       overlays = import ./overlays { inherit inputs; };
 
       #
@@ -64,7 +64,13 @@
       #
       # ========= Packages =========
       #
-      # Add custom packages to be shared or upstreamed.
+      # Expose custom packages
+
+      /*
+        NOTE: This is only for exposing packages exterally; ie, `nix build .#packages.x86_64-linux.cd-gitroot`
+        For internal use, these packages are added through the default overlay in `overlays/default.nix`
+      */
+
       packages = forAllSystems (
         system:
         let
