@@ -16,6 +16,20 @@
   '';
 
   #
+  # ========== Generation Pinning ==========
+  #
+  # Pin a boot entry if it exists. In order to generate the
+  # pinned-boot-entry.conf for a "stable" generation run: 'just pin' and then
+  # rebuild. See the pin recipe in justfile for more information
+  boot.loader.systemd-boot.extraEntries =
+    let
+      pinned = lib.custom.relativeToRoot "hosts/nixos/${config.hostSpec.hostName}/pinned-boot-entry.conf";
+    in
+    lib.optionalAttrs (config.boot.loader.systemd-boot.enable && builtins.pathExists pinned) {
+      "pinned-stable.conf" = builtins.readFile pinned;
+    };
+
+  #
   # ========== Nix Helper ==========
   #
   # Provides better build output and will also handle garbage collection in place of standard nix gc (garbage collection)

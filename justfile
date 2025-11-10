@@ -162,6 +162,20 @@ sops-add-creation-rules USER HOST:
 # ========= Admin Recipes ==========
 #
 
+# Pin the current nixos generation to the systemd-boot loader menu
+[group("admin")]
+pin:
+    #!/usr/bin/env bash
+    CURRENT=$(sudo nix-env --list-generations --profile /nix/var/nix/profiles/system | rg current | cut -f1 -d' ')
+    PINNED=hosts/nixos/$(hostname)/pinned-boot-entry.conf
+    cp /boot/loader/entries/nixos-generation-$CURRENT.conf $PINNED
+    chmod -x $PINNED
+    sed -i 's/sort-key nixos/sort-key pinned/' $PINNED
+    VERSION=$(grep version $PINNED | cut -f2- -d' ')
+    sed -i "s/title.*/title PINNED: $VERSION/" $PINNED
+    # Set the new root to prevent garbage collection
+    sudo nix-store --add-root /nix/var/nix/gcroots/pinned-$(hostname) -r /nix/var/nix/profiles/system
+
 # Copy all the config files to the remote host
 [group("admin")]
 sync USER HOST PATH:
