@@ -15,3 +15,10 @@ zstyle ':completion:::::' completer _expand _complete _ignored _approximate # en
 #      bindkey '^I' forward-word         # tab
 #      bindkey '^[[Z' backward-word      # shift+tab
 #      bindkey '^ ' autosuggest-accept   # ctrl+space
+
+function git_smart_rebase() {
+    GIT_STASH_MESSAGE="git_smart_rebase: $RANDOM"
+    git stash push -m "$GIT_STASH_MESSAGE"
+    git fetch && git rebase
+    git stash list | (grep "${GIT_STASH_MESSAGE}" && git stash pop) || true
+}
