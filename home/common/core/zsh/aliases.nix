@@ -67,6 +67,9 @@ in
   jrup = "just rebuild-update";
   jrt = "just rebuild-trace";
   jl = "just --list";
+  jup = "just update";
+  jug = "just upgrade";
+  jb = "just build-host";
 
   #-------------Neovim---------------
   e = "nvim";
@@ -127,7 +130,6 @@ in
   gd = "git diff";
   gp = "git push";
   gpf = "git push --force-with-lease";
-  gpl = "git pull";
   gl = "git log";
   gc = "git clone";
 
