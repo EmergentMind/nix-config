@@ -102,7 +102,7 @@ As of September 2025, we've been rethinking how to handle multiple users and the
     - `optional` - Optional configurations present across more than one host.
     - `users` - Host level user configurations present across at least one host.
         - `<user>/keys` - Public keys for the user that are symlinked to ~/.ssh
-  - `dariwn` - machine specific configurations for darwin-based hosts
+  - `darwin` - machine specific configurations for darwin-based hosts
       - Currently not using any darwin hosts
   - `nixos` - machine specific configurations for NixOS-based hosts
       - `genoa` - ThinkPad E15 - 3.5/4.7GHz i7-1255U (6C/12T), 16GB RAM
