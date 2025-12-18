@@ -1,3 +1,10 @@
+# IMPORTANT - 2025, December 18
+## This branch is not maintained and is here only as a reference.
+The branch is here as is from the date it was created and serves as a reference for how we handled hosts running on both Darwin and NixOS.
+Starting in 2026, we are intentionally moving away from supporting Darwin for [the](the) foreseeable future while focusing on restructuring without the need to consider hardware we don't use.
+
+__Why?__ Quite simply, I don't like Apple.
+
 <div align="center">
 <h1>
 <img width="100" src="docs/nixos-ascendancy.png" /> <br>
