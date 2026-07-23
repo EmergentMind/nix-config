@@ -2,6 +2,8 @@
 let
   extraDisk1 = "cryptextra";
   extraDisk2 = "cryptvms";
+  extraDisk3 = "cryptmedia1";
+  extraDisk4 = "cryptmedia2";
 in
 {
   system.disks = {
@@ -18,9 +20,19 @@ in
         path = "/dev/disk/by-id/nvme-WDS250G3X0C-00SJG0_202604A00429-part1";
       }
       {
-        # 500GB /dev/sda
+        # 500GB /dev/sdb
         name = extraDisk2;
         path = "/dev/disk/by-id/ata-WDC_WDS500G2B0A-00SM50_201723800798-part1";
+      }
+      {
+        # 5.0TB /dev/sbc
+        name = extraDisk3;
+        path = "/dev/disk/by-id/0x50014ee260ee313a";
+      }
+      {
+        # 5.0TB /dev/sda
+        name = extraDisk4;
+        path = "/dev/disk/by-id/0x50014ee260ee235e";
       }
     ];
   };
@@ -45,6 +57,30 @@ in
     fsType = "btrfs";
     options = [
       "subvol=@vms"
+      "compress=zstd"
+      "nofail"
+      "noauto"
+      "x-systemd.automount"
+      "x-systemd.device-timeout=10s"
+    ];
+  };
+  fileSystems."/mnt/media1" = {
+    device = "/dev/mapper/${extraDisk3}";
+    fsType = "btrfs";
+    options = [
+      "subvol=@media1"
+      "compress=zstd"
+      "nofail"
+      "noauto"
+      "x-systemd.automount"
+      "x-systemd.device-timeout=10s"
+    ];
+  };
+  fileSystems."/mnt/media2" = {
+    device = "/dev/mapper/${extraDisk4}";
+    fsType = "btrfs";
+    options = [
+      "subvol=@media2"
       "compress=zstd"
       "nofail"
       "noauto"
