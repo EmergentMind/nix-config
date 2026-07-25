@@ -9,6 +9,9 @@
       #rpi-imager
       #etcher #was disabled in nixpkgs due to dependency on insecure version of Electron
 
+      #image viewers
+      feh
+
       # Productivity
       drawio
       libreoffice
