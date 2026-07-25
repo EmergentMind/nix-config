@@ -12,7 +12,7 @@
         options = "rw,sync,no_subtree_check";
       in
       ''
-        /mnt/vms/mediashare ${gustoIP}/24(${options}) ${genoaIP}/24(${options}) ${genoaGladeIP}/24(${options})
+        /mnt/media1/mediashare ${gustoIP}/24(${options}) ${genoaIP}/24(${options}) ${genoaGladeIP}/24(${options})
       '';
   };
 }
