@@ -106,13 +106,13 @@
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1784845969,
-        "narHash": "sha256-aIwiZAN0XOpDtspHRHx7JHYWKiPBvnAPozSg1uilqIQ=",
-        "path": "/home/ta/src/nix/neovim",
+        "lastModified": 1785090247,
+        "narHash": "sha256-0RjddZRCT8VB4bBWaG3lIjr4T4MnqC+UUqngJ7NRWoQ=",
+        "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       },
       "original": {
-        "path": "/home/ta/src/nix/neovim",
+        "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       }
     },
@@ -476,13 +476,13 @@
         "wrappers": "wrappers_2"
       },
       "locked": {
-        "lastModified": 1784843098,
-        "narHash": "sha256-/4AB2YqiZLycotI9HpZalXivVK+YrYAsqvmNsztci0Q=",
-        "path": "/home/ta/src/nix/introdus/ta",
+        "lastModified": 1785090364,
+        "narHash": "sha256-+ki5WE3o+XSg4y3XybxHfzRYGeQXrInAxacbnm+A+NU=",
+        "path": "/home/ta/dev/nix/introdus/ta",
         "type": "path"
       },
       "original": {
-        "path": "/home/ta/src/nix/introdus/ta",
+        "path": "/home/ta/dev/nix/introdus/ta",
         "type": "path"
       }
     },
@@ -541,11 +541,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1784440659,
-        "narHash": "sha256-Q5kNLlWngt7TaIIZoxDKWMHjiSaNRVqr70FqWCRRfr4=",
+        "lastModified": 1785046085,
+        "narHash": "sha256-UiK+mmZJuLWQVhJ5b2wDzogIYWAesyRm6LA3h3Ulh3Y=",
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "rev": "4f8d52a3598b0dc7db7a5e7b419e3edd9d1ecfdb",
+        "rev": "11665045df8b9938ef811a3bfdc65cffb02b4b70",
         "type": "github"
       },
       "original": {
