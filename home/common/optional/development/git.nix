@@ -14,7 +14,7 @@ in
     keysPath = "hosts/common/users/super/keys/";
     # personal
     devFolders = [
-      "${home}/src/"
+      "${home}/dev/"
       "${home}/pub/"
     ];
     devKeys = [

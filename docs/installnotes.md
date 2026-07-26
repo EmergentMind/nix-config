@@ -129,14 +129,14 @@ From the source machine, copy the ssh pub key you will use for installation and 
    4. Update the keys for the sops file
       ```bash
       $ sops --config path/to/nix-secrets/.sops.yaml updatekeys path/to/nix-secrets/secrets.yaml
-      2024/02/09 12:11:05 Syncing keys for file /home/ta/src/nix-secrets/secrets.yaml
+      2024/02/09 12:11:05 Syncing keys for file /home/ta/dev/nix-secrets/secrets.yaml
       The following changes will be made to the file's groups:
       Group 1
           age00000000000000000000000000000000000000000000000000
           age00000000000000000000000000000000000000000000000000
       +++ age1jzrpvffcwjtv4e77v24ye44z2yk3nk3hkyjk60tfluuaxszdtf7s0u3xeh
       Is this okay? (y/n):y
-      2024/02/09 12:16:54 File /home/ta/src/nix-secrets/secrets.yaml synced with new keys
+      2024/02/09 12:16:54 File /home/ta/dev/nix-secrets/secrets.yaml synced with new keys
       ```
    5. Commit and push the changes to nix-secrets so they will be retrieved when the flake is built on the new host.
    6. Overwrite the auto generated host keys on the target machine with the private and public ssh host keys created in step 7.1 We can authenticate using the private key that matches the public key we added to the target machine's authorized keys in step 6.
@@ -583,8 +583,8 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 14. Clone the `nix-config` repo.
 
     ```bash
-    $ mkdir ~/src
-    $ cd ~/src
+    $ mkdir ~/dev
+    $ cd ~/dev
     $ git clone git@gitlab.com:emergentmind/nix-config.git
     Cloning into 'nix-config'...
     The authenticity of host 'gitlab.com' can't be established.
@@ -666,7 +666,7 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
     Add the age key to .sops.yaml. Since we're in a recovery state, we'll do this on the .sops.yaml for both repos (nix-config and nix-secrets) since we'll eventually be reducing it down to one.
 
     ```bash
-    $ nvim src/nix-config/.sops.yaml
+    $ nvim dev/nix-config/.sops.yaml
 
     .sops.yaml
 
@@ -688,15 +688,15 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 
     ---------
 
-    $ cp src/nix-config/.sops.yaml src/nix-secrets
+    $ cp dev/nix-config/.sops.yaml dev/nix-secrets
     ```
 
 23. Now we're ready to recreate `secrets.yaml` using sops
     Note: something was up with the EDITOR environment variable wanting xterm kitty so first I ran
-    `export EDITOR=nvim` then i deleted the old, inaccessilbe copy of secrets.yaml from nix-config using `rm ~/src/nix-config/hosts/common/secrets.yaml`
+    `export EDITOR=nvim` then i deleted the old, inaccessilbe copy of secrets.yaml from nix-config using `rm ~/dev/nix-config/hosts/common/secrets.yaml`
 
     ```bash
-    $ cd ~/src/nix-config
+    $ cd ~/dev/nix-config
     $ sops hosts/common/secrets.yaml
 
     secrets.yaml
@@ -717,7 +717,7 @@ https://nixos.org/manual/nixos/stable/#sec-installing-virtualbox-guest
 25. Commit and push the changes to nix-config.
 
     ```bash
-    $ cd ~/src/nix-config
+    $ cd ~/dev/nix-config
     $ git commmit -a -m "updated sops files"
     [dev 157d414] updated sops files
     2 files changed, 24 insertions(+), 23 deletions(-)
@@ -796,8 +796,8 @@ $ ls ~/.ssh
 ```
 
 16. Now we'll grab our nix-config flake from the repo
-17. `mkdir -p src` to create the location for our flakes
-18. `cd src`
+17. `mkdir -p dev` to create the location for our flakes
+18. `cd dev`
 19. clone the repo `git clone git@gitlab.com:emergentmind/nix-config.git`
 20. We'll need to use the hardware-configuration.nix that was generated for this system during the nixos-rebuild we did in step 2. copy it to the hosts directory of the repo
 21. `cd nix-config/`

@@ -1,31 +1,34 @@
 layout {
-    tab name="dev" hide_floating_panes=true {
-        pane size=1 borderless=true {
-            plugin location="compact-bar"
-        }
-        pane split_direction="vertical" {
-            pane cwd="$HOME/src" focus=true size="60%" {
-            }
-            pane size="40%" {
-                pane cwd="$HOME/src" focus=true size="75%" {
-                }
-                pane cwd="$HOME/src" size="25%" {
-                }
-            }
-        }
-        floating_panes {
-            pane {
-                height 44
-                width 173
-                x 87
-                y 23
-            }
-        }
+  tab name="dev" hide_floating_panes=true {
+    pane size=1 borderless=true {
+      plugin location="compact-bar"
     }
-   new_tab_template {
-        pane size=1 borderless=true {
-            plugin location="compact-bar"
+    pane split_direction="vertical" {
+      pane cwd="$HOME/dev" focus=true size="60%" {
+
+      }
+      pane size="40%" {
+        pane cwd="$HOME/dev" focus=true size="75%" {
+
         }
-        pane cwd="$HOME/src"
+        pane cwd="$HOME/dev" size="25%" {
+
+        }
+      }
     }
+    floating_panes {
+      pane {
+        height 44
+        width 173
+        x 87
+        y 23
+      }
+    }
+  }
+  new_tab_template {
+    pane size=1 borderless=true {
+      plugin location="compact-bar"
+    }
+    pane cwd="$HOME/dev"
+  }
 }

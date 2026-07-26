@@ -135,7 +135,7 @@ I think this was caused by a bootloader mismatch or something
 I completely fucked the machine (gusto) and I ended up paving.
 
 ```bash
-[nix-shell:~/src/nix-config]$ sudo nixos-rebuild switch --flake .#gusto
+[nix-shell:~/dev/nix-config]$ sudo nixos-rebuild switch --flake .#gusto
 building the system configuration...
 File system "/boot" is not a FAT EFI System Partition (ESP) file system.
 systemd-boot not installed in ESP.
@@ -150,13 +150,13 @@ Traceback (most recent call last):
 Exception: could not find any previously installed systemd-boot
 warning: error(s) occurred while switching to the new configuration
 
-[nix-shell:~/src/nix-config]$ nixos-install --flake .#gusto
+[nix-shell:~/dev/nix-config]$ nixos-install --flake .#gusto
 mount point /mnt doesn't exist
 
-[nix-shell:~/src/nix-config]$ mount /boot
+[nix-shell:~/dev/nix-config]$ mount /boot
 mount: /boot: can't find in /etc/fstab.
 
-[nix-shell:~/src/nix-config]$ bootctl status
+[nix-shell:~/dev/nix-config]$ bootctl status
 Couldn't find EFI system partition. It is recommended to mount it to /boot or /efi.
 Alternatively, use --esp-path= to specify path to mount point.
 WARNING: terminal is not fully functional
@@ -204,7 +204,7 @@ Boot Loaders Listed in EFI Variables:
          File: └─/EFI/BOOT/BOOTX64.EFI
 
 
-[nix-shell:~/src/nix-config]$ nixos-rebuild boot --install-bootloader
+[nix-shell:~/dev/nix-config]$ nixos-rebuild boot --install-bootloader
 
 ```
 

@@ -15,7 +15,7 @@
     BOOTSTRAP_USER = "ta";
     BOOTSTRAP_SSH_PORT = "22";
     BOOTSTRAP_SSH_KEY = "~/.ssh/id_yubikey";
-    NIX_SECRETS_DIR = "/home/ta/src/nix/nix-secrets";
+    NIX_SECRETS_DIR = "/home/ta/dev/nix/nix-secrets";
 
     buildInputs = checks.pre-commit-check.enabledPackages;
     nativeBuildInputs =

@@ -193,8 +193,8 @@ These steps assume:
 20. Create as source directory in the users home and clone the nix-config repo.
 
     ```bash
-    $ mkdir -p ~/src
-    $ cd ~/src
+    $ mkdir -p ~/dev
+    $ cd ~/dev
     $ nix-shell -p git --run 'git clone https://github.com/EmergentMind/nix-config.git'
     ```
 
@@ -240,14 +240,14 @@ These steps assume:
 
     ```bash
     $ sops --config ../nix-secrets/.sops.yaml updatekeys ../nix-secrets/secrets.yaml
-    2024/02/09 12:11:05 Syncing keys for file /home/ta/src/nix-secrets/secrets.yaml
+    2024/02/09 12:11:05 Syncing keys for file /home/ta/dev/nix-secrets/secrets.yaml
     The following changes will be made to the file's groups:
     Group 1
         age00000000000000000000000000000000000000000000000000
         age00000000000000000000000000000000000000000000000000
     +++ age00000000000000000000000000000000000000000000000000
     Is this okay? (y/n):y
-    2024/02/09 12:16:54 File /home/ta/src/nix-secrets/secrets.yaml synced with new keys
+    2024/02/09 12:16:54 File /home/ta/dev/nix-secrets/secrets.yaml synced with new keys
     ```
 
 24. Commit and push the changes to `nix-secrets` so they will be retrieved when the flake is built on the new host.
@@ -285,20 +285,20 @@ These steps assume:
 
     ```bash
     $ nix flake lock --update-input nix-secrets
-    warning: Git tree '/home/ta/src/nix-config' is dirty
+    warning: Git tree '/home/ta/dev/nix-config' is dirty
     Enter passphrase for key '/home/ta/.ssh/id_manu':
-    warning: updating lock file '/home/ta/src/nix-config/flake.lock':
+    warning: updating lock file '/home/ta/dev/nix-config/flake.lock':
     • Updated input 'nix-secrets':
      'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=aa0165aff5f74d367b523cc27dbd028b0251c30d&shallow=1' (2024-02-09)
     → 'git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&rev=2ef287a53f19be75a4ff1f5ba28595686d4b5cbb&shallow=1' (2024-02-13)
-    warning: Git tree '/home/ta/src/nix-config' is dirty
+    warning: Git tree '/home/ta/dev/nix-config' is dirty
     ```
 
     Enter the passphrase when prompted.
 
 28. Copy the generated hardware config from its default location to the nix-config location:
 
-    `$ cp /etc/nixos/hardware-configuration.nix ~/src/nix-config/hosts/NEWHOSTNAME/hardware-configuration.nix`
+    `$ cp /etc/nixos/hardware-configuration.nix ~/dev/nix-config/hosts/NEWHOSTNAME/hardware-configuration.nix`
 
 29. Build and switch to the flake:
 

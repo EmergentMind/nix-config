@@ -82,7 +82,7 @@
       enable = true;
       extraArgs = "--keep-since 20d --keep 20";
     };
-    flake = "${config.hostSpec.home}/src/nix/nix-config";
+    flake = "${config.hostSpec.home}/dev/nix/nix-config";
   };
 
   #

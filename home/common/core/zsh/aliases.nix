@@ -1,6 +1,6 @@
 { osConfig, ... }:
 let
-  devDirectory = "$HOME/src";
+  devDirectory = "$HOME/dev";
   devNix = "${devDirectory}/nix";
 in
 {

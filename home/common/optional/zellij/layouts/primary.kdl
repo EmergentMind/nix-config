@@ -4,7 +4,7 @@ layout {
     pane size=1 borderless=true {
       plugin location="compact-bar"
     }
-    pane command="nvim" cwd="$HOME/src/abbot-wiki" {
+    pane command="nvim" cwd="$HOME/dev/abbot-wiki" {
       args "0_ta_todo.md"
       start_suspended false
     }
@@ -14,20 +14,20 @@ layout {
       plugin location="compact-bar"
     }
     pane split_direction="vertical" {
-      pane cwd="$HOME/src/nix/introdus/ta" size="60%" {
+      pane cwd="$HOME/dev/nix/introdus/ta" size="60%" {
 
       }
       pane size="40%" {
-        pane cwd="$HOME/src/nix/introdus" size="75%" {
+        pane cwd="$HOME/dev/nix/introdus" size="75%" {
 
         }
-        pane cwd="$HOME/src/nix/introdus" size="25%" {
+        pane cwd="$HOME/dev/nix/introdus" size="25%" {
 
         }
       }
     }
     floating_panes {
-      pane cwd="$HOME/src/nix/introdus" {
+      pane cwd="$HOME/dev/nix/introdus" {
         height 44
         width 173
         x 87
@@ -40,20 +40,20 @@ layout {
       plugin location="compact-bar"
     }
     pane split_direction="vertical" {
-      pane focus=true cwd="$HOME/src/nix/nix-config" size="60%" {
+      pane focus=true cwd="$HOME/dev/nix/nix-config" size="60%" {
 
       }
       pane size="40%" {
-        pane cwd="src/nix/nix-config" size="75%" {
+        pane cwd="dev/nix/nix-config" size="75%" {
 
         }
-        pane cwd="$HOME/src/nix/nix-config" size="25%" {
+        pane cwd="$HOME/dev/nix/nix-config" size="25%" {
 
         }
       }
     }
     floating_panes {
-      pane cwd="src/nix/nix-config" {
+      pane cwd="dev/nix/nix-config" {
         height 44
         width 173
         x 87
@@ -66,10 +66,10 @@ layout {
       plugin location="compact-bar"
     }
     pane split_direction="vertical" {
-      pane command="nvim" cwd="$HOME/src/abbot-wiki" size="60%" {
+      pane command="nvim" cwd="$HOME/dev/abbot-wiki" size="60%" {
         start_suspended false
       }
-      pane cwd="$HOME/src/abbot-wiki" size="40%"
+      pane cwd="$HOME/dev/abbot-wiki" size="40%"
     }
   }
   tab name="5 FidgetingBits" hide_floating_panes=true {
@@ -86,14 +86,14 @@ layout {
       plugin location="compact-bar"
     }
     pane split_direction="vertical" {
-      pane focus=true cwd="$HOME/src/nix/neovim" size="60%" {
+      pane focus=true cwd="$HOME/dev/nix/neovim" size="60%" {
 
       }
       pane size="40%" {
-        pane cwd="$HOME/src/nix/neovim" size="75%" {
+        pane cwd="$HOME/dev/nix/neovim" size="75%" {
 
         }
-        pane cwd="$HOME/src/nix/neovim" size="25%" {
+        pane cwd="$HOME/dev/nix/neovim" size="25%" {
 
         }
       }

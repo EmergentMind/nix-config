@@ -273,7 +273,7 @@
     };
     introdus = {
       # url = "git+ssh://git@codeberg.org/fidgetingbits/introdus?shallow=1&ref=ta";
-      url = "path:///home/ta/src/nix/introdus/ta";
+      url = "path:///home/ta/dev/nix/introdus/ta";
     };
     # Private secrets repo.  See ./docs/secretsmgmt.md
     # Authenticate via ssh and use shallow clone
@@ -286,7 +286,7 @@
     };
     emergentvim = {
       # url = "git+ssh://git@codeberg.org/emergentmind/neovim";
-      url = "path:///home/ta/src/nix/neovim";
+      url = "path:///home/ta/dev/nix/neovim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
       inputs.introdus.follows = "introdus";
       inputs.flake-parts.follows = "flake-parts";
