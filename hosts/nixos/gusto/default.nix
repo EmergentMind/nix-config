@@ -81,7 +81,11 @@
   };
 
   # ========== autosshTunnel ==========
-  tunnels.cakes.enable = true;
+  tunnels.cakes = {
+    enable = true;
+    sopsEntry = "keys/ssh/meek";
+    keyPath = "/etc/ssh/id_meek";
+  };
 
   #Firmwareupdater
   #  $ fwupdmgr update

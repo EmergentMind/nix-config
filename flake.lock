@@ -106,8 +106,8 @@
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1785090247,
-        "narHash": "sha256-0RjddZRCT8VB4bBWaG3lIjr4T4MnqC+UUqngJ7NRWoQ=",
+        "lastModified": 1785123693,
+        "narHash": "sha256-7Bwwzqswb8vgHcIWtZf9cVKc0uXNgIr34M8q2jMT2Kk=",
         "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       },
@@ -124,11 +124,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1784520168,
-        "narHash": "sha256-ulTgejlYlZIbl7rJdDjFMfm81eW+OgbZaJ3tgVvQL3I=",
+        "lastModified": 1785038882,
+        "narHash": "sha256-Y5V6bOp5VQjoll+TeFmUki00cSnWAD88wOr/N0c+VNE=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "97a0b88b7ff3fabfbe9353ea3d8243e7d99f96a3",
+        "rev": "f352fe54c0d939110314aebfd6b442417a42add7",
         "type": "gitlab"
       },
       "original": {
@@ -476,8 +476,8 @@
         "wrappers": "wrappers_2"
       },
       "locked": {
-        "lastModified": 1785090364,
-        "narHash": "sha256-+ki5WE3o+XSg4y3XybxHfzRYGeQXrInAxacbnm+A+NU=",
+        "lastModified": 1785126233,
+        "narHash": "sha256-mn2G/Q/lQGK0HtZNI742FwZzBDJUJ9tJUlcGrQt2koE=",
         "path": "/home/ta/dev/nix/introdus/ta",
         "type": "path"
       },
@@ -517,6 +517,27 @@
         "ref": "ta",
         "type": "git",
         "url": "ssh://git@codeberg.org/fidgetingbits/introdus"
+      }
+    },
+    "microvm": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "spectrum": "spectrum"
+      },
+      "locked": {
+        "lastModified": 1784666190,
+        "narHash": "sha256-xgfS6slV7J3baMooNN1UuBi51RIgg9y0DbCxfSA0668=",
+        "owner": "microvm-nix",
+        "repo": "microvm.nix",
+        "rev": "fa5340ac684cdce8a22b6d4a0bcebb0cc999275e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "microvm-nix",
+        "repo": "microvm.nix",
+        "type": "github"
       }
     },
     "nix-assets": {
@@ -561,10 +582,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1780532338,
-        "narHash": "sha256-64y1Vy7fhPsRGBz56n/Mjl/xWS24B9ovzwt74NVcolM=",
+        "lastModified": 1785123653,
+        "narHash": "sha256-RQs0Nhf8a65ywEmNURE0FXHVzXn3E5u4nqd4go+H/GE=",
         "ref": "main",
-        "rev": "7a666d002032239b221d6ee808ce358f34efd853",
+        "rev": "f694b8285ce07dceea393e1c112a04ee9fa39f17",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
@@ -596,11 +617,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1784310968,
-        "narHash": "sha256-rkSPTePrKqs4dg+i7ZFCq93+HrClac6oSwXX927SVjA=",
+        "lastModified": 1784723954,
+        "narHash": "sha256-1CfD8ZUjCkTgjsneLZ/lxCHhgDfqxxE7/GX0MmsgiqA=",
         "owner": "nixos",
         "repo": "nixos-hardware",
-        "rev": "779c32a00155994c86cde8213a8dd4df139d4355",
+        "rev": "a017f5b72210026af5b3ac5949f08d94380a6fbd",
         "type": "github"
       },
       "original": {
@@ -706,11 +727,11 @@
     },
     "nixpkgs-unstable_3": {
       "locked": {
-        "lastModified": 1784497964,
-        "narHash": "sha256-vlHUuqAcbcH2RKmHbPiuQzbv1pnzzavXnI62RD0bqCU=",
+        "lastModified": 1784796856,
+        "narHash": "sha256-wWFrV5/Qbm+lyt5x20E/bSbfJiGKMo4RCxZV8cl/WZI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "241313f4e8e508cb9b13278c2b0fa25b9ca27163",
+        "rev": "e2587caef70cea85dd97d7daab492899902dbf5d",
         "type": "github"
       },
       "original": {
@@ -767,11 +788,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1784432872,
-        "narHash": "sha256-n3gKTBIV4ZA5VQpUakffBe3KGu4+mhPoA34rrqS0GkA=",
+        "lastModified": 1784856561,
+        "narHash": "sha256-J+Bx1Z6Oeoj2FgnBhRMKyUhhtDoOpTgXYaVLZpDjW4A=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "fd1462031fdee08f65fd0b4c6b64e22239a77870",
+        "rev": "597283ad8aa0b331c788e97c4c262d58877074ef",
         "type": "github"
       },
       "original": {
@@ -1294,6 +1315,7 @@
         "impermanence": "impermanence",
         "introdus": "introdus",
         "introdus-git": "introdus-git",
+        "microvm": "microvm",
         "nix-assets": "nix-assets",
         "nix-index-database": "nix-index-database",
         "nix-secrets": "nix-secrets",
@@ -1317,11 +1339,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782837720,
-        "narHash": "sha256-6t35AM4lhK7kQTH103YMICyHzMofZMgs+xIJ9kgMZ4I=",
+        "lastModified": 1785015872,
+        "narHash": "sha256-7dTNd8o3xInMXSBRkRCkHAGQc+e0mrlljDGTXKhk6I0=",
         "owner": "uiriansan",
         "repo": "SilentSDDM",
-        "rev": "3b55533612bc66a225b8babc6abfc5f24d04f4ac",
+        "rev": "da69191d32721c1f093d13bfd803e8d8000bd712",
         "type": "github"
       },
       "original": {
@@ -1348,6 +1370,22 @@
         "owner": "mic92",
         "repo": "sops-nix",
         "type": "github"
+      }
+    },
+    "spectrum": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1783694892,
+        "narHash": "sha256-xO8f7Qng+18FK2UlB9vcrkxCaQMCt5WjCH24aW/11eg=",
+        "ref": "refs/heads/main",
+        "rev": "24c4346e30fdea8d8e80f34aec3554a15a667d24",
+        "revCount": 1410,
+        "type": "git",
+        "url": "https://spectrum-os.org/git/spectrum"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://spectrum-os.org/git/spectrum"
       }
     },
     "stylix": {

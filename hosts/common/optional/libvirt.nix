@@ -36,7 +36,7 @@ in
           active = true;
           definition = virtLib.network.writeXML {
             uuid = "8e91d351-e902-4fce-99b6-e5ea88ac9b80";
-            name = "vm-lan";
+            name = "b-lan";
             forward = {
               mode = "nat";
               nat = {
@@ -57,7 +57,7 @@ in
             ipv6 = false;
             ip =
               let
-                subnet = secrets.networking.subnets.vm-lan;
+                subnet = secrets.networking.subnets.b-lan;
               in
               {
                 address = subnet.gateway;

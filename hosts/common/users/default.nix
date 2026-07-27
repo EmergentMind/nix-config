@@ -4,6 +4,7 @@
   config,
   lib,
   isDarwin,
+  namespace,
   secrets,
   ...
 }:
@@ -100,6 +101,7 @@ in
       extraSpecialArgs = {
         inherit
           inputs
+          namespace
           pkgs
           secrets
           ;

@@ -50,6 +50,22 @@ in
         sopsFile = "${sopsFolder}/shared.yaml";
       };
     }
+    // lib.optionalAttrs osConfig.hostSpec.isDevelopment {
+      # LLM tokens, use agents.yaml since it's shared elsewhere
+      # FIXME: This should be automated and synced with other usages in config
+      "tokens/openai" = {
+        sopsFile = "${sopsFolder}/agents.yaml";
+      };
+      "tokens/anthropic" = {
+        sopsFile = "${sopsFolder}/agents.yaml";
+      };
+      "tokens/google" = {
+        sopsFile = "${sopsFolder}/agents.yaml";
+      };
+      "tokens/deepseek" = {
+        sopsFile = "${sopsFolder}/agents.yaml";
+      };
+    }
     // yubikeySecrets;
   };
 }

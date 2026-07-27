@@ -24,7 +24,7 @@ lib.mkIf cfg.isAdmin {
       "myth"
       cfg.networking.subnets.glade.wildcard
       cfg.networking.subnets.grove.wildcard
-      cfg.networking.subnets.vm-lan.wildcard
+      cfg.networking.subnets.c-lan.wildcard
     ]
     ++ lib.optional cfg.isWork secrets.work.git.servers;
   };
