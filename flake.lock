@@ -106,8 +106,8 @@
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1785123693,
-        "narHash": "sha256-7Bwwzqswb8vgHcIWtZf9cVKc0uXNgIr34M8q2jMT2Kk=",
+        "lastModified": 1785127062,
+        "narHash": "sha256-cjAE3lvbxk3ko/FdM0qh9O6K+1WIliyH7Yrx6iE2J34=",
         "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       },
@@ -582,10 +582,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1785123653,
-        "narHash": "sha256-RQs0Nhf8a65ywEmNURE0FXHVzXn3E5u4nqd4go+H/GE=",
+        "lastModified": 1785175055,
+        "narHash": "sha256-Im1Sx6OR83mWOkapYutDCDDaDhtFOBWLCRWHSEXS5S0=",
         "ref": "main",
-        "rev": "f694b8285ce07dceea393e1c112a04ee9fa39f17",
+        "rev": "66c1760c25dda0b03987e6e6f38456f68348c026",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"

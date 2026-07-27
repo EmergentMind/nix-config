@@ -11,7 +11,7 @@ let
   # llamaSwapPort = ports.tcp.llama-swap;
   # ghostLlamaSwapPort = (ports.tcp.llama-swap + 1);
   grove = subnets.grove;
-  nanoSpecs = rec {
+  chainSpecs = rec {
     vm-lan = subnets.c-lan;
     hostAuthorizedKeys = [
       grove.hosts.${config.networking.hostName}.sshPubKey
@@ -19,8 +19,7 @@ let
     inherit (vm-lan.hosts.chain) ip;
     name = "chain";
     user = config.hostSpec.primaryUsername;
-    #mac = (lib.head vm-lan.hosts.chain.mac);
-    mac = lib.trace vm-lan.hosts (lib.head vm-lan.hosts.chain.mac);
+    mac = (lib.head vm-lan.hosts.chain.mac);
     sshPort = 22;
     sharedDir = config.${namespace}.microvms.sharedDir;
     # allowedPorts = {
@@ -38,14 +37,14 @@ in
   imports = [
     # Anonymous submodule to allow us to specify an isolated vmSpecs
     {
-      _module.args.vmSpecs = nanoSpecs;
+      _module.args.vmSpecs = chainSpecs;
       imports = [ (lib.custom.relativeToRoot "modules/hosts/nixos/microvms/agents.nix") ];
     }
   ];
 
   microvm.vms.chain = {
     specialArgs = {
-      vmSpecs = nanoSpecs;
+      vmSpecs = chainSpecs;
     };
     config = {
       imports = [
@@ -53,7 +52,7 @@ in
       ];
       home-manager = {
         # FIXME(microvms): This would need to change if we want multiple users
-        users.${nanoSpecs.user} = {
+        users.${chainSpecs.user} = {
           imports = [ ./home.nix ];
         };
       };

@@ -13,6 +13,7 @@ let
   cfg = osConfig.${namespace}.microvms;
   home = config.home.homeDirectory;
   sharedDir = "${cfg.sharedDir}/shared";
+
 in
 lib.mkIf (lib.length (lib.attrNames osConfig.microvm.vms) != 0) {
 

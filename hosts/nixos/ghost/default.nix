@@ -41,7 +41,9 @@
           "amdgpu_top.nix" # GPU monitor (not available in home-manager)
           "gaming.nix" # window manager
           "fonts.nix" # fonts
-          "libvirt.nix" # vm tools
+          #NOTE: disabling for now in favor of microvms. There is a network collision when using both
+          # and I haven't been make much use of libvirt lately anyway
+          #"libvirt.nix" # vm tools
           "mail-delivery.nix" # for sending email notifications
           "nvtop.nix" # GPU monitor (not available in home-manager)
           "obsidian.nix" # wiki
