@@ -20,21 +20,22 @@
 
     packages = lib.attrValues {
       inherit (pkgs)
+        curl
         delta
         difftastic
         direnv
         fd
         git
         htop
-        just
         jq
-        ripgrep
-        tree
-        curl
-        python3
-        openssh
+        just
         neovim # FIXME: (overlay our neovim package, etc?)
+        openssh
+        python3
+        ripgrep
         strace
+        tree
+        wget
         ;
     };
   };
