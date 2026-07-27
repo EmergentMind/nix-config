@@ -31,8 +31,8 @@ in
   # See ./default for why
   systemd.services.microvm-prepare-agent-secrets = {
     description = "Stage SOPS agent secrets for microVM";
-    wantedBy = [ "multi-user.target" ];
-    after = [ "sops-nix.service" ];
+    requires = [ "sysinit-reactivation.target" ];
+    partOf = [ "sysinit-reactivation.target" ];
 
     serviceConfig = {
       Type = "oneshot";
