@@ -8,6 +8,7 @@
       round_corners = true;
       theme_background = true;
       vim_keys = true;
+      disks_filter = "exclude=/ /boot /persist";
     };
   };
 }
