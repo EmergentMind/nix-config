@@ -42,9 +42,7 @@ This stage will add a second host machine, gusto (theatre). To effectively used 
 
 DEFERRED:
 
-- [>] Potentially yubiauth and u2f for passwordless sudo
-
-## 3. Installation Automation and drive encryption - Completed: 2024.08.08
+- [>] Potentially yubiauth and u2f for passwordless sudo ## 3. Installation Automation and drive encryption - Completed: 2024.08.08
 
 Introduce declarative partitioning, custom iso generation, install automation, and full drive encryption. This stage was also initially intended to add impermanence and several other improvements aimed at keeping a
 cleaner environment. However, automation took substantially longer than anticipated and I need to start using NixOS as a daily driver sooner than later. Being spread across two distros and different config paradigms while putting 99% of the effort into the new distro/config is becoming unsustainable. As such, several features have been deferred until later stages.
@@ -217,14 +215,6 @@ Rice
   - [x] make sure to include `/luks-secondary-unlock.key` (will be handled by modules/nixos/disks)
 - [x] enable impermanence
 
-### 8.2 Cleaning - Nice to Have
-
-- [ ] Consider nixifying bash scripts (see refs below)
-- [ ] Overhaul just file
-  - [x] clean up
-  - [ ] add {{just.executable()}} to just entries
-- [ ] revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
-
 ### Stage 8 references
 
 Impermanence - These two are the references to follow and integrate. The primer list below is good review before diving into this:
@@ -245,20 +235,23 @@ Migrating bash scripts to nix
 - https://www.youtube.com/watch?v=diIh0P12arA and https://www.youtube.com/watch?v=qRE6kf30u4g
 - Consider also the first comment "writeShellApplication over writeShellScriptBin. writeShellApplication also runs your shell script through shellcheck, great for people like me who write sloppy shell scripts. You can also specify runtime dependencies by doing runtimeInputs = [ cowsay ];, that way you can just write cowsay without having to reference the path to cowsay explicitly within the script"
 
-## 9 Improved network handling
+## 9 Automatic microvms for agents - completed: 2026.07.27
+- [x] network segregated, auto-starting microvm sandboxes for agent sessions
+
+## 10 Improved network handling
 
 - [ ] complete services.per-network-services
 - [ ] add firewall module
 
-## 10 Improving remote
+## 11 Improving remote
 
-### 10.1 Automate config deployment
+### 11.1 Automate config deployment
 
 - [ ] Per host branch scheme
 - [ ] Automated machine update on branch release
 - [ ] Handle general auto updates as well
 
-### 10.2 Remote luks decryption
+### 11.2 Remote luks decryption
 
 The following has to happen on bare metal because I can't seem to get the yubikey's to redirect to the VM for use with git-agecrypt.
 
@@ -266,12 +259,17 @@ The following has to happen on bare metal because I can't seem to get the yubike
   - [ ] need to set up age-crypt keys because this happens before sops and therefore we can't use nix-secrets
   - [ ] add initrd-ssh module that will spawn an ssh service for use during boot
 
-### 10.x Extras
+### 11.x Extras
 
 - [ ] Automatic scheduled sops rotate
 - [ ] Disk usage notifier
+- [ ] Consider nixifying bash scripts (see refs below)
+- [ ] Overhaul just file
+  - [ ] add {{just.executable()}} to just entries
+- [ ] revisit scanPaths. Usage in hosts/common/core is doubled up when hosts/common/core/services is imported. Options are: declare services imports individually in services/default.nix, move services modules into parent core directory... or add a recursive variant of scanPaths.
 
-## 11 Secure boot
+
+## 12 Secure boot
 
 - [ ] lanzaboote https://github.com/nix-community/lanzaboote
 
@@ -281,7 +279,7 @@ Some stage 1 with systemd info for reference (not specific to lanzaboote)
 - https://youtu.be/X-2zfHnHfU0?si=HXCyJ5MpuLhWWwj3
 
 
-## 12. TBD
+## 13. TBD
 
 - [ ] Nixify floater laptop
 

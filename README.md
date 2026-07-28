@@ -69,6 +69,7 @@ Chat with me directly on our [Discord server](https://discord.gg/XTFg57xGxC).
 
 - Automated borg backups
 - NixOS and Home-Manager automation recipes
+- Automatic micro-vm sandboxing for agents
 
 The roadmap of additional features is laid across functionally thematic stages that can be viewed, along with short term objectives, in the [Roadmap of TODOs](docs/TODO.md).
 
@@ -108,6 +109,7 @@ As of September 2025, we've been rethinking how to handle multiple users and the
   - `nixos` - machine specific configurations for NixOS-based hosts
       - `genoa` - ThinkPad E15 - 3.5/4.7GHz i7-1255U (6C/12T), 16GB RAM
       - `ghost` - Primary box - 4.8GHz Ryzen 9 5900XT (16C/32T), 64GB RAM, RX 9070XT
+        - microvms/<name> - microvm environments that run on ghost.
       - `grief` - Lab - Qemu VM
       - `gooey` - stage x
       - `guppy` - Remote Install Lab - Qemu VM
@@ -120,6 +122,11 @@ As of September 2025, we've been rethinking how to handle multiple users and the
   - `<user>` - User-specific, host-specific configurations.
     - `common` - User-specific configurations common across that user's hosts.
 - `lib` - Custom library used throughout the nix-config to make import paths more readable. Accessible via `lib.custom`.
+- `microvms` - Ephemeral agent sandbox environments. The structure intentionally mimics nix-config but stays distinct seprate.
+  - home/common/core
+  - home/common/optional
+  - hosts/common/core
+  - hosts/common/optional
 - `modules` - Custom modules to enable special functionality and options.
     - `home` - Custom modules for home-manager
     - `hosts` - Custom modules for hosts
