@@ -40,6 +40,8 @@ in
   src = "cd ${devDirectory}";
   cab = "cd ${devDirectory}/abbot-wiki";
   cuc = "cd ${devDirectory}/unmoved-centre";
+  cai = "cd ${devNix}/ai";
+  casc = "cd ${devNix}/ai/shared/chain";
   ## nix
   cna = "cd ${devNix}/nix-assets";
   cnc = "cd ${devNix}/nix-config";
