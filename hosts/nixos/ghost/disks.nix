@@ -27,12 +27,12 @@ in
       {
         # 5.0TB /dev/sbc
         name = extraDisk3;
-        path = "/dev/disk/by-id/0x50014ee260ee313a";
+        path = "/dev/disk/by-id/wwn-0x50014ee260ee313a";
       }
       {
         # 5.0TB /dev/sda
         name = extraDisk4;
-        path = "/dev/disk/by-id/0x50014ee260ee235e";
+        path = "/dev/disk/by-id/wwn-0x50014ee260ee235e";
       }
     ];
   };
