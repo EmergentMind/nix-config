@@ -5,10 +5,13 @@
   ...
 }:
 {
+  # This is required here now because introdus stopped using mkInstallModule,
+  # otherwise introdus will infinite recurse
+  imports = [ inputs.emergentvim.wrappers.neovim.install ];
+
   introdus.neovim = {
     enable = true;
     fontSize = 14;
-    wrapper = "emergentvim";
   };
   # My custom neovim wrapper, built on top of the introdus neovim base, is enabled by the above
   # and exposed in the config as wrappers.neovim.
