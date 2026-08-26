@@ -106,8 +106,8 @@
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1787662844,
-        "narHash": "sha256-xP9tRYnpCiJKZzZwpjOEAvBIbwzllySGonXNMl2cuRw=",
+        "lastModified": 1787706521,
+        "narHash": "sha256-LFJtzqQO+f5tXrBMA7/1eoACfl2atHw2SCWaHuOhF9U=",
         "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       },

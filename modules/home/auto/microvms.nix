@@ -13,7 +13,6 @@ let
   cfg = osConfig.${namespace}.microvms;
   home = config.home.homeDirectory;
   sharedDir = "${cfg.sharedDir}/shared";
-
 in
 lib.mkIf (lib.length (lib.attrNames osConfig.microvm.vms) != 0) {
 
@@ -32,7 +31,8 @@ lib.mkIf (lib.length (lib.attrNames osConfig.microvm.vms) != 0) {
           hostname = vmSpecs.ip;
           port = vmSpecs.sshPort;
           user = vmSpecs.user;
-          identityFile = "${home}/.ssh/id_ed25519";
+
+          identityFile = "${home}/.ssh/${cfg.commsKey}";
         };
       }
     )

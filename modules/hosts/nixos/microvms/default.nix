@@ -35,7 +35,11 @@ in
         config.${namespace}.microvms.sharedDir
       } where all VMs have a shared folder";
     };
-
+    commsKey = lib.mkOption {
+      type = lib.types.str;
+      default = "id_ed25519";
+      description = "Name of the ssh key used for comms between the host and the microvm";
+    };
     # FIXME: Eventually if we have microvms across networks, this will have to
     # get rethought
     vmBridge = lib.mkOption {

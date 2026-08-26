@@ -60,6 +60,7 @@ in
   };
 
   ${namespace}.microvms = {
+    commsKey = "id_mila";
     vpn.enable = true;
   };
 
