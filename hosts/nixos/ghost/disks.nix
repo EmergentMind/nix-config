@@ -74,6 +74,9 @@ in
       "noauto"
       "x-systemd.automount"
       "x-systemd.device-timeout=10s"
+      # "x-systemd.mount-timeout=20s"
+      # "X-mount.owner=${config.hostSpec.primaryUsername}"
+      # "X-mount.mode=755"
     ];
   };
   fileSystems."/mnt/media2" = {
@@ -86,6 +89,9 @@ in
       "noauto"
       "x-systemd.automount"
       "x-systemd.device-timeout=10s"
+      # "x-systemd.mount-timeout=20s"
+      # "X-mount.owner=${config.hostSpec.primaryUsername}"
+      # "X-mount.mode=755"
     ];
   };
 }

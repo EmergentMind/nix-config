@@ -56,6 +56,16 @@ in
   # If there is a conflict file that is backed up, use this extension
   home-manager.backupFileExtension = "bk";
 
+  #NOTE: comments below were an attempt at preemptively create /mnt
+  # to mitigate quirk with secondary drives that are being mounted by
+  # systemd for nfs prior to /mnt being created elsewhere
+  # didn't seem to make a difference
+  # systemd.tmpfiles.rules = [
+  #   "d /mnt 0755 root root - -"
+  #   "d /mnt/media1  0755 root root - -"
+  #   "d /mnt/media2 0755 root root - -"
+  # ];
+
   #
   # ========== Overlays ==========
   #
