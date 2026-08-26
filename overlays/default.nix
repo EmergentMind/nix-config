@@ -3,7 +3,6 @@
 #
 
 { inputs, lib, ... }:
-
 let
   overlays = {
     # Adds my custom packages
@@ -58,27 +57,27 @@ let
         inherit (final.stdenv.hostPlatform) system;
         config.allowUnfree = true;
         overlays = [
-          (unstable_final: unstable_prev: {
-            bootdev-cli = unstable_prev.bootdev-cli.overrideAttrs (
-              previousAttrs:
-              let
-                version = "1.29.2";
-                hashes = {
-                  "1.29.2" = "sha256-POOxwveDSQ3hiybFKmI2eQQEbxN45ubmfEUkLk7i/ng=";
-                };
-              in
-              rec {
-                inherit version;
-                src = prev.fetchFromGitHub {
-                  owner = "bootdotdev";
-                  repo = "bootdev";
-                  tag = "v${version}";
-                  hash = hashes.${version} or "";
-                };
-                vendorHash = "sha256-ZDioEU5uPCkd+kC83cLlpgzyOsnpj2S7N+lQgsQb8uY=";
-              }
-            );
-          })
+          # (unstable_final: unstable_prev: {
+          #   bootdev-cli = unstable_prev.bootdev-cli.overrideAttrs (
+          #     previousAttrs:
+          #     let
+          #       version = "1.29.2";
+          #       hashes = {
+          #         "1.29.2" = "sha256-POOxwveDSQ3hiybFKmI2eQQEbxN45ubmfEUkLk7i/ng=";
+          #       };
+          #     in
+          #     rec {
+          #       inherit version;
+          #       src = prev.fetchFromGitHub {
+          #         owner = "bootdotdev";
+          #         repo = "bootdev";
+          #         tag = "v${version}";
+          #         hash = hashes.${version} or "";
+          #       };
+          #       vendorHash = "sha256-ZDioEU5uPCkd+kC83cLlpgzyOsnpj2S7N+lQgsQb8uY=";
+          #     }
+          #   );
+          # })
         ];
       };
     };
