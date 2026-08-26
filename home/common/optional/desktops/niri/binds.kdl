@@ -239,7 +239,9 @@ binds {
   }
   // Presets are defined in rules.kdl
   Super+F hotkey-overlay-title="Toggle fullscreen" {
-    fullscreen-window
+    // fullscreen-window
+    // use custom helper to smartly handle nirius scratchpads
+    spawn "niri-fullscreen-window"
   }
   Super+Alt+F hotkey-overlay-title="Toggle windowed fullscreen" {
     toggle-windowed-fullscreen
