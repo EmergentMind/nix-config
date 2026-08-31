@@ -3,7 +3,7 @@
 //
 // ========== Named Workspaces ==========
 //
-workspace "8_per" {
+workspace "8_ref" {
   open-on-output "DP-2"
 }
 workspace "9_com" {
@@ -12,10 +12,10 @@ workspace "9_com" {
 workspace "0_ref" {
   open-on-output "DP-3"
 }
-workspace "1_dev" {
+workspace "1_uci" {
   open-on-output "DP-1"
 }
-workspace "2_uci" {
+workspace "2_dev" {
   open-on-output "DP-1"
 }
 workspace "3_edu" {
@@ -30,7 +30,7 @@ workspace "Y_qrs" {
 // ========== Workspace Assignments ==========
 window-rule {
   match title="^(.*obsidian-vault-01.*)$"
-  open-on-workspace "8_per"
+  open-on-workspace "1_uci"
 }
 window-rule {
   match app-id="signal"
@@ -48,6 +48,7 @@ window-rule {
 }
 window-rule {
   match app-id="com.yubico.yubioath"
+  match app-id="proton.vpn.app.gtk"
   match app-id=".protonvpn-app-wrapped"
   match app-id="^[Ss]potify$"
   open-on-workspace "Y_qrs"

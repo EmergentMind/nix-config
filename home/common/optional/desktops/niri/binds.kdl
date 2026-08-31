@@ -60,10 +60,10 @@ binds {
   //
   // ========== Focus workspace ==========
   Super+1 {
-    focus-workspace "1_dev"
+    focus-workspace "1_uci"
   }
   Super+2 {
-    focus-workspace "2_uci"
+    focus-workspace "2_dev"
   }
   Super+3 {
     focus-workspace "3_edu"
@@ -81,7 +81,7 @@ binds {
     focus-workspace 7
   }
   Super+8 {
-    focus-workspace "8_per"
+    focus-workspace "8_ref"
   }
   Super+9 {
     focus-workspace "9_com"

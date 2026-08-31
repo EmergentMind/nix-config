@@ -217,18 +217,45 @@ window-rule {
   open-on-output "DP-1"
   open-on-workspace "4_gmz"
 }
+window-rule {
+  match title="Friends List" app-id="^([Ss]team)$"
+  open-on-output "DP-1"
+  open-on-workspace "4_gmz"
+  default-column-width {
+    proportion 0.25
+  }
+}
+window-rule {
+  match title="lsfg-vk Configuration Window"
+  open-on-output "DP-1"
+  open-on-workspace "4_gmz"
+  default-column-width {
+    proportion 0.3
+  }
+}
 // ========== Signal ==========
 // Resize certain windows to specific sizes.
 window-rule {
   match app-id="^signal$"
   default-column-width {
-    proportion 0.25
+    proportion 0.33333
+  }
+}
+// ========== Spotify ==========
+// Resize certain windows to specific sizes.
+window-rule {
+  match app-id="^[sS]potify$"
+  default-column-width {
+    proportion 0.33333
   }
 }
 // ========== Brave ==========
 // Resize certain windows to specific sizes.
 window-rule {
   match app-id="brave-browser"
+  default-column-width {
+    proportion 0.66667
+  }
 }
 // ========== Projects ==========
 // Resize certain windows to specific sizes.
