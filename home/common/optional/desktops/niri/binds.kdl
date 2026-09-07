@@ -145,10 +145,10 @@ binds {
   }
   // Center all fully visible columns on screen    // ========== Move windows/columns ==========
   Super+Shift+1 {
-    move-window-to-workspace "1_dev"
+    move-window-to-workspace "1_uci"
   }
   Super+Shift+2 {
-    move-window-to-workspace "2_uci"
+    move-window-to-workspace "2_dev"
   }
   Super+Shift+3 {
     move-window-to-workspace "3_edu"
@@ -166,7 +166,7 @@ binds {
     move-window-to-workspace 7
   }
   Super+Shift+8 {
-    move-window-to-workspace "8_per"
+    move-window-to-workspace "8_ref"
   }
   Super+Shift+9 {
     move-window-to-workspace "9_com"
