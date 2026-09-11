@@ -5,6 +5,7 @@
 spawn-at-startup "signal-desktop"
 spawn-at-startup "/run/current-system/sw/bin/protonvpn-app"
 spawn-at-startup "yubioath-flutter"
+spawn-at-startup "proton-authenticator"
 spawn-at-startup "spotify"
 spawn-at-startup "obsidian"
 spawn-at-startup "copyq"

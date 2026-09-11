@@ -48,6 +48,7 @@ window-rule {
 }
 window-rule {
   match app-id="com.yubico.yubioath"
+  match app-id="proton-authenticator"
   match app-id="proton.vpn.app.gtk"
   match app-id=".protonvpn-app-wrapped"
   match app-id="^[Ss]potify$"

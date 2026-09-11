@@ -189,6 +189,7 @@ window-rule {
   match app-id="^org\\.keepassxc\\.KeePassXC$"
   match app-id="Proton Pass$"
   match app-id="com.yubico.yubioath"
+  match app-id="proton-authenticator"
   block-out-from "screencast"
 }
 // ========== Open at full width ==========

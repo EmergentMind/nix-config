@@ -20,6 +20,7 @@
           "zellij"
 
           "atuin.nix"
+          "authenticator.nix"
           "ebooks.nix"
           "media.nix"
           "introdus-xdg.nix" # file associations
