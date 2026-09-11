@@ -106,8 +106,8 @@
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1788197806,
-        "narHash": "sha256-VjmEM2PDgxzp4yv6ofArAgBquOXdC+GovBNj+gIrm3g=",
+        "lastModified": 1788822931,
+        "narHash": "sha256-EGeyAc7xlHmopqJFjOxI519wUzOzTUe5+gAxzD1IGqg=",
         "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       },
@@ -124,11 +124,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1788148965,
-        "narHash": "sha256-1CNXzumVKWLmcWlZlryXhr9W9DbpuwchQ8KQZ91NQhM=",
+        "lastModified": 1788235502,
+        "narHash": "sha256-UqkwtAk/MAQR7gsGebxXPDL8xDkz9OvrZ86KLhLLCkQ=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "a8b90bdf8c7680604c600965a13224c22dfc68da",
+        "rev": "b51c931ae8954d811a3715fce206bac1812d4914",
         "type": "gitlab"
       },
       "original": {
@@ -454,8 +454,8 @@
         "wrappers": "wrappers_2"
       },
       "locked": {
-        "lastModified": 1788117787,
-        "narHash": "sha256-mG29C1ghfMQ2XQXXAXpzdMAZWytoYkD1MWJwj8IMcPg=",
+        "lastModified": 1788548190,
+        "narHash": "sha256-G02ZjFFl4vZgYiBlyeb5vjiENU3G4K/4fF0qFC70a+M=",
         "path": "/home/ta/dev/nix/introdus/ta",
         "type": "path"
       },
@@ -483,11 +483,11 @@
         "wrappers": "wrappers_3"
       },
       "locked": {
-        "lastModified": 1787711113,
-        "narHash": "sha256-DOAd3V75XmR3AjRIsklvmZP7nxy7lJzu6BwEt1TiHgA=",
+        "lastModified": 1787711577,
+        "narHash": "sha256-Vux1B+EPMnL0B4pbOkgFwvLMouKjOF7g4UDJTqu619w=",
         "ref": "ta",
-        "rev": "7ecd0c6dd195fa831ecd2f35661736d8950752ce",
-        "revCount": 56,
+        "rev": "6476801182a1a8430ee7c60e9a4437a1369b15b7",
+        "revCount": 58,
         "type": "git",
         "url": "ssh://git@codeberg.org/fidgetingbits/introdus"
       },
@@ -505,11 +505,11 @@
         "spectrum": "spectrum"
       },
       "locked": {
-        "lastModified": 1788055725,
-        "narHash": "sha256-yBTPSlzoS29StLUpEyQpivSkhwRVki/wzB335/62CO8=",
+        "lastModified": 1788263502,
+        "narHash": "sha256-gyVqW5U9wy6A8voJNu6SiSYTKDplo/MDl31x7FszWlk=",
         "owner": "microvm-nix",
         "repo": "microvm.nix",
-        "rev": "174e28de151e069a95d03c86dd174c3b71bdfba7",
+        "rev": "974d315e504e666eac4920d712e3ff6804dc1502",
         "type": "github"
       },
       "original": {
@@ -520,11 +520,11 @@
     },
     "nix-assets": {
       "locked": {
-        "lastModified": 1777583188,
-        "narHash": "sha256-mxKQw7tyx6H9QxXF4mXMo4Mcf4vBMR4Eiu5HNHCK/Qw=",
+        "lastModified": 1788230251,
+        "narHash": "sha256-CldTAh+2z/9c2xhBD3bifFCJ5lwJKzoqYa1M/b34lTs=",
         "ref": "refs/heads/master",
-        "rev": "b61281a6ada049a5dedfcc5425dde4432e38e193",
-        "revCount": 13,
+        "rev": "d347429bb085b373fd160dbf6ff2283199f12650",
+        "revCount": 14,
         "type": "git",
         "url": "ssh://git@codeberg.org/emergentmind/nix-assets"
       },
@@ -540,11 +540,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788080100,
-        "narHash": "sha256-n14luQo3F/ZLfCEHk1QieiI1nGnW92ZQZeZ0UIb0UMQ=",
+        "lastModified": 1788680125,
+        "narHash": "sha256-amGSoDobwmp4CFvCn841ws2iuitus+HUJdD/gKgsrJA=",
         "owner": "nix-community",
         "repo": "nix-index-database",
-        "rev": "dbb978fa87faf13398e90ccbc52c343d21c7dd6d",
+        "rev": "116ad1c2adb642405ef8916f6a94c8626f971344",
         "type": "github"
       },
       "original": {
@@ -560,10 +560,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1786498798,
-        "narHash": "sha256-VTAoL3Vo9Tlt/U9odmLR5ze0DOLZQKu+nxrLmFSNbSI=",
+        "lastModified": 1788822816,
+        "narHash": "sha256-AV7HhwZPf2EQgoeNwwnaJDYB/XEycUcnLfnbu5evIhU=",
         "ref": "main",
-        "rev": "00b27769b84e5cd832fadb23189fb965a0ff4a83",
+        "rev": "43ed80609ef76278baecf55b8c70708e293403de",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
@@ -705,11 +705,11 @@
     },
     "nixpkgs-unstable_3": {
       "locked": {
-        "lastModified": 1788039129,
-        "narHash": "sha256-pa4Q0qErvCvzCaaUph7Sm37RhR4xvPrYI8Lgz6k85+A=",
+        "lastModified": 1788179007,
+        "narHash": "sha256-hn1oU2rue2SYK8dAr8+WNZWtbsz1S2W5mnHlSEuh3bo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d2f67949798825fe853f7c5d0492b8bf016d3f88",
+        "rev": "34ab99075ac4f7e40cf037eef32cb1c360bb85e9",
         "type": "github"
       },
       "original": {
@@ -766,11 +766,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1787962033,
-        "narHash": "sha256-u6z9VTZA4Kf3RkHQo9sQI7NI4Ei/uiU9vrMqOiwWP1Y=",
+        "lastModified": 1788187754,
+        "narHash": "sha256-bu1QxmXKmPuvBLN7bHP355OV9Qo13x9WCiRDH62CqRM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c5c4a43b0e8056328ec4529f735cabdb8f1942bb",
+        "rev": "5dfba6236110080a54247d6460bc2ff5dda939cc",
         "type": "github"
       },
       "original": {
@@ -1268,11 +1268,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1787424939,
-        "narHash": "sha256-O2tBn84NNuHrnqNVxx/XqsXwfYvS1YwBh+7CBnbCYsk=",
+        "lastModified": 1788267358,
+        "narHash": "sha256-nt+lUqYVpc9Y6JeMd2WmXzCDojasdadKo0mWcluvY2Y=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "809414f0cdadf82cf11b06c2b29ba9b3168b3297",
+        "rev": "27555e2624241fb116b49095df4caaee85a25691",
         "type": "github"
       },
       "original": {
