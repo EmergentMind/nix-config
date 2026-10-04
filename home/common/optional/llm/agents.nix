@@ -10,8 +10,8 @@
       inherit (pkgs)
         claude-code
         claude-agent-acp
-        codex
-        codex-acp
+        #codex
+        #codex-acp
         crush
         gemini-cli
         pi-coding-agent
