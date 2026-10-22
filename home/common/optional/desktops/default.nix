@@ -6,7 +6,7 @@
     ./niri
 
     ########## Shell ##########
-    ./noctalia.nix
+    ./noctalia
 
     ########## Utilities ##########
     ./services/kanshi.nix # Monitor profiles

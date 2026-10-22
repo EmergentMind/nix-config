@@ -239,10 +239,14 @@ dev:
 fmt:
     nix fmt --reference-lock-file locks/$(hostname).lock
 
+#
+# ========== Noctalia recipes ==========
+#
+
 # Generate json diff of current noctalia settings
 [group("noctalia")]
 noctalia-diff:
-    nix shell nixpkgs#json-diff -c bash -c "json-diff <(jq -S . ~/.config/noctalia/settings.json) <(noctalia-shell ipc call state all | jq -S .settings)"
+    @-json-diff <(jq -S . ~/.config/noctalia/settings.json) <(noctalia-shell ipc call state all | jq -S .settings)
 
 # Dump noctalia settings
 [group("noctalia")]
@@ -253,3 +257,34 @@ noctalia-json:
 [group("noctalia")]
 noctalia-nix:
     @just noctalia-json | json2nix
+
+# Save current noctalia settings to nix file
+[group("noctalia")]
+noctalia-save:
+    #!/usr/bin/env bash
+    SETTINGS=home/common/optional/desktop/noctalia/settings.nix
+    echo "{ $(just noctalia-json | json2nix)}" > "$SETTINGS"
+
+# Save current noctalia settings to host-specific settings file
+[group("noctalia")]
+noctalia-save-host:
+    #!/usr/bin/env bash
+    SETTINGS=hosts/nixos/$(hostname)/noctalia/settings.nix
+    mkdir -p "$PATH" ||  true
+    echo "{ $(just noctalia-json | json2nix)}" > "$SETTINGS")
+
+# Backup the current noctalia json settings to backup folder
+[group("noctalia")]
+noctalia-backup:
+    #!/usr/bin/env bash
+    # A noctalia update can cause an IPC incompatibility that requires restart, but restart wipes
+    # recent settings changes that may have happened and have not yet been caught by noctalia-snapshot-settings
+    # service. A precautionary measure, since it's happened at least once before.
+    # NOTE: If something is broken in the build, this might fail on rebuilds, but not pressing, so just ignore
+    # FIXME: This doesn't work with v5
+    # noctalia ipc call state all | jq -S .settings > ~/.cache/noctalia/backup/settings_pre_rebuild.json 2>/dev/null || true
+
+# Diff current settings against the last rebuild backup
+[group("noctalia")]
+noctalia-diff-last-backup:
+    @-json-diff <(jq -S . ~/.cache/noctalia/backup/settings_pre_rebuild.json) <(noctalia-shell ipc call state all | jq -S .settings)

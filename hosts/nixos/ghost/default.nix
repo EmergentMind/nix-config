@@ -66,6 +66,7 @@
     services = {
       audio.enable = true;
       silent-sddm.enable = true; # desktop display manager
+      silent-sddm.theme = "default"; # desktop display manager
     };
   };
   # Additional settings not in introdus

@@ -51,6 +51,8 @@ in
   cnp = "cd ${devNix}/nixpkgs";
   cns = "cd ${devNix}/nix-secrets";
   cnv = "cd ${devNix}/neovim";
+  tfs = "cd ${devDirectory}/tfs/tfspricecalculator";
+  ucos = "cd ~/sync/uc-vault-01";
 
   #-----------Nix commands----------------
   nfc = "nix flake check";

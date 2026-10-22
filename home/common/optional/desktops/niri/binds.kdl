@@ -1,6 +1,3 @@
-// IMPORTANT: for noctalia-shell keybinds the documentation will show
-// `qs -c noctalia-shell foo` but because we are inputing noctalia from the
-// flake we simply use `noctalia-shell foo` instead.
 gestures {
   hot-corners {
     off
@@ -276,75 +273,75 @@ binds {
   // ========== Brightness ==========
   XF86MonBrightnessUp allow-when-locked=true hotkey-overlay-title=null {
     // spawn "brightnessctl" "set" "0.01+"
-    spawn "noctalia-shell" "ipc" "call" "brightness" "increase"
+    spawn "noctalia" "msg" "brightness-up"
   }
   XF86MonBrightnessDown allow-when-locked=true hotkey-overlay-title=null {
     // spawn "brightnessctl" "set" "0.01-"
-    spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"
+    spawn "noctalia" "msg" "brightness-down"
   }
   // ========== Media Control==========
   XF86AudioPlay allow-when-locked=true hotkey-overlay-title=null {
     // spawn "playerctl" "play-pause" "--ignore-player=firefox,chromium,brave"
-    spawn "noctalia-shell" "ipc" "call" "media" "playPause"
+    spawn "noctalia" "msg" "media" "toggle"
   }
   XF86AudioStop allow-when-locked=true hotkey-overlay-title=null {
     // spawn "playerctl" "stop" "--ignore-player=firefox,chromium,brave"
-    spawn "noctalia-shell" "ipc" "call" "media" "pause"
+    spawn "noctalia" "msg" "media" "pause"
   }
   XF86AudioPrev allow-when-locked=true hotkey-overlay-title=null {
     // spawn "playerctl" "previous" "--ignore-player=firefox,chromium,brave"
-    spawn "noctalia-shell" "ipc" "call" "media" "previous"
+    spawn "noctalia" "msg" "media" "previous"
   }
   XF86AudioNext allow-when-locked=true hotkey-overlay-title=null {
     // spawn "playerctl" "next" "--ignore-player=firefox,chromium,brave"
-    spawn "noctalia-shell" "ipc" "call" "media" "next"
+    spawn "noctalia" "msg" "media" "next"
   }
   XF86AudioRewind allow-when-locked=true hotkey-overlay-title=null {
     // spawn "playerctl" "position" "2-" "--ignore-player=firefox,chromium,brave"
-    spawn "noctalia-shell" "ipc" "call" "media" "seekRelative" "-2"
+    spawn "noctalia" "msg" "media" "seekRelative" "-2"
   }
   XF86AudioForward allow-when-locked=true hotkey-overlay-title=null {
     // spawn "playerctl" "position" "2+" "--ignore-player=firefox,chromium,brave"
-    spawn "noctalia-shell" "ipc" "call" "media" "seekRelative" "2"
+    spawn "noctalia" "msg" "media" "seekRelative" "2"
   }
   // ========== Media audio control==========
   // Shift+XF86AudioRaiseVolume allow-when-locked=true hotkey-overlay-title=null {
   //   // spawn "playerctl" "volume" "0.05%+"
-  //   spawn "noctalia-shell ipc call volume increase"
+  //   spawn "noctalia msg volume-up"
   // }
   // Shift+XF86AudioLowerVolume allow-when-locked=true hotkey-overlay-title=null {
   //   // spawn "playerctl" "volume" "0.05%-"
-  //   spawn "noctalia-shell ipc call volume decrease"
+  //   spawn "noctalia msg volume-down"
   // }
   // ========== Output audio control==========
   XF86AudioRaiseVolume allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05+"
-    spawn "noctalia-shell" "ipc" "call" "volume" "increase"
+    spawn "noctalia" "msg" "volume-up"
   }
   XF86AudioLowerVolume allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.05-"
-    spawn "noctalia-shell" "ipc" "call" "volume" "decrease"
+    spawn "noctalia" "msg" "volume-down"
   }
   XF86AudioMute allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"
-    spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"
+    spawn "noctalia" "msg" "volume-mute"
   }
   // ========== Input audio control==========
   Super+XF86AudioRaiseVolume allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SOURCE@" "0.05+"
-    spawn "noctalia-shell" "ipc" "call" "volume" "increaseInput"
+    spawn "noctalia" "msg" "volume" "increaseInput"
   }
   Super+XF86AudioLowerVolume allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SOURCE@" "0.05-"
-    spawn "noctalia-shell" "ipc" "call" "volume" "decreaseInput"
+    spawn "noctalia" "msg" "volume" "decreaseInput"
   }
   Super+XF86AudioMute allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"
-    spawn "noctalia-shell" "ipc" "call" "volume" "muteInput"
+    spawn "noctalia" "msg" "volume" "muteInput"
   }
   XF86AudioMicMute allow-when-locked=true hotkey-overlay-title=null {
     // spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"
-    spawn "noctalia-shell" "ipc" "call" "volume" "muteInput"
+    spawn "noctalia" "msg" "volume" "muteInput"
   }
   //
   // ========== Screenshots ==========
@@ -363,20 +360,20 @@ binds {
   // ========== Noctalia calls ==========
   //
   Super+Shift+E hotkey-overlay-title="Session Menu" {
-    spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"
+    spawn-sh "noctalia msg panel-toggle session"
   }
   Super+Space hotkey-overlay-title="Launcher" {
-    spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"
+    spawn-sh "noctalia msg panel-toggle launcher"
   }
   Super+Shift+Space hotkey-overlay-title="Command Launcher" {
-    spawn "noctalia-shell" "ipc" "call" "launcher" "command"
+    spawn-sh "noctalia msg launcher command"
   }
   Super+Comma hotkey-overlay-title="Noctalia Settings" {
-    spawn "noctalia-shell" "ipc" "call" "settings" "open"
+    spawn-sh "noctalia msg settings-toggle"
   }
   // this is redundant with alt+tab for niri window selector
   // Super+Tab hotkey-overlay-title="Window switcher" {
-  //   spawn "noctalia-shell" "ipc" "call" "launcher" "windows"
+  //   spawn "noctalia" "msg" "window-switcher"
   // }
   //
   // ========== Quick Launch ==========
