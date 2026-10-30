@@ -4,141 +4,153 @@
   ...
 }:
 {
-  appLauncher = {
-    autoPasteClipboard = false;
-    clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
-    clipboardWatchTextCommand = "wl-paste --type text --watch cliphist store";
-    clipboardWrapText = true;
-    customLaunchPrefix = "";
-    customLaunchPrefixEnabled = false;
-    density = "default";
-    enableClipPreview = true;
-    enableClipboardChips = true;
-    enableClipboardHistory = true;
-    enableClipboardSmartIcons = true;
-    enableSessionSearch = true;
-    enableSettingsSearch = true;
-    enableWindowsSearch = true;
-    iconMode = "tabler";
-    ignoreMouseInput = false;
-    overviewLayer = true;
-    pinnedApps = [
-    ];
-    position = "center";
-    screenshotAnnotationTool = "";
-    showCategories = true;
-    showIconBackground = true;
-    sortByMostUsed = true;
-    terminalCommand = "ghostty -e";
-    viewMode = "list";
-  };
-  audio = {
-    mprisBlacklist = [
-    ];
-    preferredPlayer = "spotify";
-    spectrumFrameRate = 30;
-    spectrumMirrored = true;
-    visualizerType = "linear";
-    volumeFeedback = false;
-    volumeFeedbackSoundFile = "";
-    volumeOverdrive = false;
-    volumeStep = 5;
-  };
-  brightness = {
-    backlightDeviceMappings = [
-    ];
-    brightnessStep = 5;
-    enableDdcSupport = false;
-    enforceMinimum = true;
-  };
-  calendar = {
-    cards = [
-      {
-        enabled = true;
-        id = "calendar-header-card";
-      }
-      {
-        enabled = true;
-        id = "calendar-month-card";
-      }
-      {
-        enabled = true;
-        id = "weather-card";
-      }
-    ];
-  };
-  colorSchemes = {
-    predefinedScheme = "default";
-    darkMode = true;
-    generationMethod = "tonal-spot";
-    manualSunrise = "06 =30";
-    manualSunset = "18 =30";
-    monitorForColors = "";
-    schedulingMode = "off";
-    syncGsettings = false;
-    useWallpaperColors = false;
-  };
-  controlCenter = {
-    cards = [
-      {
-        enabled = true;
-        id = "profile-card";
-      }
-      {
-        enabled = true;
-        id = "shortcuts-card";
-      }
-      {
-        enabled = true;
-        id = "audio-card";
-      }
-      {
-        enabled = true;
-        id = "brightness-card";
-      }
-      {
-        enabled = true;
-        id = "weather-card";
-      }
-      {
-        enabled = false;
-        id = "media-sysmon-card";
-      }
-    ];
-    diskPath = "/";
-    position = "center";
-    shortcuts = {
-      left = [
-        {
-          id = "Network";
-        }
-        {
-          id = "Bluetooth";
-        }
-        {
-          id = "WallpaperSelector";
-        }
-        {
-          id = "NoctaliaPerformance";
-        }
-      ];
-      right = [
-        {
-          id = "Notifications";
-        }
-        {
-          id = "PowerProfile";
-        }
-      ];
+  shell = {
+    # appLauncher = {
+    launcher = {
+      layout = "full";
+      # width = 760;
+      search_position = "bottom";
+      default_view = "recent";
+      categories = true;
+      show_settings_button = false;
+      show_session_button = false;
+      app_grid = false;
+      track_usage = true;
+      # autoPasteClipboard = false;
+      # clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
+      # clipboardWatchTextCommand = "wl-paste --type text --watch cliphist store";
+      # clipboardWrapText = true;
+      # customLaunchPrefix = "";
+      # customLaunchPrefixEnabled = false;
+      # density = "default";
+      # enableClipPreview = true;
+      # enableClipboardChips = true;
+      # enableClipboardHistory = true;
+      # enableClipboardSmartIcons = true;
+      # enableSessionSearch = true;
+      # enableSettingsSearch = true;
+      # enableWindowsSearch = true;
+      # iconMode = "tabler";
+      # ignoreMouseInput = false;
+      # overviewLayer = true;
+      # pinnedApps = [
+      # ];
+      # position = "center";
+      # screenshotAnnotationTool = "";
+      # showCategories = true;
+      # showIconBackground = true;
+      # sortByMostUsed = true;
+      # terminalCommand = "ghostty -e";
+      # viewMode = "list";
     };
   };
-  desktopWidgets = {
+  audio = {
+    # mprisBlacklist = [
+    # ];
+    # preferredPlayer = "spotify";
+    # spectrumFrameRate = 30;
+    # spectrumMirrored = true;
+    # visualizerType = "linear";
+    # volumeFeedback = false;
+    # volumeFeedbackSoundFile = "";
+    # volumeOverdrive = false;
+    # volumeStep = 5;
+  };
+  brightness = {
+    # brightnessStep = 5;
+    enable_ddcutil = false;
+    minimum_brightness = 0.2;
+    sync_all_monitors = false;
+  };
+  calendar = {
+    enabled = true;
+    event_date_format = "%A %e %B";
+    # cards = [
+    #   {
+    #     enabled = true;
+    #     id = "calendar-header-card";
+    #   }
+    #   {
+    #     enabled = true;
+    #     id = "calendar-month-card";
+    #   }
+    #   {
+    #     enabled = true;
+    #     id = "weather-card";
+    #   }
+    # ];
+  };
+  # colorSchemes = {
+  #   predefinedScheme = "default";
+  #   darkMode = true;
+  #   generationMethod = "tonal-spot";
+  #   manualSunrise = "06 =30";
+  #   manualSunset = "18 =30";
+  #   monitorForColors = "";
+  #   schedulingMode = "off";
+  #   syncGsettings = false;
+  #   useWallpaperColors = false;
+  # };
+  theme = {
+    mode = "dark";
+    shell_mode = "follow";
+  };
+  # control_center = {
+  #   cards = [
+  #     {
+  #       enabled = true;
+  #       id = "profile-card";
+  #     }
+  #     {
+  #       enabled = true;
+  #       id = "shortcuts-card";
+  #     }
+  #     {
+  #       enabled = true;
+  #       id = "audio-card";
+  #     }
+  #     {
+  #       enabled = true;
+  #       id = "brightness-card";
+  #     }
+  #     {
+  #       enabled = true;
+  #       id = "weather-card";
+  #     }
+  #     {
+  #       enabled = false;
+  #       id = "media-sysmon-card";
+  #     }
+  #   ];
+  #   diskPath = "/";
+  #   position = "center";
+  #   shortcuts = {
+  #     left = [
+  #       {
+  #         id = "Network";
+  #       }
+  #       {
+  #         id = "Bluetooth";
+  #       }
+  #       {
+  #         id = "WallpaperSelector";
+  #       }
+  #       {
+  #         id = "NoctaliaPerformance";
+  #       }
+  #     ];
+  #     right = [
+  #       {
+  #         id = "Notifications";
+  #       }
+  #       {
+  #         id = "PowerProfile";
+  #       }
+  #     ];
+  #   };
+  # };
+  desktop_widgets = {
     enabled = false;
-    gridSnap = false;
-    gridSnapScale = false;
-    monitorWidgets = [
-    ];
-    overviewEnabled = true;
   };
   general = {
     allowPanelsOnScreenWithoutBar = true;
@@ -222,53 +234,49 @@
     wallpaperChange = "";
   };
   idle = {
-    customCommands = "[]";
-    enabled = false;
-    fadeDuration = 5;
-    lockCommand = "";
-    lockTimeout = 660;
-    resumeLockCommand = "";
-    resumeScreenOffCommand = "";
-    resumeSuspendCommand = "";
-    screenOffCommand = "";
-    screenOffTimeout = 600;
-    suspendCommand = "";
-    suspendTimeout = 1800;
+    behavior_order = [
+      "lock"
+      "screen-off"
+
+    ];
+    # Seconds to fade a fullscreen surface-tint overlay, then run the idle command.
+    # 0 disables the overlay (the command runs as soon as the compositor reports idle).
+    # Parsed between 0 and 120; the in-app Settings stepper uses whole seconds 0–30.
+    # pre_action_fade_seconds = 4.0;
+    behavior = {
+      lock = {
+        timeout = 660;
+        action = "lock";
+        enabled = false;
+      };
+      screen-off = {
+        timeout = 600;
+        action = "screen_off";
+        enabled = false;
+      };
+      suspend = {
+        timeout = 1800;
+        action = "lock_and_suspend";
+        enabled = false;
+      };
+    };
   };
   location = {
-    analogClockInCalendar = false;
-    autoLocate = false;
-    firstDayOfWeek = -1;
-    hideWeatherCityName = false;
-    hideWeatherTimezone = false;
-    name = "Calgary";
-    showCalendarEvents = true;
-    showCalendarWeather = true;
-    showWeekNumberInCalendar = false;
-    use12hourFormat = false;
-    useFahrenheit = false;
-    weatherEnabled = true;
-    weatherShowEffects = true;
-    weatherTaliaMascotAlways = false;
+    auto_locate = false;
+    address = "Calgary, AB";
   };
-  network = {
-    bluetoothAutoConnect = true;
-    bluetoothDetailsViewMode = "grid";
-    bluetoothHideUnnamedDevices = false;
-    bluetoothRssiPollIntervalMs = 60000;
-    bluetoothRssiPollingEnabled = false;
-    disableDiscoverability = false;
-    networkPanelView = "wifi";
-    wifiDetailsViewMode = "grid";
-  };
-  nightLight = {
-    autoSchedule = true;
-    dayTemp = "6500";
+  # network = {
+  #   bluetoothAutoConnect = true;
+  #   bluetoothDetailsViewMode = "grid";
+  #   bluetoothHideUnnamedDevices = false;
+  #   bluetoothRssiPollIntervalMs = 60000;
+  #   bluetoothRssiPollingEnabled = false;
+  #   disableDiscoverability = false;
+  #   networkPanelView = "wifi";
+  #   wifiDetailsViewMode = "grid";
+  # };
+  nightlight = {
     enabled = false;
-    forced = false;
-    manualSunrise = "06 =30";
-    manualSunset = "18 =30";
-    nightTemp = "4000";
   };
   noctaliaPerformance = {
     disableDesktopWidgets = true;
@@ -347,8 +355,6 @@
   };
   settingsVersion = 59;
   systemMonitor = {
-    batteryCriticalThreshold = 5;
-    batteryWarningThreshold = 20;
     cpuCriticalThreshold = 90;
     cpuWarningThreshold = 80;
     criticalColor = "";
@@ -378,10 +384,10 @@ deepin-system-monitor || pantheon-system-monitor";
     enableUserTheming = false;
   };
   wallpaper = {
-    automationEnabled = true;
-    directory = "/home/ta/sync/wallpaper/hostCollections/ghost";
-    enableMultiMonitorDirectories = true;
     enabled = true;
+    default.path = "/home/ta/sync/wallpaper/hostCollections/ghost";
+    automationEnabled = true;
+    enableMultiMonitorDirectories = true;
     favorites = [
     ];
     fillColor = "#000000";
@@ -425,6 +431,12 @@ deepin-system-monitor || pantheon-system-monitor";
     wallhavenResolutionWidth = "";
     wallhavenSorting = "relevance";
     wallpaperChangeMode = "random";
+  };
+  weather = {
+    enabled = true;
+    refresh = 15;
+    unit = "metric";
+    effects = true;
   };
   bar = {
     autoHideDelay = 500;
@@ -589,6 +601,9 @@ deepin-system-monitor || pantheon-system-monitor";
     };
     backgroundOpacity = lib.mkForce 1;
   };
+  battery = {
+    warning_threshold = 20;
+  };
   dock = {
     animationSpeed = 1;
     colorizeIcons = false;
@@ -620,32 +635,46 @@ deepin-system-monitor || pantheon-system-monitor";
     size = 1;
   };
   notifications = {
-    clearDismissed = true;
-    criticalUrgencyDuration = 15;
-    density = "default";
-    enableBatteryToast = true;
-    enableKeyboardLayoutToast = true;
-    enableMarkdown = false;
-    enableMediaToast = false;
-    enabled = true;
-    location = "top_right";
-    lowUrgencyDuration = 3;
-    normalUrgencyDuration = 8;
-    overlayLayer = true;
-    respectExpireTimeout = false;
-    saveToHistory = {
-      critical = true;
-      low = true;
-      normal = true;
-    };
-    sounds = {
-      criticalSoundFile = "";
-      enabled = false;
-      excludedApps = "discord,firefox,chrome,chromium,edge";
-      lowSoundFile = "";
-      normalSoundFile = "";
-      separateSounds = false;
-      volume = 0.5;
+    enable_daemon = true;
+    show_app_name = true;
+    show_actions = true;
+    position = "top_right";
+    layer = "top";
+    scale = 1.0;
+    # width = 500;
+    background_opacitty = 0.95;
+    border = true;
+    border_color = "outline";
+    border_width = 1;
+    follow_focused_output = false; # show new toasts on the focused output; keep visible toasts pinned
+    offset_x = 20; # absolute horizontal margin from the screen edge
+    offset_y = 8; # absolute vertical margin from the screen edge
+    monitors = [ ]; # empty = all monitors; otherwise connector/description selectors (e.g. ["eDP-1", "DP-1"])
+    collapse_on_dismiss = true; # slide remaining toasts to close gaps when one is dismissed
+    keep_dismissed_in_history = true; # keep history entries when their toasts are dismissed
+    max_visible = 3; # maximum on-screen toasts; 0 = fill available space (all visible)
+    history_retention_hours = 0; # delete stored history older than this; 0 keeps it indefinitely
+    filter = {
+      chrome = {
+        match = "chrome";
+        play_sound = false;
+        show_toast = false;
+      };
+      chromium = {
+        match = "chromium";
+        play_sound = false;
+        show_toast = false;
+      };
+      discord = {
+        match = "discord";
+        play_sound = false;
+        show_toast = false;
+      };
+      firefox = {
+        match = "firefox";
+        play_sound = false;
+        show_toast = false;
+      };
     };
   };
   osd = {
@@ -673,8 +702,8 @@ deepin-system-monitor || pantheon-system-monitor";
     translucentWidgets = true;
     panelBackgroundOpacity = lib.mkForce 0.75;
   };
-  colors = {
-    Surface = lib.mkForce "#${config.lib.stylix.colors.base00}";
+  dark = {
+    mSurface = lib.mkForce "#${config.lib.stylix.colors.base00}";
     mOnSurface = lib.mkForce "#${config.lib.stylix.colors.base03}";
     mSurfaceVariant = lib.mkForce "#${config.lib.stylix.colors.base01}";
     mOnSurfaceVariant = lib.mkForce "#${config.lib.stylix.colors.base04}";
