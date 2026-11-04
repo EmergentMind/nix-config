@@ -10,6 +10,9 @@
   lib,
   ...
 }:
+let
+  sopsFolder = (lib.toString inputs.nix-secrets) + "/sops";
+in
 {
   imports = lib.flatten [
     #
@@ -84,6 +87,7 @@
   tunnels.cakes = {
     enable = true;
     sopsEntry = "keys/ssh/meek";
+    sopsFile = "${sopsFolder}/shared.yaml";
     keyPath = "/etc/ssh/id_meek";
   };
 

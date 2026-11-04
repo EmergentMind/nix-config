@@ -13,6 +13,12 @@ in
         description = "Yaml path in sops file that points to the ssh key";
       };
 
+      sopsFile = lib.mkOption rec {
+        type = lib.types.str;
+        default = config.sops.defaultSopsFiles;
+        example = default;
+        description = "Path to the sops secrets file";
+      };
       keyPath = lib.mkOption rec {
         type = lib.types.str;
         default = "/etc/ssh/id_ed25519";
@@ -26,11 +32,15 @@ in
     sops = {
       secrets = {
         "${cfg.sopsEntry}" = {
+          inherit (cfg) sopsFile;
+
           owner = "autossh";
           group = "autossh";
           path = cfg.keyPath;
         };
         "${cfg.sopsEntry}_pub" = {
+          inherit (cfg) sopsFile;
+
           owner = "autossh";
           group = "autossh";
           path = "${cfg.keyPath}.pub";
