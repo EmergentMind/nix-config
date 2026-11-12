@@ -75,7 +75,9 @@
   services.blueman.enable = true;
 
   hardware = {
-    graphics.package = pkgs.unstable.mesa;
+    #graphics.package = pkgs.unstable.mesa;
+    graphics.package = pkgs.stable.mesa;
+    #graphics.package32 = pkgs.stable.pkgsi686Linux.mesa; # force the same mesa for when steams requires separate system32 mesa dep
     graphics.package32 = pkgs.unstable.pkgsi686Linux.mesa; # force the same mesa for when steams requires separate system32 mesa dep
   };
 
