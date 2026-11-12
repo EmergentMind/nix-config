@@ -281,9 +281,8 @@
     # Private secrets repo.  See ./docs/secretsmgmt.md
     # Authenticate via ssh and use shallow clone
     nix-secrets = {
-      # url = "git+ssh://git@gitlab.com/emergentmind/nix-secrets.git?ref=main&shallow=1";
-      # url = "git+ssh://olan-forge/emergentmind/nix-secrets.git";
-      url = "path:///home/ta/dev/nix/nix-secrets";
+      url = "git+ssh://olan-forge/emergentmind/nix-secrets.git";
+      # url = "path:///home/ta/dev/nix/nix-secrets";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-assets = {
