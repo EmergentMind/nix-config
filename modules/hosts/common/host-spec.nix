@@ -62,6 +62,10 @@
           default = "local"; # Need a default for the installer
           description = "The domain of the host";
         };
+        gitforge = lib.mkOption {
+          type = lib.types.str;
+          description = "The domain for personal gitforge";
+        };
         userFullName = lib.mkOption {
           type = lib.types.str;
           description = "The full name of the user";

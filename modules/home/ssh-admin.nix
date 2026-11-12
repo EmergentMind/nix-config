@@ -54,6 +54,11 @@ lib.mkIf cfg.isAdmin {
         |> lib.attrsets.mergeAttrsList;
     in
     {
+      "internal-git" = lib.hm.dag.entryAfter [ "yubikey-hosts" ] {
+        Host = "git.${cfg.gitforge} git.moth.${cfg.gitforge}";
+        HostName = "git.${cfg.gitforge}";
+        Port = cfg.networking.ports.tcp.moth;
+      };
       # external hosts with
       "moth" = lib.hm.dag.entryAfter [ "yubikey-hosts" ] {
         Host = "moth";

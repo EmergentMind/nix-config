@@ -42,6 +42,7 @@ in
     handle = "emergentmind";
     inherit (secrets)
       domain
+      gitforge
       email
       userFullName
       networking

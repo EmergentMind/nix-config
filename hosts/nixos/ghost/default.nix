@@ -1,6 +1,5 @@
 #############################################################
-#
-#  Ghost - Main Desktop
+# Ghost - Main Desktop
 #  NixOS running on Ryzen 9 5900XT, Radeon RX 9070 XT, 64GB RAM
 #
 ###############################################################
@@ -113,6 +112,11 @@
     # Fix for XBox controller disconnects
     extraModprobeConfig = "options bluetooth disable_ertm=1 ";
   };
+
+  environment.etc."gitconfig".text = ''
+    [url "ssh://git@git.${config.hostSpec.gitforge}:${lib.toString config.hostSpec.networking.ports.tcp.moth}/"]
+      insteadOf = ssh://olan-forge/
+  '';
 
   environment.systemPackages = lib.attrValues {
     inherit (pkgs.unstable)
