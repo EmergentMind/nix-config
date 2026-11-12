@@ -106,8 +106,8 @@
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1794319845,
-        "narHash": "sha256-agNUSjjzRJqqwc9sqAdmGph5qip3Fs7p1xrDhATGPZg=",
+        "lastModified": 1794406563,
+        "narHash": "sha256-DvvRCFZvbj9OS8JyonZrqwu8cICWZAgjOZSKtu6RJrg=",
         "path": "/home/ta/dev/nix/neovim",
         "type": "path"
       },
@@ -454,7 +454,7 @@
         "wrappers": "wrappers_2"
       },
       "locked": {
-        "lastModified": 1794320186,
+        "lastModified": 1794404927,
         "narHash": "sha256-G02ZjFFl4vZgYiBlyeb5vjiENU3G4K/4fF0qFC70a+M=",
         "path": "/home/ta/dev/nix/introdus/ta",
         "type": "path"
@@ -560,19 +560,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1793755515,
-        "narHash": "sha256-EroDRi+hfLRr9gauY52hSPkr9HJrPRxR8ngnECSyeXw=",
-        "ref": "main",
-        "rev": "7bc90e02d03d6eeeb27df3350276197ebe0b6902",
-        "shallow": true,
+        "lastModified": 1794508305,
+        "narHash": "sha256-kmh+Y3Ez1r4GtrMoXAmQSs4nF9VB/K9JBNe+ZtBc1bw=",
+        "ref": "refs/heads/main",
+        "rev": "eb7fe8231ab65fc21fd01db70b5b6a4783e64719",
+        "revCount": 378,
         "type": "git",
-        "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
+        "url": "ssh://olan-forge/emergentmind/nix-secrets.git"
       },
       "original": {
-        "ref": "main",
-        "shallow": true,
         "type": "git",
-        "url": "ssh://git@gitlab.com/emergentmind/nix-secrets.git"
+        "url": "ssh://olan-forge/emergentmind/nix-secrets.git"
       }
     },
     "nixos-facter-modules": {
